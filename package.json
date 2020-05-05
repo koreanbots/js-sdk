@@ -1,0 +1,18 @@
+{
+  "name": "koreanbots",
+  "version": "1.0.0",
+  "description": "Simple Bot Info patch for DBKR (Koreanbots)",
+  "main": "dist/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "wondelandpark<wondelandpark@callisto.team>",
+  "license": "MIT",
+  "types": "./types.ts",
+  "dependencies": {
+    "node-fetch": "^2.6.0"
+  },
+  "devDependencies": {
+    "@types/node-fetch": "^2.5.7"
+  }
+}
