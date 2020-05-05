@@ -3,8 +3,8 @@ export interface APIresponse {
     message?: string;
 }
 
-export interface getBot {
-    code: 200|429;
+export interface getBots {
+    code: 200|429|400;
     data?: Bot[];
     totalPage?: number;
     currentPage?: number;
@@ -60,12 +60,13 @@ export interface User {
     avatar: string;
     bots: string[]
 }
+
 export enum Category {
     '관리',
     '뮤직',
     '전적',
     '웹 대시보드',
-     '로깅',
+    '로깅',
     '도박',
     '게임',
     '밈',

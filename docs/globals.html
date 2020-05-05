@@ -2730,7 +2730,73 @@ img {
 			<a href="#koreanbots" id="koreanbots" style="color: inherit; text-decoration: none;">
 				<h1>koreanbots</h1>
 			</a>
-			<p>JS SDK for Koreanbots</p>
+			<p>JS SDK for Koreanbots (Made in TS)</p>
+			<a href="#문서" id="문서" style="color: inherit; text-decoration: none;">
+				<h2>문서</h2>
+			</a>
+			<p><a href="https://koreanbots.cf/js-sdk">문서</a></p>
+			<a href="#예시" id="예시" style="color: inherit; text-decoration: none;">
+				<h2>예시</h2>
+			</a>
+			<a href="#서버수-업데이트하기" id="서버수-업데이트하기" style="color: inherit; text-decoration: none;">
+				<h3>서버수 업데이트하기</h3>
+			</a>
+			<p>주기적으로 봇의 서버 수를 업데이트합니다. (discord.js)</p>
+			<a href="#v12" id="v12" style="color: inherit; text-decoration: none;">
+				<h4>v12</h4>
+			</a>
+			<pre><code class="language-js"><span class="hljs-keyword">const</span> Discord = <span class="hljs-built_in">require</span>(<span class="hljs-string">'discord.js'</span>);
+<span class="hljs-keyword">const</span> client = <span class="hljs-keyword">new</span> Discord.Client();
+
+<span class="hljs-keyword">const</span> koreanbots = <span class="hljs-built_in">require</span>(<span class="hljs-string">'koreanbots'</span>);
+<span class="hljs-keyword">const</span> Bot = <span class="hljs-keyword">new</span> koreanbots.MyBot(<span class="hljs-string">'Koreanbots 토큰'</span>)
+
+client.on(<span class="hljs-string">'ready'</span>, () =&gt; {
+    <span class="hljs-built_in">console</span>.log(<span class="hljs-string">`<span class="hljs-subst">${client.user.tag}</span>로 로그인하였습니다.`</span>);
+    Bot.update(client.guilds.cache.size) <span class="hljs-comment">// 준비 상태를 시작할 때, 최초로 업데이트합니다.</span>
+    .then(<span class="hljs-function"><span class="hljs-params">res</span>=&gt;</span><span class="hljs-built_in">console</span>.log(<span class="hljs-string">'서버 수를 정상적으로 업데이트하였습니다!\n반환된 정보:'</span> + <span class="hljs-built_in">JSON</span>.stringify(res)))
+    .catch(<span class="hljs-function"><span class="hljs-params">e</span>=&gt;</span> <span class="hljs-built_in">console</span>.error(e))
+    <span class="hljs-keyword">set</span><span class="hljs-title">Interval</span>(<span class="hljs-params">function(</span>){
+        Bot.update(client.guilds.cache.size)
+        .then(<span class="hljs-function"><span class="hljs-params">res</span>=&gt;</span><span class="hljs-built_in">console</span>.log(<span class="hljs-string">'서버 수를 정상적으로 업데이트하였습니다!\n반환된 정보:'</span> + <span class="hljs-built_in">JSON</span>.stringify(res)))
+        .catch(<span class="hljs-function"><span class="hljs-params">e</span>=&gt;</span> <span class="hljs-built_in">console</span>.log(e))
+        <span class="hljs-comment">// 10분마다 서버 수를 업데이트합니다.</span>
+    }, <span class="hljs-number">600000</span>)
+});
+
+client.login(<span class="hljs-string">'토큰'</span>)</code></pre>
+			<a href="#v11-gt" id="v11-gt" style="color: inherit; text-decoration: none;">
+				<h4>v11 &gt;</h4>
+			</a>
+			<pre><code class="language-js"><span class="hljs-keyword">const</span> Discord = <span class="hljs-built_in">require</span>(<span class="hljs-string">'discord.js'</span>);
+<span class="hljs-keyword">const</span> client = <span class="hljs-keyword">new</span> Discord.Client();
+
+<span class="hljs-keyword">const</span> koreanbots = <span class="hljs-built_in">require</span>(<span class="hljs-string">'koreanbots'</span>);
+<span class="hljs-keyword">const</span> Bot = <span class="hljs-keyword">new</span> koreanbots.MyBot(<span class="hljs-string">'Koreanbots 토큰'</span>)
+
+client.on(<span class="hljs-string">'ready'</span>, () =&gt; {
+    <span class="hljs-built_in">console</span>.log(<span class="hljs-string">`<span class="hljs-subst">${client.user.tag}</span>로 로그인하였습니다.`</span>);
+    Bot.update(client.guilds.size) <span class="hljs-comment">// 준비 상태를 시작할 때, 최초로 업데이트합니다.</span>
+    .then(<span class="hljs-function"><span class="hljs-params">res</span>=&gt;</span><span class="hljs-built_in">console</span>.log(<span class="hljs-string">'서버 수를 정상적으로 업데이트하였습니다!\n반환된 정보:'</span> + <span class="hljs-built_in">JSON</span>.stringify(res)))
+    .catch(<span class="hljs-function"><span class="hljs-params">e</span>=&gt;</span> <span class="hljs-built_in">console</span>.error(e))
+    <span class="hljs-keyword">set</span><span class="hljs-title">Interval</span>(<span class="hljs-params">function(</span>){
+        Bot.update(client.guilds.cache.size)
+        .then(<span class="hljs-function"><span class="hljs-params">res</span>=&gt;</span><span class="hljs-built_in">console</span>.log(<span class="hljs-string">'서버 수를 정상적으로 업데이트하였습니다!\n반환된 정보:'</span> + <span class="hljs-built_in">JSON</span>.stringify(res)))
+        .catch(<span class="hljs-function"><span class="hljs-params">e</span>=&gt;</span> <span class="hljs-built_in">console</span>.log(e))
+        <span class="hljs-comment">// 10분마다 서버 수를 업데이트합니다.</span>
+    }, <span class="hljs-number">600000</span>)
+});
+
+client.login(<span class="hljs-string">'토큰'</span>)</code></pre>
+			<a href="#아이디로-봇-정보-가져오기-botsgetid" id="아이디로-봇-정보-가져오기-botsgetid" style="color: inherit; text-decoration: none;">
+				<h3>아이디로 봇 정보 가져오기 (/bots/get/:id)</h3>
+			</a>
+			<pre><code class="language-js"><span class="hljs-keyword">const</span> koreanbots = <span class="hljs-built_in">require</span>(<span class="hljs-string">'koreanbots'</span>);
+<span class="hljs-keyword">const</span> Bots = koreanbots.Bots
+
+Bots.getByID(<span class="hljs-string">'653534001742741552'</span>)
+.then(<span class="hljs-function"><span class="hljs-params">r</span>=&gt;</span> <span class="hljs-built_in">console</span>.log(r)) <span class="hljs-comment">// 반환되는 데이터는 옆 링크를 참고해주세요: https://koreanbots.cf/js-sdk/interfaces/_types_.getbyid.html</span>
+.catch(<span class="hljs-function"><span class="hljs-params">e</span>=&gt;</span> <span class="hljs-built_in">console</span>.error(e))</code></pre>
 		</div>
 		<section class="tsd-panel-group tsd-index-group">
 			<h2>Index</h2>

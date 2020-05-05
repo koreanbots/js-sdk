@@ -1,4 +1,4 @@
-import { APIresponse, getBot, getByID } from './types'
+import { APIresponse, getBots, getByID, Category} from './types'
 import Request from './Request'
 
 class MyBot {
@@ -46,7 +46,7 @@ const Bots =  {
     /**
      * 봇 리스트를 불러옵니다. (기본)
      */
-    get: async(page: Number = 1):Promise<getBot> => {
+    get: async(page: Number = 1):Promise<getBots> => {
         /**
          * @param page 불러올 페이지
          */
@@ -65,7 +65,35 @@ const Bots =  {
         if(typeof id !== "string") throw new Error('올바르지 않은 아이디입니다.')
         return await Request('/bots/get/' + id)
     }
+    ,
+    /**
+     * 봇을 검색합니다.
+     */
+    search: async(query: string, page: Number = 1):Promise<getBots> => {
+        /**
+         * @param query 검색할 검색어
+         * @param page 불러올 페이지
+         */
+        if(!query) throw new Error('쿼리 텍스트가 요구됩니다!')
+        if(typeof page !== "number") throw new Error('올바르지 않은 페이지입니다.')
 
+        return await Request(`/bots/search?q=${query}&page=${page}`)
+    }
+    ,
+    /**
+     * 카테고리별 봇의 리스트를 불러옵니다.
+     */
+    category: async(category: Category, page: Number = 1):Promise<getBots> => {
+        /**
+         * @param category 불러올 카테고리
+         * @param page 불러올 페이지
+         */
+        if(!category) throw new Error('카테고리가 요구됩니다!')
+        if(!Object.values(Category).includes(category)) throw new Error('올바르지 않은 카테고리입니다.')
+        if(typeof page !== "number") throw new Error('올바르지 않은 페이지입니다.')
+
+        return await Request(`/bots/category/${category}?page=${page}`)
+    },
 }
 
 export { MyBot, Bots }

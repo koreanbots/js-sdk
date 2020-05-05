@@ -5,6 +5,6 @@ import fetch from 'node-fetch'
  * @param endpoint 요청을 전송할 EndPoint
  * @param opt 요청 옵션 (fetch Opt)
  */
-export default async function MakeReq( endpoint:RequestInfo, opt?: Object) {
-    return await fetch( api + endpoint, opt).then((r: { json: () => any })=> r.json()).catch((e: string)=> { throw new Error(e) })
+export default async function MakeReq( endpoint:string, opt?: Object) {
+    return await fetch( api + encodeURI(endpoint), opt).then((r: { json: () => any })=> r.json()).catch((e: string)=> { throw new Error(e) })
 }
