@@ -25,11 +25,11 @@ client.on('ready', () => {
     console.log(`${client.user.tag}로 로그인하였습니다.`);
     Bot.update(client.guilds.cache.size) // 준비 상태를 시작할 때, 최초로 업데이트합니다.
     .then(res=>console.log('서버 수를 정상적으로 업데이트하였습니다!\n반환된 정보:' + JSON.stringify(res)))
-    .catch(e=> console.error(e)
-    setInterval(()=> {
+    .catch(e=> console.error(e))
+    setInterval(function(){
         Bot.update(client.guilds.cache.size)
         .then(res=>console.log('서버 수를 정상적으로 업데이트하였습니다!\n반환된 정보:' + JSON.stringify(res)))
-        .catch(e=> console.log(e)
+        .catch(e=> console.log(e))
         , 600000) // 10분마다 서버 수를 업데이트합니다.
     })
 });
@@ -50,11 +50,11 @@ client.on('ready', () => {
     console.log(`${client.user.tag}로 로그인하였습니다.`);
     Bot.update(client.guilds.size) // 준비 상태를 시작할 때, 최초로 업데이트합니다.
     .then(res=>console.log('서버 수를 정상적으로 업데이트하였습니다!\n반환된 정보:' + JSON.stringify(res)))
-    .catch(e=> console.error(e)
-    setInterval(()=> {
+    .catch(e=> console.error(e))
+    setInterval(function(){
         Bot.update(client.guilds.size)
         .then(res=>console.log('서버 수를 정상적으로 업데이트하였습니다!\n반환된 정보:' + JSON.stringify(res)))
-        .catch(e=> console.log(e)
+        .catch(e=> console.log(e))
         , 600000) // 10분마다 서버 수를 업데이트합니다.
     })
 });

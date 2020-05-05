@@ -1,7 +1,7 @@
 {
   "name": "koreanbots",
-  "version": "1.0.3",
-  "description": "Simple Bot Info patch for DBKR (Koreanbots)",
+  "version": "1.0.4",
+  "description": "JS SDK for Koreanbots",
   "main": "dist/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
