@@ -13,6 +13,8 @@
     "node-fetch": "^2.6.0"
   },
   "devDependencies": {
-    "@types/node-fetch": "^2.5.7"
+    "@types/node-fetch": "^2.5.7",
+    "typedoc": "^0.17.6",
+    "typescript": "^3.8.3"
   }
 }

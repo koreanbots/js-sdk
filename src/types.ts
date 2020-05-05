@@ -5,8 +5,10 @@ export interface APIresponse {
 
 export interface getBot {
     code: 200|429;
-    data?: Bot[]
-    message?: string
+    data?: Bot[];
+    totalPage?: number;
+    currentPage?: number;
+    message?: string;
 }
 
 export interface getByID {
