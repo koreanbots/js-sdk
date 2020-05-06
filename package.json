@@ -1,6 +1,6 @@
 {
   "name": "koreanbots",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "JS SDK for Koreanbots",
   "main": "dist/index.js",
   "scripts": {
@@ -16,5 +16,9 @@
     "@types/node-fetch": "^2.5.7",
     "typedoc": "^0.17.6",
     "typescript": "^3.8.3"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/koreanbots/js-sdk.git"
   }
 }

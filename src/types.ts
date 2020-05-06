@@ -1,6 +1,6 @@
 export interface APIresponse {
     code: 200|400|403|401|429;
-    message?: string;
+    message?: string|object;
 }
 
 export interface getBots {
@@ -14,7 +14,7 @@ export interface getBots {
 export interface getByID {
     code: 200|429;
     data?: BotDetail;
-    message?: string
+    message?: string;
 }
 
 export interface Bot {
@@ -51,6 +51,12 @@ export interface BotDetail {
     category: Category[];
     tag: string;
     state: "ok"|"archived"|"private"
+}
+
+export interface Voted {
+    code: 200|400|429;
+    voted?: boolean;
+    message?: string|object;
 }
 
 export interface User {

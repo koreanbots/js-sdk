@@ -1,4 +1,4 @@
-import { APIresponse, getBots, getByID, Category} from './types'
+import { APIresponse, getBots, getByID, Category, Voted} from './types'
 import Request from './Request'
 
 class MyBot {
@@ -19,7 +19,7 @@ class MyBot {
          */
     update = async(serverCount: Number) => {
         /**
-         * @param serverCount 봇의 서버 수입니다.
+         * @param serverCount 봇의 서버 수
          */
         if(!serverCount || typeof serverCount !== "number") throw new Error('서버 수가 주어지지 않았거나, 올바르지 않은 타입입니다.')
         const res:APIresponse = await Request('/bots/servers', {
@@ -36,7 +36,24 @@ class MyBot {
             return res
         }
     }
-
+    /**
+     * 유저의 봇 하트 여부를 확인합니다.
+     */ 
+    checkVote  = async(id: string) => {
+        /**
+         * @param id 유저 아이디
+         */
+        if(!id || typeof id !== "string") throw new Error('아이디가 주어지지 않았거나, 올바르지 않은 아이디입니다!')
+        const res:Voted = await Request('/bots/voted/' + id, {
+            method: 'GET',
+            headers: {
+                token: this.token,
+                'Content-Type': 'application/json'
+            }
+        })
+        if(res.code !== 200) throw new Error(typeof res.message === 'string' ? res.message : `올바르지 않은 응답이 반환되었습니다.\n응답: ${JSON.stringify(res)}`)
+        else return res
+    }   
 }
 
 /**
