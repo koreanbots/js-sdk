@@ -36,6 +36,7 @@ export interface BotDetail {
     owners: User[]
     name: string;
     prefix: string;
+    lib: Library;
     servers: number;
     votes: number;
     intro: string;
@@ -84,7 +85,7 @@ export enum Category {
     '검색'
 }
 
-export enum Librarys {
+export enum Library {
     'discord.js',
     'Eris',
     'discord.py',
