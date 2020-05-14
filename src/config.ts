@@ -1,4 +1,4 @@
-const api = new URL('https://api.koreanbots.cf').origin
+const api = new URL('https://api.koreanbots.dev').origin
 
 
 
