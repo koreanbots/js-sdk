@@ -52,7 +52,7 @@ client.on('ready', () => {
     .then(res=>console.log('서버 수를 정상적으로 업데이트하였습니다!\n반환된 정보:' + JSON.stringify(res)))
     .catch(e=> console.error(e))
     setInterval(function(){
-        Bot.update(client.guilds.cache.size)
+        Bot.update(client.guilds.size)
         .then(res=>console.log('서버 수를 정상적으로 업데이트하였습니다!\n반환된 정보:' + JSON.stringify(res)))
         .catch(e=> console.log(e))
         // 10분마다 서버 수를 업데이트합니다.
