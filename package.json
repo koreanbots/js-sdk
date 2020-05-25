@@ -1,21 +1,23 @@
 {
   "name": "koreanbots",
-  "version": "1.0.9",
+  "version": "1.1.0-beta",
   "description": "JS SDK for Koreanbots",
-  "main": "dist/index.js",
+  "main": "src/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "node test"
   },
-  "author": "wondelandpark<wondelandpark@callisto.team>",
+  "author": {
+    "name": "zero734kr",
+    "email": "zero734kr@gmail.com",
+    "url": "https://github.com/zero734kr"
+  },
+  "engine": ">=11.0.0",
   "license": "MIT",
-  "types": "./types.ts",
   "dependencies": {
     "node-fetch": "^2.6.0"
   },
   "devDependencies": {
-    "@types/node-fetch": "^2.5.7",
-    "typedoc": "^0.17.6",
-    "typescript": "^3.8.3"
+    "eslint": "^7.1.0"
   },
   "repository": {
     "type": "git",
