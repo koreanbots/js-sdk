@@ -67,10 +67,10 @@ client.login("토큰")
 - 아이디로 봇 정보 가져오기 (/bots/get/:id)
 ```js
 const koreanbots = require('koreanbots');
-const Bots = koreanbots.Bots
+const Bots = new koreanbots.Bots()
 
 Bots.get("653534001742741552")
-    .then(r=> console.log(r)) // 반환되는 데이터는 옆 링크를 참고해주세요: https://koreanbots.cf/js-sdk/interfaces/_types_.getbyid.html
+    .then(r=> console.log(r)) // 반환되는 데이터는 옆 링크를 참고해주세요: https://koreanbots.dev/js-sdk/interfaces/_types_.getbyid.html
     .catch(e=> console.error(e))
 ```
 
