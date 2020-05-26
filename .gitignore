@@ -1,5 +1,4 @@
 node_modules/
-package-lock.json
-docs/
 test/
 1.0.9/
+package-lock.json

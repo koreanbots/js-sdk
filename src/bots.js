@@ -10,10 +10,24 @@ class Bots {
         this.remainingPerEndpointCache = {}
     }
 
+    /**
+     * 오류 메세지를 생성합니다.
+     * @private
+     * @param {string|any} text - 값
+     * @returns string
+     */
     _mkError(text) {
         return `올바르지 않은 ${text}입니다.`
     }
 
+    /**
+     * API의 endpoint로 fetch합니다.
+     * @private
+     * @async
+     * @param {string} endpoint - fetch할 endpoint
+     * @param {Options} opt - fetch 옵션
+     * @returns Promise<APIResponse | Error>
+     */
     async _fetch(endpoint, opt) {
         endpoint = encodeURI(endpoint)
 
@@ -31,7 +45,7 @@ class Bots {
         return req(`https://api.koreanbots.dev${endpoint}`, opt)
             .then(async r => {
                 let data = r.json()
-                if(!data.code) data.code = r.status
+                if (!data.code) data.code = r.status
 
                 if (r.status === 429 || data === { "size": 0, "timeout": 0 }) {
                     if (this.options.noWarning) process.emitWarning(`Rate limited from ${r.url}`, "RateLimitWarning")

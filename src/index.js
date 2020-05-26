@@ -17,6 +17,12 @@ class MyBot {
         this.remainingPerEndpointCache = {}
     }
 
+    /**
+     * 넘겨진 값이 JSON인지 확인합니다.
+     * @private
+     * @param {object|any} something - JSON인지 확인할 값
+     * @returns boolean
+     */
     isJSON(something) {
         try {
             JSON.parse(something)
@@ -26,6 +32,14 @@ class MyBot {
         }
     }
 
+    /**
+     * API의 endpoint로 fetch합니다.
+     * @private
+     * @async
+     * @param {string} endpoint - fetch할 endpoint
+     * @param {Options} opt - fetch 옵션
+     * @returns Promise<APIResponse | Error>
+     */
     async _fetch(endpoint, opt) {
         endpoint = encodeURI(endpoint)
 
@@ -70,6 +84,12 @@ class MyBot {
             })
     }
 
+    /**
+     * 봇의 서버 수를 업데이트합니다.
+     * @async
+     * @param {number} count - 새로운 서버 수
+     * @returns Promise<APIResonse | Error>
+     */
     async update(count) {
         if (!count || typeof count !== "number") throw new Error("서버 수가 주어지지 않았거나, 올바르지 않은 타입입니다.")
 
@@ -90,8 +110,14 @@ class MyBot {
         return res
     }
 
+    /**
+     * 해당 유저가 이 봇에 하트를 눌렀는지 확인합니다.
+     * @async
+     * @param {string} id - 확인할 유저 ID
+     * @returns Promise<APIResponse>
+     */
     async checkVote(id) {
-        if (!id || typeof id !== "string") return new Error("아이디가 주어지지 않았거나, 올바르지 않은 아이디입니다!")
+        if (!id || typeof id !== "string") throw new Error("아이디가 주어지지 않았거나, 올바르지 않은 아이디입니다!")
 
         const res = await this._fetch(`/bots/voted/${id}`, {
             method: "GET",
@@ -100,7 +126,7 @@ class MyBot {
                 "Content-Type": "application/json"
             }
         })
-        if (res.code !== 200) return new Error(typeof res.message === "string" ? res.message : `올바르지 않은 응답이 반환되었습니다.\n응답: ${JSON.stringify(res)}`)
+        if (res.code !== 200) throw new Error(typeof res.message === "string" ? res.message : `올바르지 않은 응답이 반환되었습니다.\n응답: ${JSON.stringify(res)}`)
 
         return res
     }

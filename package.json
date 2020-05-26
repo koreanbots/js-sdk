@@ -1,16 +1,28 @@
 {
   "name": "koreanbots",
-  "version": "1.1.0-beta",
+  "version": "1.1.0",
   "description": "JS SDK for Koreanbots",
   "main": "src/index.js",
+  "types": "typings/index.d.ts",
   "scripts": {
-    "test": "node test"
+    "test": "node test",
+    "build": "npm install",
+    "build:dev": "npm run build && npm i -D",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix"
   },
   "author": {
     "name": "zero734kr",
     "email": "zero734kr@gmail.com",
     "url": "https://github.com/zero734kr"
   },
+  "contributors": [
+    {
+      "email": "wonderbotsupport@naver.com",
+      "name": "wonderlandpark",
+      "url": "https://dev.wonderbot.xyz"
+    }
+  ],
   "engine": ">=11.0.0",
   "license": "MIT",
   "dependencies": {
@@ -18,6 +30,14 @@
   },
   "devDependencies": {
     "eslint": "^7.1.0"
+  },
+  "exports": {
+    ".": [
+      {
+        "require": "./src/index.js"
+      },
+      "./src/index.js"
+    ]
   },
   "repository": {
     "type": "git",
