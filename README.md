@@ -1,4 +1,4 @@
-<h1 align="center">Welcome to koreanbots 👋</h1>
+<h1 align="center">Koreanbots - JS SDK</h1>
 <p>
   <a href="https://www.npmjs.com/package/koreanbots" target="_blank">
     <img alt="Version" src="https://img.shields.io/npm/v/koreanbots.svg">
@@ -10,21 +10,21 @@
     <img alt="Maintenance" src="https://img.shields.io/badge/Maintained%3F-yes-green.svg" />
   </a>
   <a href="https://github.com/koreanbots/js-sdk/blob/master/LICENSE" target="_blank">
-    <img alt="License: MIT" src="https://img.shields.io/github/license/koreanbots/koreanbots" />
+    <img alt="License: MIT" src="https://img.shields.io/github/license/koreanbots/js-sdk" />
   </a>
 </p>
 
 > JS SDK for <a href="https://koreanbots.dev">Koreanbots</a>
 
-### 🏠 [Homepage](https://koreanbots.dev)
+### 🏠 [홈페이지](https://koreanbots.dev)
 
-## Install
+## 설치
 
 ```sh
 npm install koreanbots
 ```
 
-## Run tests
+## 테스트하기
 
 - discord.js v12
 ```js
@@ -78,18 +78,20 @@ Bots.get("653534001742741552")
 
 👤 **zero734kr**
 
-* Personal Github: [@zero734kr](https://github.com/zero734kr)
+* 개인 Github: [@zero734kr](https://github.com/zero734kr)
 * Organization Github: [@koreanbots](https://github.com/koreanbots)
 
-## 🤝 Contributing
+## 🤝 도움주기
 
-Contributions, issues and feature requests are welcome!<br />Feel free to check [issues page](https://github.com/koreanbots/js-sdk/issues). You can also take a look at the [contributing guide](https://github.com/koreanbots/js-sdk/pulls).
+이슈와 PR은 모두 환영입니다!<br>
+무언가 문제가 생겼다면 [이슈 페이지](https://github.com/koreanbots/js-sdk/issues) 또는 [koreanbots 통합 이슈 페이지](https://github.com/koreanbots/koreanbots)에 저를 언급하여 알려주세요! ``(예시: @zero734kr, js sdk 버그입니다.)``<br>
+코드 수정 요청은 [PR 페이지](https://github.com/koreanbots/js-sdk/pulls)에 올려주세요.
 
-## Show your support
+## 서포트
 
-Give a ⭐️ if this project helped you!
+만약 이 모듈이 도움이 되었다면 ⭐️를 눌러주세요!
 
-## 📝 License
+## 📝 라이센스
 
 Copyright © 2020 [zero734kr](https://github.com/koreanbots).<br />
 This project is [MIT](https://github.com/koreanbots/js-sdk/blob/master/LICENSE) licensed.

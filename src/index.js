@@ -88,7 +88,7 @@ class MyBot {
      * 봇의 서버 수를 업데이트합니다.
      * @async
      * @param {number} count - 새로운 서버 수
-     * @returns Promise<APIResonse | Error>
+     * @returns Promise<APIResponse | Error>
      */
     async update(count) {
         if (!count || typeof count !== "number") throw new Error("서버 수가 주어지지 않았거나, 올바르지 않은 타입입니다.")
@@ -119,6 +119,8 @@ class MyBot {
     async checkVote(id) {
         if (!id || typeof id !== "string") throw new Error("아이디가 주어지지 않았거나, 올바르지 않은 아이디입니다!")
 
+        if(this.cache[id]) return this.cache[id]
+
         const res = await this._fetch(`/bots/voted/${id}`, {
             method: "GET",
             headers: {
@@ -128,6 +130,10 @@ class MyBot {
         })
         if (res.code !== 200) throw new Error(typeof res.message === "string" ? res.message : `올바르지 않은 응답이 반환되었습니다.\n응답: ${JSON.stringify(res)}`)
 
+        setTimeout(() => {
+            if(this.cache[id]) delete this.cache[id]
+        }, 60000 * 60 * 6)
+        this.cache[id] = res
         return res
     }
 }
