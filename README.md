@@ -16,7 +16,7 @@
     <img alt="Downloads" src="https://img.shields.io/npm/dm/koreanbots.svg">
   </a>
   <a href="https://github.com/koreanbots/js-sdk/workflows/.github/workflows/eslint.yml" target="_blank">
-    <img alt="eslint.yml" src="https://github.com/koreanbots/koreanbots/workflows/.github/workflows/eslint.yml/badge.svg">
+    <img alt="eslint.yml" src="https://github.com/koreanbots/js-sdk/workflows/.github/workflows/eslint.yml/badge.svg">
   </a>
 </p>
 
