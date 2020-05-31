@@ -12,6 +12,12 @@
   <a href="https://github.com/koreanbots/js-sdk/blob/master/LICENSE" target="_blank">
     <img alt="License: MIT" src="https://img.shields.io/github/license/koreanbots/js-sdk" />
   </a>
+  <a href="https://npmcharts.com/compare/koreanbots?minimal=true" target="_blank">
+    <img alt="Downloads" src="https://img.shields.io/npm/dm/koreanbots.svg">
+  </a>
+  <a href="https://github.com/koreanbots/js-sdk/workflows/.github/workflows/eslint.yml" target="_blank">
+    <img alt="eslint.yml" src="https://github.com/koreanbots/koreanbots/workflows/.github/workflows/eslint.yml/badge.svg">
+  </a>
 </p>
 
 > JS SDK for <a href="https://koreanbots.dev">Koreanbots</a>
