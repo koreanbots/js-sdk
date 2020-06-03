@@ -111,7 +111,7 @@ class Bots {
         if (!id) throw new Error("아이디를 입력해주세요!")
         if (typeof id !== "string") throw new Error("올바르지 않은 아이디입니다.")
 
-        process.emitWarning("해당 메소드 getByID는 deprecated 메소드이며, 추후 버젼에서 제거됩니다. Bots#get(id: string)를 대신 사용 해주세요.", "DeprecationWarning")
+        process.emitWarning("해당 메소드 getByID는 deprecated 메소드이며, 추후 버전에서 제거됩니다. Bots#get(id: string)를 대신 사용 해주세요.", "DeprecationWarning")
 
         const res = await this.get(id)
 
