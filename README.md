@@ -32,7 +32,27 @@ npm install koreanbots
 
 ## 테스트하기
 
-- discord.js v12
+- discord.js : 자동 업데이트
+```js
+const { MyBot } = require("koreanbots")
+const Bot = new MyBot("Koreanbots 토큰")
+
+client.on("ready", () => {
+    console.log(`${client.user.tag}로 로그인하였습니다.`)
+
+    Bot.setUpdate(client, 600000) //10분마다 서버 수를 업데이트합니다. (기본값 30분)
+})
+
+client.login("토큰")
+
+process.on("SIGINT", () => {
+    Bot.delUpdate()
+    client.destroy()
+    process.exit()
+})
+```
+
+- discord.js v12 : 수동 업데이트
 ```js
 const { MyBot } = require("koreanbots")
 const Bot = new MyBot("Koreanbots 토큰")
@@ -44,14 +64,14 @@ let update = count => Bot.update(count)
 client.on("ready", () => {
     console.log(`${client.user.tag}로 로그인하였습니다.`)
 
-    update(client.guilds.cache.size) // 준비 상태를 시작할 때, 최초로 업데이트합니다.
+    update(client.guilds.size) // 준비 상태를 시작할 때, 최초로 업데이트합니다.
     setInterval(() => update(client.guilds.cache.size), 600000) // 10분마다 서버 수를 업데이트합니다.
 })
 
 client.login("토큰")
 ```
 
-- discord.js v11
+- discord.js v11 : 수동 업데이트
 ```js
 const { MyBot } = require("koreanbots")
 const Bot = new MyBot("Koreanbots 토큰")
@@ -76,8 +96,8 @@ const koreanbots = require('koreanbots');
 const Bots = new koreanbots.Bots()
 
 Bots.get("653534001742741552")
-    .then(r=> console.log(r)) // 반환되는 데이터는 옆 링크를 참고해주세요: https://koreanbots.dev/js-sdk/interfaces/_types_.getbyid.html
-    .catch(e=> console.error(e))
+    .then(r => console.log(r)) // 반환되는 데이터는 옆 링크를 참고해주세요: https://koreanbots.dev/js-sdk/interfaces/_types_.getbyid.html
+    .catch(e => console.error(e))
 ```
 
 ## Author

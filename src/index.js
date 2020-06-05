@@ -15,6 +15,8 @@ class MyBot {
 
         this.cache = {}
         this.remainingPerEndpointCache = {}
+
+        this.interval = null
     }
 
     /**
@@ -38,7 +40,7 @@ class MyBot {
      * @async
      * @param {string} endpoint - fetch할 endpoint
      * @param {Options} opt - fetch 옵션
-     * @returns Promise<APIResponse | Error>
+     * @returns Promise<APIResponse>
      */
     async _fetch(endpoint, opt) {
         endpoint = encodeURI(endpoint)
@@ -50,7 +52,7 @@ class MyBot {
             && this.cache[endpoint]
         ) {
             let value = this.cache[endpoint]
-            if(!value.code) value.code = 200
+            if (!value.code) value.code = 200
             return value
         }
 
@@ -73,7 +75,7 @@ class MyBot {
                 if (r.status === 200) this.cache[endpoint] = data
                 if (r.status === 200) this.remainingPerEndpointCache[endpoint] = r.headers.get("x-ratelimit-remaining")
 
-                if (r.status.toString().startsWith("4") || r.status.toString().startsWith("5")) throw new Error(data.message || data)
+                if (r.status.toString().startsWith("4") || r.status.toString().startsWith("5")) throw new Error(data.message || JSON.stringify(data))
 
                 return data
             })
@@ -88,10 +90,10 @@ class MyBot {
      * 봇의 서버 수를 업데이트합니다.
      * @async
      * @param {number} count - 새로운 서버 수
-     * @returns Promise<APIResponse | Error>
+     * @returns Promise<APIResponse>
      */
     async update(count) {
-        if (!count || typeof count !== "number") throw new Error("서버 수가 주어지지 않았거나, 올바르지 않은 타입입니다.")
+        if ((!count && count !== 0) || typeof count !== "number") throw new Error("서버 수가 주어지지 않았거나, 올바르지 않은 타입입니다.")
 
         const res = await this._fetch("/bots/servers", {
             method: "POST",
@@ -106,7 +108,7 @@ class MyBot {
 
         this.updatedTimestamp = Date.now()
         this.updatedAt = new Date(this.updatedTimestamp)
-        
+
         return res
     }
 
@@ -119,7 +121,7 @@ class MyBot {
     async checkVote(id) {
         if (!id || typeof id !== "string") throw new Error("아이디가 주어지지 않았거나, 올바르지 않은 아이디입니다!")
 
-        if(this.cache[id]) return this.cache[id]
+        if (this.cache[id]) return this.cache[id]
 
         const res = await this._fetch(`/bots/voted/${id}`, {
             method: "GET",
@@ -131,10 +133,23 @@ class MyBot {
         if (res.code !== 200) throw new Error(typeof res.message === "string" ? res.message : `올바르지 않은 응답이 반환되었습니다.\n응답: ${JSON.stringify(res)}`)
 
         setTimeout(() => {
-            if(this.cache[id]) delete this.cache[id]
+            if (this.cache[id]) delete this.cache[id]
         }, 60000 * 60 * 6)
         this.cache[id] = res
         return res
+    }
+
+    async setUpdate(client, interval = 1800000) {
+        if(this.interval) throw new Error("이미 실행 중인 인터벌이 있습니다. 만약 삭제 후 다시 실행하시려면 MyBot#delUpdate()를 써주시고 실행 해주세요.")
+        
+        await this.update(client.guilds.cache.size).catch(err => { throw err })
+        return this.interval = setInterval(() => this.update(client.guilds.cache.size).catch(err => { throw err }), interval)
+    }
+
+    async delUpdate() {
+        if(this.interval) this.interval = null
+
+        return this.interval
     }
 }
 
