@@ -32,21 +32,23 @@ npm install koreanbots
 
 ## 테스트하기
 
-- discord.js : 자동 업데이트
+- discord.js v12 : 자동 업데이트 
+
+**주의:** *이 KoreanbotsClient는 discord.js v12에서만 작동합니다.*
 ```js
-const { MyBot } = require("koreanbots")
-const Bot = new MyBot("Koreanbots 토큰")
-
-client.on("ready", () => {
-    console.log(`${client.user.tag}로 로그인하였습니다.`)
-
-    Bot.setUpdate(client, 600000) //10분마다 서버 수를 업데이트합니다. (기본값 30분)
+const { KoreanbotsClient } = require("koreanbots")
+const client = new KoreanbotsClient({
+    koreanbotsToken: "토큰",
+    koreanbotsOptions: {
+        interval: 600000 //10분마다 서버 수를 업데이트합니다. (기본값 30분)
+    }
 })
+
+client.on("ready", () => console.log(`${client.user.tag}로 로그인하였습니다.`))
 
 client.login("토큰")
 
 process.on("SIGINT", () => {
-    Bot.delUpdate()
     client.destroy()
     process.exit()
 })

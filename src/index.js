@@ -1,5 +1,6 @@
 const req = require("node-fetch")
 const Bots = require("./bots")
+const KoreanbotsClient = require("./KoreanbotsClient")
 
 class MyBot {
     constructor(token, options = {}) {
@@ -15,8 +16,6 @@ class MyBot {
 
         this.cache = {}
         this.remainingPerEndpointCache = {}
-
-        this.interval = null
     }
 
     /**
@@ -138,19 +137,6 @@ class MyBot {
         this.cache[id] = res
         return res
     }
-
-    async setUpdate(client, interval = 1800000) {
-        if(this.interval) throw new Error("이미 실행 중인 인터벌이 있습니다. 만약 삭제 후 다시 실행하시려면 MyBot#delUpdate()를 써주시고 실행 해주세요.")
-        
-        await this.update(client.guilds.cache.size).catch(err => { throw err })
-        return this.interval = setInterval(() => this.update(client.guilds.cache.size).catch(err => { throw err }), interval)
-    }
-
-    async delUpdate() {
-        if(this.interval) this.interval = null
-
-        return this.interval
-    }
 }
 
-module.exports = { MyBot, Bots }
+module.exports = { MyBot, Bots, KoreanbotsClient }

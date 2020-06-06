@@ -163,7 +163,6 @@ class Bots {
             "유틸리티",
             "번역",
             "대화",
-            "NSFW",
             "검색"
         ]
         if (!category) throw new Error(this._mkError("카테고리"))
