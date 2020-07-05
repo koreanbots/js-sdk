@@ -85,7 +85,7 @@ let update = count => Bot.update(count)
 client.on("ready", () => {
     console.log(`${client.user.tag}로 로그인하였습니다.`)
 
-    update(client.guilds.size) // 준비 상태를 시작할 때, 최초로 업데이트합니다.
+    update(client.guilds.cache.size) // 준비 상태를 시작할 때, 최초로 업데이트합니다.
     setInterval(() => update(client.guilds.size), 600000) // 10분마다 서버 수를 업데이트합니다.
 })
 
