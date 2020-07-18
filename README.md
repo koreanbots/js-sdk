@@ -30,6 +30,37 @@
 npm install koreanbots
 ```
 
+## 옵션 
+
+### Koreanbots.MyBot
+
+| 옵션                      | 타입         | 필수 | 기본값       | 설명                                                                       |
+|--------------------------|-------------|-----|------------|---------------------------------------------------------------------------|
+| `token`                  | String      |  O  |      -     | Koreanbots의 토큰                                                           |
+| `options.noWarning`      | Boolean     |     |    false   | 모듈의 경고 알림을 끕니다                                                        |
+| `options.avoidRateLimit` | Boolean     |     |    true    | 레이트리밋을 최대한 피합니다                                                      |
+| `options.GCFlushOnMB`    | Number      |     |     5      | 캐시 값 용량이 ${옵션의 숫자}MB가 될시 캐시를 초기화합니다                              | 
+| `options.GCInterval`     | Number(ms)  |     |  216000000 | `options.GCInterval` 밀리초마다 `options.GCFlushOnMB`MB를 넘을시 캐시를 초기화합니다 |
+
+### Koreanbots.Bots
+
+* 주의: Bots는 캐시를 자주 활용합니다. 이는 곧 메모리 사용량으로 직결되며 GC로 시작하는 옵션들을 잘 설정해주세요.
+
+| 옵션                      | 타입         | 필수 | 기본값       | 설명                                                                       |
+|--------------------------|-------------|-----|------------|---------------------------------------------------------------------------|
+| `options.noWarning`      | Boolean     |     |    false   | 모듈의 경고 알림을 끕니다                                                        |
+| `options.avoidRateLimit` | Boolean     |     |    true    | 레이트리밋을 최대한 피합니다                                                      |
+| `options.GCFlushOnMB`    | Number      |     |     5      | 캐시 값 용량이 ${옵션의 숫자}MB가 될시 캐시를 초기화합니다                              | 
+| `options.GCInterval`     | Number(ms)  |     |  216000000 | `options.GCInterval` 밀리초마다 `options.GCFlushOnMB`MB를 넘을시 캐시를 초기화합니다 |
+
+## 수동 메모리(캐시) 관리
+
+```js
+const { SearchCache } = require("koreanbots")._cache.Bots
+
+if(SearchCache.getStats().vsize >= 10 * 1024 * 1024) SearchCache.flushAll()
+```
+
 ## 테스트하기
 
 - discord.js v12 : 자동 업데이트 
