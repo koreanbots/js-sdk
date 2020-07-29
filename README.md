@@ -34,31 +34,52 @@ npm install koreanbots
 
 ### Koreanbots.MyBot
 
-| 옵션                      | 타입         | 필수 | 기본값       | 설명                                                                       |
-|--------------------------|-------------|-----|------------|---------------------------------------------------------------------------|
-| `token`                  | String      |  O  |      -     | Koreanbots의 토큰                                                           |
-| `options.noWarning`      | Boolean     |     |    false   | 모듈의 경고 알림을 끕니다                                                        |
-| `options.avoidRateLimit` | Boolean     |     |    true    | 레이트리밋을 최대한 피합니다                                                      |
-| `options.GCFlushOnMB`    | Number      |     |     5      | 캐시 값 용량이 ${옵션의 숫자}MB가 될시 캐시를 초기화합니다                              | 
-| `options.GCInterval`     | Number(ms)  |     |  216000000 | `options.GCInterval` 밀리초마다 `options.GCFlushOnMB`MB를 넘을시 캐시를 초기화합니다 |
+| 옵션                         | 타입         | 필수  | 기본값      | 설명                                                                         |
+|-----------------------------|-------------|-----|------------|----------------------------------------------------------------------------|
+| `token`                     | String      |  O  |      -     | Koreanbots의 토큰                                                            |
+| `options.noWarning`         | Boolean     |     |    false   | 모듈의 경고 알림을 끕니다                                                         |
+| `options.avoidRateLimit`    | Boolean     |     |    true    | 레이트리밋을 최대한 피합니다                                                       |
+| `options.autoFlush`         | Number      |     |    100     | 캐시에 저장된 데이터 수가 `options.autoFlush`를 넘을시 캐시를 초기화합니다. (자동 캐시 관리) |
+| `options.autoFlushInterval` | Number      |     |  3600000   | `options.autoFlushInterval`(밀리초)마다 캐시를 관리합니다                          |
 
 ### Koreanbots.Bots
 
-* 주의: Bots는 캐시를 자주 활용합니다. 이는 곧 메모리 사용량으로 직결되며 GC로 시작하는 옵션들을 잘 설정해주세요.
+* 주의: Bots는 캐시를 자주 활용합니다. 이는 곧 메모리 사용량으로 직결되며 autoFlush로 시작하는 옵션들을 잘 설정해주세요.
 
-| 옵션                      | 타입         | 필수 | 기본값       | 설명                                                                       |
-|--------------------------|-------------|-----|------------|---------------------------------------------------------------------------|
-| `options.noWarning`      | Boolean     |     |    false   | 모듈의 경고 알림을 끕니다                                                        |
-| `options.avoidRateLimit` | Boolean     |     |    true    | 레이트리밋을 최대한 피합니다                                                      |
-| `options.GCFlushOnMB`    | Number      |     |     5      | 캐시 값 용량이 ${옵션의 숫자}MB가 될시 캐시를 초기화합니다                              | 
-| `options.GCInterval`     | Number(ms)  |     |  216000000 | `options.GCInterval` 밀리초마다 `options.GCFlushOnMB`MB를 넘을시 캐시를 초기화합니다 |
+| 옵션                         | 타입         | 필수  | 기본값       | 설명                                                                        |
+|-----------------------------|-------------|-----|------------|----------------------------------------------------------------------------|
+| `options.noWarning`         | Boolean     |     |    false   | 모듈의 경고 알림을 끕니다                                                         |
+| `options.avoidRateLimit`    | Boolean     |     |    true    | 레이트리밋을 최대한 피합니다                                                       |
+| `options.autoFlush`         | Number      |     |    100     | 캐시에 저장된 데이터 수가 `options.autoFlush`를 넘을시 캐시를 초기화합니다. (자동 캐시 관리) |
+| `options.autoFlushInterval` | Number      |     |  3600000   | `options.autoFlushInterval`(밀리초)마다 캐시를 관리합니다                          |
+
+### Koreanbots.Widgets
+
+| 옵션                         | 타입         | 필수  | 기본값       | 설명                                                                        |
+|-----------------------------|-------------|-----|------------|----------------------------------------------------------------------------|
+| `options.autoFlush`         | Number      |     |    100     | 캐시에 저장된 데이터 수가 `options.autoFlush`를 넘을시 캐시를 초기화합니다. (자동 캐시 관리) |
+| `options.autoFlushInterval` | Number      |     |  3600000   | `options.autoFlushInterval`(밀리초)마다 캐시를 관리합니다                          |
 
 ## 수동 메모리(캐시) 관리
 
 ```js
 const { SearchCache } = require("koreanbots")._cache.Bots
 
-if(SearchCache.getStats().vsize >= 10 * 1024 * 1024) SearchCache.flushAll()
+if(SearchCache.size >= 100) SearchCache.clear()
+```
+
+### 위젯 
+
+```js
+const { Widgets } = require("koreanbots")
+const widget = new Widgets()
+const { MessageAttachment } = require("discord.js")
+
+widget.getVoteWidget(client.user.id, "jpeg").then(w => {
+    let wg = new MessageAttachment(w)
+
+    message.channel.send(wg)
+}).catch(er => { throw er })
 ```
 
 ## 테스트하기
@@ -125,7 +146,7 @@ client.login("토큰")
 
 - 아이디로 봇 정보 가져오기 (/bots/get/:id)
 ```js
-const koreanbots = require('koreanbots');
+const koreanbots = require("koreanbots");
 const Bots = new koreanbots.Bots()
 
 Bots.get("653534001742741552")

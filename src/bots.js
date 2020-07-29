@@ -6,8 +6,8 @@ class Bots {
         this.options = options
         this.options.noWarning = options.noWarning === true
         this.options.avoidRateLimit = options.avoidRateLimit === undefined ? true : options.avoidRateLimit === true
-        this.options.GCFlushOnMB = options.GCFlushOnMB || 5
-        this.options.GCInterval = options.GCInterval || 60000 * 60 * 60
+        this.options.autoFlush = options.autoFlush || 100
+        this.options.autoFlushInterval = options.autoFlushInterval || 60000 * 60
 
         this.cache = BotsCache
         this.remainingPerEndpointCache = BotsdotjsRemainingPerEndpoint
@@ -15,22 +15,18 @@ class Bots {
             search: SearchCache, category: CategoryCache
         }
 
-        setInterval(() => {
-            let cacheValueMB = this.cache.stats.vsize / 1024 / 1024
-            let remainingPerEndpointCacheValueMB = this.remainingPerEndpointCache.stats.vsize / 1024 / 1024
-            let searchValueMB = this.privateCache.search.stats.vsize / 1024 / 1024
-            let categoryValueMB = this.privateCache.category.stats.vsize / 1024 / 1024
+        if (this.options.autoFlushInterval && this.options.autoFlushInterval > 10000) {
+            setInterval(() => {
+                function flush(cache) {
+                    if (cache.size >= this.options.autoFlush) cache.clear()
+                }
 
-            function flush(cache) {
-                cache.flushAll()
-                if (!this.options.noWarning) process.emitWarning("Koreanbots cache flushed by Koreanbots GC, because this cache exceeded 10MB of size.", "KoreanbotsGCWarning")
-            }
-
-            if (cacheValueMB > this.options.GCFlushOnMB) flush(this.cache)
-            if (remainingPerEndpointCacheValueMB > this.options.GCFlushOnMB) flush(this.remainingPerEndpointCache)
-            if (searchValueMB > this.options.GCFlushOnMB) flush(this.privateCache.search)
-            if (categoryValueMB > this.options.GCFlushOnMB) flush(this.privateCache.category)
-        }, this.options.GCInterval)
+                [
+                    this.cache, this.remainingPerEndpointCache,
+                    this._privateCache.search, this._privateCache.category
+                ].map(c => flush(c))
+            }, this.options.autoFlushInterval)
+        }
     }
 
     /**
@@ -74,7 +70,7 @@ class Bots {
                 if (r.status === 429 || data === { size: 0, timeout: 0 }) {
                     if (!this.options.noWarning) process.emitWarning(`Rate limited from ${r.url}`, "RateLimitWarning")
 
-                    if (this.cache[endpoint] && opt.method !== "POST") return this.cache.get(endpoint)
+                    if (this.cache.get(endpoint) && opt.method !== "POST") return this.cache.get(endpoint)
 
                     return {
                         code: 429,
@@ -83,37 +79,23 @@ class Bots {
                 }
 
                 if (r.status === 200 && opt.disableGlobalCache !== true) {
-                    if (this.cache.has(endpoint)) this.cache.del(endpoint)
+                    if (this.cache.has(endpoint)) this.cache.delete(endpoint)
 
                     data["updatedTimestamp"] = Date.now()
 
-                    try {
-                        this.cache.set(endpoint, data)
-                    } catch (err) {
-                        if (String(err).includes("ECACHEFULL")) {
-                            this.cache.flushAll()
-                            this.cache.set(endpoint, data)
-                        }
-                    }
+                    this.cache.set(endpoint, data)
                 }
                 if (r.status === 200) {
-                    if (this.remainingPerEndpointCache.has(endpoint)) this.remainingPerEndpointCache.del(endpoint)
+                    if (this.remainingPerEndpointCache.has(endpoint)) this.remainingPerEndpointCache.delete(endpoint)
 
-                    try {
-                        this.remainingPerEndpointCache.set(endpoint, r.headers.get("x-ratelimit-remaining"))
-                    } catch (err) {
-                        if (String(err).includes("ECACHEFULL")) {
-                            this.remainingPerEndpointCache.flushAll()
-                            this.cache.set(endpoint, r.headers.get("x-ratelimit-remaining"))
-                        }
-                    }
+                    this.remainingPerEndpointCache.set(endpoint, r.headers.get("x-ratelimit-remaining"))
                 }
                 if (r.status.toString().startsWith("4") || r.status.toString().startsWith("5")) throw new Error(data.message || JSON.stringify(data))
 
                 return data
             })
             .catch(e => {
-                if (String(e).includes("body used already") && opt.method !== "POST") return this.cache[endpoint]
+                if (String(e).includes("body used already") && opt.method !== "POST") return this.cache.get(endpoint)
 
                 throw e
             })
@@ -163,7 +145,7 @@ class Bots {
         })
 
         setTimeout(() => {
-            if (this._privateCache.search.has(`${query}/${page}`)) this._privateCache.search.del(`${query}/${page}`)
+            if (this._privateCache.search.has(`${query}/${page}`)) this._privateCache.search.delete(`${query}/${page}`)
         }, 60000 * 30)
         this._privateCache.search.set(`${query}/${page}`, res)
         return res
@@ -208,7 +190,7 @@ class Bots {
         })
 
         setTimeout(() => {
-            if (this._privateCache.category.has(`${category}/${page}`)) this._privateCache.category.del(`${category}/${page}`)
+            if (this._privateCache.category.has(`${category}/${page}`)) this._privateCache.category.delete(`${category}/${page}`)
         }, 60000 * 30)
         this._privateCache.category.set(`${category}/${page}`, res)
         return res

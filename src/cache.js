@@ -1,29 +1,12 @@
-const options = {
-    maxKeys: 10,
-    stdTTL: 60000 * 10
-}
 
-const NodeCache = require("node-cache")
-const RemainingEndpointCache = new NodeCache(options)
-const KoreanbotsCache = new NodeCache(options)
-
-const botsdotjsOptions = {
-    maxKeys: 10,
-    stdTTL: 60000 * 5
-}
-
-const queryCacheOptions = {
-    maxKeys: 25,
-    stdTTL: 60000 * 5
-}
-
-const BotsCache = new NodeCache(botsdotjsOptions)
-const BotsdotjsRemainingPerEndpoint = new NodeCache({
-    maxKeys: 10,
-    stdTTL: 60000 * 60
-})
-const SearchCache = new NodeCache(queryCacheOptions)
-const CategoryCache = new NodeCache(queryCacheOptions)
+const { Collection } = require("@discordjs/collection")
+const RemainingEndpointCache = new Collection()
+const KoreanbotsCache = new Collection()
+const BotsCache = new Collection()
+const BotsdotjsRemainingPerEndpoint = new Collection()
+const SearchCache = new Collection()
+const CategoryCache = new Collection()
+const WidgetsCache = new Collection()
 
 module.exports = {
     "index.js": {
@@ -31,7 +14,8 @@ module.exports = {
     },
     "bots.js": {
         BotsCache, BotsdotjsRemainingPerEndpoint, SearchCache, CategoryCache
+    },
+    "widget.js": {
+        WidgetsCache
     }
 }
-
-//내가 봐도 이건 좀 개판이네

@@ -1,6 +1,7 @@
 const req = require("node-fetch")
 const Bots = require("./bots")
 const KoreanbotsClient = require("./KoreanbotsClient")
+const KoreanbotsWidgets = require("./widget")
 const { KoreanbotsCache, RemainingEndpointCache } = require("./cache")["index.js"]
 
 class MyBot {
@@ -11,8 +12,8 @@ class MyBot {
         this.options = options
         this.options.noWarning = options.noWarning === true
         this.options.avoidRateLimit = options.avoidRateLimit === undefined ? true : options.avoidRateLimit === true
-        this.options.GCFlushOnMB = options.GCFlushOnMB || 5
-        this.options.GCInterval = options.GCInterval || 60000 * 60 * 60
+        this.options.autoFlush = options.autoFlush || 100
+        this.options.autoFlushInterval = options.autoFlushInterval || 60000 * 60
 
         this.updatedAt = null
         this.updatedTimestamp = null
@@ -20,19 +21,15 @@ class MyBot {
         this.cache = KoreanbotsCache
         this.remainingPerEndpointCache = RemainingEndpointCache
 
+        if (this.options.autoFlushInterval && this.options.autoFlushInterval > 10000) {
+            setInterval(() => {
+                function flush(cache) {
+                    if (cache.size >= this.options.autoFlush) cache.clear()
+                }
 
-        setInterval(() => {
-            let cacheValueMB = this.cache.stats.vsize / 1024 / 1024
-            let remainingPerEndpointCacheValueMB = this.remainingPerEndpointCache.stats.vsize / 1024 / 1024 
-
-            function flush(cache) {
-                cache.flushAll()
-                if(!this.options.noWarning) process.emitWarning("Koreanbots cache flushed by Koreanbots GC, because this cache exceeded 10MB of size.", "KoreanbotsGCWarning")
-            }
-
-            if(cacheValueMB > this.options.GCFlushOnMB) flush(this.cache)
-            if (remainingPerEndpointCacheValueMB > this.options.GCFlushOnMB) flush(this.remainingPerEndpointCache)
-        }, this.options.GCInterval)
+                [this.cache, this.remainingPerEndpointCache].map(c => flush(c))
+            }, this.options.autoFlushInterval)
+        }
     }
 
     /**
@@ -90,7 +87,7 @@ class MyBot {
                 }
 
                 if (r.status === 200) {
-                    if (this.cache.has(endpoint)) this.cache.del(endpoint)
+                    if (this.cache.has(endpoint)) this.cache.delete(endpoint)
 
                     data["updatedTimestamp"] = Date.now()
 
@@ -98,22 +95,15 @@ class MyBot {
                         this.cache.set(endpoint, data)
                     } catch (err) {
                         if (String(err).includes("ECACHEFULL")) {
-                            this.cache.flushAll()
+                            this.cache.clear()
                             this.cache.set(endpoint, data)
                         }
                     }
                 }
                 if (r.status === 200) {
-                    if (this.remainingPerEndpointCache.has(endpoint)) this.remainingPerEndpointCache.del(endpoint)
+                    if (this.remainingPerEndpointCache.has(endpoint)) this.remainingPerEndpointCache.delete(endpoint)
 
-                    try {
-                        this.remainingPerEndpointCache.set(endpoint, r.headers.get("x-ratelimit-remaining"))
-                    } catch (err) {
-                        if(String(err).includes("ECACHEFULL")) {
-                            this.remainingPerEndpointCache.flushAll()
-                            this.cache.set(endpoint, r.headers.get("x-ratelimit-remaining"))
-                        }
-                    }
+                    this.remainingPerEndpointCache.set(endpoint, r.headers.get("x-ratelimit-remaining"))
                 }
                 if (r.status.toString().startsWith("4") || r.status.toString().startsWith("5")) throw new Error(data.message || JSON.stringify(data))
 
@@ -161,7 +151,7 @@ class MyBot {
     async checkVote(id) {
         if (!id || typeof id !== "string") throw new Error("아이디가 주어지지 않았거나, 올바르지 않은 아이디입니다!")
 
-        if (this.cache[id]) return this.cache[id]
+        if (this.cache.get(id)) return this.cache.get(id)
 
         const res = await this._fetch(`/bots/voted/${id}`, {
             method: "GET",
@@ -173,16 +163,18 @@ class MyBot {
         if (res.code !== 200) throw new Error(typeof res.message === "string" ? res.message : `올바르지 않은 응답이 반환되었습니다.\n응답: ${JSON.stringify(res)}`)
 
         setTimeout(() => {
-            if (this.cache[id]) delete this.cache[id]
+            if (this.cache.has(id)) this.cache.delete[id]
         }, 60000 * 60 * 6)
-        this.cache[id] = res
+        this.cache.set(id, res)
         return res
     }
 }
 
 let cache = require("./cache")
 
-module.exports = { MyBot, Bots, KoreanbotsClient, _cache: {
-    MyBot: cache["index.js"],
-    Bots: cache["bots.js"]
-}}
+module.exports = {
+    MyBot, Bots, KoreanbotsClient, _cache: {
+        MyBot: cache["index.js"],
+        Bots: cache["bots.js"]
+    }, Widgets: KoreanbotsWidgets
+}
