@@ -175,6 +175,7 @@ let cache = require("./cache")
 module.exports = {
     MyBot, Bots, KoreanbotsClient, _cache: {
         MyBot: cache["index.js"],
-        Bots: cache["bots.js"]
+        Bots: cache["bots.js"],
+        Widgets: cache["widget.js"]
     }, Widgets: KoreanbotsWidgets
 }

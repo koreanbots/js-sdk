@@ -1,5 +1,7 @@
+let { Collection } = require("@discordjs/collection")
 
-const { Collection } = require("@discordjs/collection")
+if(!Collection) Collection = require("@discordjs/collection").default || require("@discordjs/collection")
+
 const RemainingEndpointCache = new Collection()
 const KoreanbotsCache = new Collection()
 const BotsCache = new Collection()

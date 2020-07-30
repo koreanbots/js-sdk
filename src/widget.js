@@ -3,8 +3,8 @@ const req = require("node-fetch")
 const sharp = require("sharp")
 
 class KoreanbotsWidgets {
-    constructor(options) {
-        this.options = options
+    constructor(options = {}) {
+        this.options = options = {}
         this.options.autoFlush = options.autoFlush || 100
         this.options.autoFlushInterval = options.autoFlushInterval || 60000 * 60
 
@@ -24,13 +24,13 @@ class KoreanbotsWidgets {
     }
 
     async _mkWidget(type, id, format) {
-        if (!this.allowedFormats(format)) throw new Error(`해당 포맷은 지원되지 않습니다. 지원되는 포맷: ${this.allowedFormats.join(", ")}`)
+        if (!this.allowedFormats.includes(format)) throw new Error(`해당 포맷은 지원되지 않습니다. 지원되는 포맷: ${this.allowedFormats.join(", ")}`)
         if (this.cache.get(`${id}/${format}`)) return this.cache.get(`${id}/${format}`)
 
         const res = await req(this[`get${type}WidgetURL`](id)).then(r => r.buffer())
 
         if (format === "svg") var widget = res
-        else var widget = sharp(res)[format]() //eslint-disable-line no-redeclare
+        else var widget = await sharp(res)[format]().toBuffer() //eslint-disable-line no-redeclare
 
         this.cache.set(`${id}/${format}`, widget)
 

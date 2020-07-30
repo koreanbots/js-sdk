@@ -33,7 +33,7 @@ class Bots {
      * 오류 메세지를 생성합니다.
      * @private
      * @param {string|any} text - 값
-     * @returns string
+     * @returns boolean
      */
     _mkError(text) {
         return `올바르지 않은 ${text}입니다.`
@@ -45,7 +45,7 @@ class Bots {
      * @async
      * @param {string} endpoint - fetch할 endpoint
      * @param {Options} opt - fetch 옵션
-     * @returns Promise<APIResponse | Error>
+     * @returns Promise<APIResponse>
      */
     async _fetch(endpoint, opt) {
         endpoint = encodeURI(endpoint)
