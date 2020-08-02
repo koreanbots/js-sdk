@@ -78,7 +78,7 @@ class MyBot {
                 if (r.status === 429 || data === { size: 0, timeout: 0 }) {
                     if (!this.options.noWarning) process.emitWarning(`Rate limited from ${r.url}`, "RateLimitWarning")
 
-                    if (this.cache[endpoint] && opt.method !== "POST") return this.cache.get(endpoint)
+                    if (this.cache.has(endpoint) && opt.method !== "POST") return this.cache.get(endpoint)
 
                     return {
                         code: 429,
@@ -90,17 +90,9 @@ class MyBot {
                     if (this.cache.has(endpoint)) this.cache.delete(endpoint)
 
                     data["updatedTimestamp"] = Date.now()
-
-                    try {
-                        this.cache.set(endpoint, data)
-                    } catch (err) {
-                        if (String(err).includes("ECACHEFULL")) {
-                            this.cache.clear()
-                            this.cache.set(endpoint, data)
-                        }
-                    }
-                }
-                if (r.status === 200) {
+    
+                    this.cache.set(endpoint, data)
+  
                     if (this.remainingPerEndpointCache.has(endpoint)) this.remainingPerEndpointCache.delete(endpoint)
 
                     this.remainingPerEndpointCache.set(endpoint, r.headers.get("x-ratelimit-remaining"))
