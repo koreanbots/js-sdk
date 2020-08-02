@@ -1,6 +1,6 @@
 {
   "name": "koreanbots",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "JS SDK for Koreanbots",
   "main": "src/index.js",
   "types": "typings/index.d.ts",
@@ -18,7 +18,7 @@
   },
   "contributors": [
     {
-      "email": "wonderbotsupport@naver.com",
+      "email": "wonderlandpark@callisto.team",
       "name": "wonderlandpark",
       "url": "https://dev.wonderbot.xyz"
     }

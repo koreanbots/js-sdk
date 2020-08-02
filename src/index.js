@@ -4,12 +4,21 @@ const KoreanbotsClient = require("./KoreanbotsClient")
 const KoreanbotsWidgets = require("./widget")
 const { KoreanbotsCache, RemainingEndpointCache } = require("./cache")["index.js"]
 
+let privateToken = null
+
+function hide(token) {
+    return token.split(".").map((v, i) => i !== 0
+        ? v.replace(/\w|([/,!\\^${}[\]().+?|<>\-&])/gi, "*")
+        : v)
+        .join(".")
+}
+
 class MyBot {
     constructor(token, options = {}) {
         if (!token || typeof token !== "string") throw new Error("올바른 토큰을 입력해주세요!")
 
-        this.token = token
-        this.options = options
+        this.options = options || {}
+        this.options.hideToken = options.hideToken === true
         this.options.noWarning = options.noWarning === true
         this.options.avoidRateLimit = options.avoidRateLimit === undefined ? true : options.avoidRateLimit === true
         this.options.autoFlush = options.autoFlush || 100
@@ -18,8 +27,15 @@ class MyBot {
         this.updatedAt = null
         this.updatedTimestamp = null
 
+        this.lastGuildCount = 0
+
         this.cache = KoreanbotsCache
         this.remainingPerEndpointCache = RemainingEndpointCache
+
+        if (this.options.hideToken) this.token = hide(token)
+        else this.token = token
+
+        privateToken = token
 
         if (this.options.autoFlushInterval && this.options.autoFlushInterval > 10000) {
             setInterval(() => {
@@ -67,6 +83,7 @@ class MyBot {
         ) {
             let value = this.cache.get(endpoint)
             if (!value.code) value.code = 200
+            if (!value.isCache) value.isCache = true
             return value
         }
 
@@ -78,9 +95,14 @@ class MyBot {
                 if (r.status === 429 || data === { size: 0, timeout: 0 }) {
                     if (!this.options.noWarning) process.emitWarning(`Rate limited from ${r.url}`, "RateLimitWarning")
 
-                    if (this.cache.has(endpoint) && opt.method !== "POST") return this.cache.get(endpoint)
+                    if (this.cache.has(endpoint) && opt.method !== "POST") {
+                        let cache = this.cache.get(endpoint)
+                        if (!cache.isCache) cache.isCache = true
+                        return cache
+                    }
 
                     return {
+                        isCache: false,
                         code: 429,
                         message: `Rate limited from ${r.url}`
                     }
@@ -90,14 +112,19 @@ class MyBot {
                     if (this.cache.has(endpoint)) this.cache.delete(endpoint)
 
                     data["updatedTimestamp"] = Date.now()
-    
+
                     this.cache.set(endpoint, data)
-  
+
                     if (this.remainingPerEndpointCache.has(endpoint)) this.remainingPerEndpointCache.delete(endpoint)
 
                     this.remainingPerEndpointCache.set(endpoint, r.headers.get("x-ratelimit-remaining"))
                 }
-                if (r.status.toString().startsWith("4") || r.status.toString().startsWith("5")) throw new Error(data.message || JSON.stringify(data))
+                if (r.status.toString().startsWith("4") || r.status.toString().startsWith("5")) {
+                    if (r.status === 400 && process.uptime() < 60000) return { isCache: false, code: 400, canBeIgnored: true }// Error: {"code":400}
+                    throw new Error(data.message || JSON.stringify(data))
+                }
+
+                data.isCache = false
 
                 return data
             })
@@ -116,17 +143,18 @@ class MyBot {
      */
     async update(count) {
         if ((!count && count !== 0) || typeof count !== "number") throw new Error("서버 수가 주어지지 않았거나, 올바르지 않은 타입입니다.")
+        if (this.lastGuildCount === count) return
 
         const res = await this._fetch("/bots/servers", {
             method: "POST",
             headers: {
-                token: this.token,
+                token: privateToken,
                 "Content-Type": "application/json"
             },
             body: `{"servers": ${count}}`
         })
 
-        if (res.code !== 200 && res.code !== 429) throw new Error(typeof res.message === "string" ? res.message : `올바르지 않은 응답이 반환되었습니다.\n응답: ${JSON.stringify(res)}`, res.code)
+        if (res.code !== 200 && res.code !== 429 && !res.canBeIgnored) throw new Error(typeof res.message === "string" ? res.message : `올바르지 않은 응답이 반환되었습니다.\n응답: ${JSON.stringify(res)}`, res.code)
 
         this.updatedTimestamp = Date.now()
         this.updatedAt = new Date(this.updatedTimestamp)
@@ -148,7 +176,7 @@ class MyBot {
         const res = await this._fetch(`/bots/voted/${id}`, {
             method: "GET",
             headers: {
-                token: this.token,
+                token: privateToken,
                 "Content-Type": "application/json"
             }
         })

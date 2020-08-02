@@ -59,6 +59,7 @@ class Bots {
         ) {
             let value = this.cache.get(endpoint)
             if (!value.code) value.code = 200
+            if (!value.isCache) value.isCache = true
             return value
         }
 
@@ -70,9 +71,14 @@ class Bots {
                 if (r.status === 429 || data === { size: 0, timeout: 0 }) {
                     if (!this.options.noWarning) process.emitWarning(`Rate limited from ${r.url}`, "RateLimitWarning")
 
-                    if (this.cache.get(endpoint) && opt.method !== "POST") return this.cache.get(endpoint)
+                    if (this.cache.get(endpoint) && opt.method !== "POST") {
+                        let value = this.cache.get(endpoint)
+                        if (!value.isCache) value.isCache = true
+                        return value
+                    }
 
                     return {
+                        isCache: false,
                         code: 429,
                         message: `Rate limited from ${r.url}`
                     }
@@ -92,6 +98,7 @@ class Bots {
                 }
                 if (r.status.toString().startsWith("4") || r.status.toString().startsWith("5")) throw new Error(data.message || JSON.stringify(data))
 
+                data.isCache = false 
                 return data
             })
             .catch(e => {

@@ -10,6 +10,7 @@ declare module "koreanbots" {
         public options: DefaultClassOptions
         public updatedAt: Date
         public updatedTimestamp: number
+        public lastGuildCount: number
 
         public cache: Collection<string, object>
         public remainingPerEndpointCache: Collection<string, number | string>

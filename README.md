@@ -37,6 +37,7 @@ npm install koreanbots
 | 옵션                         | 타입         | 필수  | 기본값      | 설명                                                                         |
 |-----------------------------|-------------|-----|------------|----------------------------------------------------------------------------|
 | `token`                     | String      |  O  |      -     | Koreanbots의 토큰                                                            |
+| `options.hideToken`         | Boolean     |     |    false   | 외부로 유출될수 있는 this.token을 가립니다.                                         |
 | `options.noWarning`         | Boolean     |     |    false   | 모듈의 경고 알림을 끕니다                                                         |
 | `options.avoidRateLimit`    | Boolean     |     |    true    | 레이트리밋을 최대한 피합니다                                                       |
 | `options.autoFlush`         | Number      |     |    100     | 캐시에 저장된 데이터 수가 `options.autoFlush`를 넘을시 캐시를 초기화합니다. (자동 캐시 관리) |
