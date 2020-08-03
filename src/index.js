@@ -39,7 +39,7 @@ class MyBot {
 
         if (this.options.autoFlushInterval && this.options.autoFlushInterval > 10000) {
             setInterval(() => {
-                const flush = (cache) => {
+                const flush = cache => {
                     if (cache.size >= this.options.autoFlush) cache.clear()
                 }
 
