@@ -24,7 +24,7 @@ class KoreanbotsClient extends Client {
         this.koreanbots = new MyBot(this.options.koreanbotsToken, this.options.koreanbotsOptions)
 
         this._update()
-        this.koreanbotsInterval = setInterval(this._update, this.options.koreanbotsOptions.interval)
+        this.koreanbotsInterval = setInterval(()=>this._update(), this.options.koreanbotsOptions.interval)
     }
 } 
 
