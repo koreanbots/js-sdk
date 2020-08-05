@@ -32,9 +32,6 @@ class MyBot {
         this.cache = KoreanbotsCache
         this.remainingPerEndpointCache = RemainingEndpointCache
 
-        if (this.options.hideToken) this.token = hide(token)
-        else this.token = token
-
         privateToken = token
 
         if (this.options.autoFlushInterval && this.options.autoFlushInterval > 10000) {
@@ -46,6 +43,16 @@ class MyBot {
                 [this.cache, this.remainingPerEndpointCache].map(c => flush(c))
             }, this.options.autoFlushInterval)
         }
+    }
+
+    set token(value) {
+        throw new Error(`'this.token' 값은 ${value.toString ? value.toString() : JSON.stringify(value)}으로 수정될수 없습니다.`)
+    }
+
+    get token() {
+        if(this.options.hideToken) return hide(privateToken)
+
+        return privateToken
     }
 
     /**
