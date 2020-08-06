@@ -1,4 +1,4 @@
-const { Client } = require("discord.js")
+const { Client,version } = require("discord.js")
 
 class KoreanbotsClient extends Client {
     constructor(options = {}) {
@@ -14,7 +14,8 @@ class KoreanbotsClient extends Client {
     }
 
     _update() {
-        return this.koreanbots.update(this.guilds.cache.size)
+        const djsver = version.split(".")[0]
+        return this.koreanbots.update(djsver == "11" ? this.guilds.size : this.guilds.cache.size)
     }
 
     _ok() {
