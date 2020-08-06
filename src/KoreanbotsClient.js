@@ -1,5 +1,5 @@
 const { Client,version } = require("discord.js")
-
+const djsver = version.split(".")[0]
 class KoreanbotsClient extends Client {
     constructor(options = {}) {
         super(options)
@@ -14,12 +14,13 @@ class KoreanbotsClient extends Client {
     }
 
     _update() {
-        const djsver = version.split(".")[0]
-        return this.koreanbots.update(djsver == "11" ? this.guilds.size : this.guilds.cache.size)
+        const guildcount = djsver == "11" ? this.guilds.size : this.guilds.cache.size
+        return this.koreanbots.update(guildcount)
     }
 
     _ok() {
-        if (!this.guilds.cache.size) return setTimeout(this._ok, 1000)
+        const guildcount = djsver == "11" ? this.guilds.size : this.guilds.cache.size
+        if (!guildcount) return setTimeout(this._ok, 1000)
 
         const { MyBot } = require("./")
         this.koreanbots = new MyBot(this.options.koreanbotsToken, this.options.koreanbotsOptions)
