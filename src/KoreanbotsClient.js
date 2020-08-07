@@ -14,12 +14,12 @@ class KoreanbotsClient extends Client {
     }
 
     _update() {
-        const GuildCount = DjsVersion && DjsVersion <= 12 ? this.guilds.cache.size : this.guilds.size
+        const GuildCount = DjsVersion && DjsVersion >= 12 ? this.guilds.cache.size : this.guilds.size
         return this.koreanbots.update(GuildCount)
     }
 
     _ok() {
-        const GuildCount = DjsVersion && DjsVersion <= 12 ? this.guilds.cache.size : this.guilds.size
+        const GuildCount = DjsVersion && DjsVersion >= 12 ? this.guilds.cache.size : this.guilds.size
         if (!GuildCount) return setTimeout(this._ok, 1000)
 
         const { MyBot } = require("./")
