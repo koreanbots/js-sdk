@@ -3,7 +3,7 @@ const DjsVersion = version ? parseInt(version.split(".")[0]) : null
 class KoreanbotsClient extends Client {
     constructor(options = {}) {
         super(options)
-        if(!DjsVersion) throw new Error('Can't find Discord.js Version. (It will be >= 9.3.0)');
+        if(!DjsVersion) throw new Error("Can't find Discord.js Version. (It will be >= 9.3.0)")
         this.options.koreanbotsToken = options.koreanbotsToken || null
         this.options.koreanbotsOptions = options.koreanbotsOptions || new Object()
         this.options.koreanbotsOptions.interval = options.koreanbotsOptions.interval || 60000 * 30
