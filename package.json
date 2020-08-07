@@ -29,7 +29,7 @@
   "license": "MIT",
   "dependencies": {
     "@discordjs/collection": "^0.1.6",
-    "discord.js": "^12.2.0",
+    "discord.js": ">=11.0.0",
     "node-fetch": "^2.6.0",
     "sharp": "^0.25.4"
   },

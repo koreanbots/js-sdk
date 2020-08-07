@@ -85,9 +85,9 @@ widget.getVoteWidget(client.user.id, "jpeg").then(w => {
 
 ## 테스트하기
 
-- discord.js v12 : 자동 업데이트 
+- discord.js : 자동 업데이트 
 
-**주의:** *이 KoreanbotsClient는 discord.js v12에서만 작동합니다.*
+**주의:** *이 KoreanbotsClient는 discord.js v11,12에서 작동합니다.*
 ```js
 const { KoreanbotsClient } = require("koreanbots")
 const client = new KoreanbotsClient({
