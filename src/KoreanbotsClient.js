@@ -1,9 +1,12 @@
 const { Client,version } = require("discord.js")
 const DjsVersion = version ? parseInt(version.split(".")[0]) : null
+
 class KoreanbotsClient extends Client {
     constructor(options = {}) {
         super(options)
-        if(!DjsVersion) throw new Error("Can't find Discord.js Version. (It will be >= 9.3.0)")
+
+        if(!DjsVersion) throw new Error("discord.js 버전을 찾을수 없습니다. Discord.js가 설치 되었는지 확인해 주세요.")
+
         this.options.koreanbotsToken = options.koreanbotsToken || null
         this.options.koreanbotsOptions = options.koreanbotsOptions || new Object()
         this.options.koreanbotsOptions.interval = options.koreanbotsOptions.interval || 60000 * 30
@@ -13,14 +16,20 @@ class KoreanbotsClient extends Client {
         this.once("ready", this._ok)
     }
 
+    get _getGuildCount() {
+        return DjsVersion >= 12 ? this.guilds.cache.size : this.guilds.size
+    }
+
+    set _getGuildCount(v) {
+       throw new Error("Can't modify value as " + v)
+    }
+
     _update() {
-        const GuildCount = DjsVersion >= 12 ? this.guilds.cache.size : this.guilds.size
-        return this.koreanbots.update(GuildCount)
+        return this.koreanbots.update(this._getGuildCount)
     }
 
     _ok() {
-        const GuildCount = DjsVersion >= 12 ? this.guilds.cache.size : this.guilds.size
-        if (!GuildCount) return setTimeout(this._ok, 1000)
+        if (!this._getGuildCount) return setTimeout(() => this._ok(), 1000)
 
         const { MyBot } = require("./")
         this.koreanbots = new MyBot(this.options.koreanbotsToken, this.options.koreanbotsOptions)
