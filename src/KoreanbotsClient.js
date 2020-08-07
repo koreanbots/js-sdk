@@ -21,7 +21,7 @@ class KoreanbotsClient extends Client {
     }
 
     set _getGuildCount(v) {
-       throw new Error("Can't modify value as " + v)
+        throw new Error("Can't modify value as " + v)
     }
 
     _update() {
