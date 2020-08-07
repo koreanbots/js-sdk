@@ -8,7 +8,7 @@ on:
     types: [created]
 
 jobs:
-  lint:
+  build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
