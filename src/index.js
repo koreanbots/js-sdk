@@ -168,6 +168,7 @@ class MyBot {
 
         this.updatedTimestamp = Date.now()
         this.updatedAt = new Date(this.updatedTimestamp)
+        this.lastGuildCount = count
 
         return res
     }
