@@ -13,6 +13,16 @@ function hide(token) {
         .join(".")
 }
 
+function flush(cache) {
+    if (cache.size >= this.options.autoFlush) cache.clear()
+
+    return cache
+}
+
+function callback() {
+    return [this.cache, this.remainingPerEndpointCache].map(c => flush.call(this, c))
+}
+
 class MyBot {
     constructor(token, options = {}) {
         if (!token || typeof token !== "string") throw new Error("올바른 토큰을 입력해주세요!")
@@ -34,15 +44,8 @@ class MyBot {
 
         privateToken = token
 
-        if (this.options.autoFlushInterval && this.options.autoFlushInterval > 10000) {
-            setInterval(() => {
-                const flush = cache => {
-                    if (cache.size >= this.options.autoFlush) cache.clear()
-                }
-
-                [this.cache, this.remainingPerEndpointCache].map(c => flush(c))
-            }, this.options.autoFlushInterval)
-        }
+        if (this.options.autoFlushInterval && this.options.autoFlushInterval > 10000)
+            setInterval(callback.bind(this), this.options.autoFlushInterval)
     }
 
     set token(value) {
@@ -50,7 +53,7 @@ class MyBot {
     }
 
     get token() {
-        if(this.options.hideToken) return hide(privateToken)
+        if (this.options.hideToken) return hide(privateToken)
 
         return privateToken
     }
