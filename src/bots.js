@@ -63,7 +63,7 @@ class Bots {
             return value
         }
 
-        return req(`https://api.koreanbots.dev${endpoint}`, opt)
+        return req(`https://api.koreanbots.dev/v1${endpoint}`, opt)
             .then(async r => {
                 let data = r.json()
                 if (!data.code) data.code = r.status

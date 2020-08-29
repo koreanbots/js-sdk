@@ -38,7 +38,7 @@ class KoreanbotsWidgets {
     }
 
     getVoteWidgetURL(id) {
-        return `https://api.koreanbots.dev/widget/bots/votes/${id}.svg`
+        return `https://api.koreanbots.dev/v1/widget/bots/votes/${id}.svg`
     }
 
     async getVoteWidget(id, format = "png") {
@@ -46,7 +46,7 @@ class KoreanbotsWidgets {
     }
 
     getServerWidgetURL(id) {
-        return `https://api.koreanbots.dev/widget/bots/servers/${id}.svg`
+        return `https://api.koreanbots.dev/v1/widget/bots/servers/${id}.svg`
     }
 
     async getServerWidget(id, format = "png") {
