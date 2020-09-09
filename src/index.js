@@ -208,5 +208,8 @@ module.exports = {
         MyBot: cache["index.js"],
         Bots: cache["bots.js"],
         Widgets: cache["widget.js"]
-    }, Widgets: KoreanbotsWidgets
+    }, 
+    get Widgets() {
+        return KoreanbotsWidgets
+    }
 }
