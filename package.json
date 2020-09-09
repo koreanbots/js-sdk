@@ -30,11 +30,13 @@
   "dependencies": {
     "@discordjs/collection": "^0.1.6",
     "discord.js": "^12.2.0",
-    "node-fetch": "^2.6.0",
-    "sharp": "^0.25.4"
+    "node-fetch": "^2.6.0"
   },
   "devDependencies": {
     "eslint": "^7.1.0"
+  },
+  "optionalDependencies": {
+    "sharp": "^0.25.4"
   },
   "exports": {
     ".": [
