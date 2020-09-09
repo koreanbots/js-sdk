@@ -1,7 +1,6 @@
 const req = require("node-fetch")
 const Bots = require("./bots")
 const KoreanbotsClient = require("./KoreanbotsClient")
-const KoreanbotsWidgets = require("./widget")
 const { KoreanbotsCache, RemainingEndpointCache } = require("./cache")["index.js"]
 
 let privateToken = null
@@ -210,6 +209,6 @@ module.exports = {
         Widgets: cache["widget.js"]
     }, 
     get Widgets() {
-        return KoreanbotsWidgets
+        return require("./widget")
     }
 }
