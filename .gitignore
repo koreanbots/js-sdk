@@ -1,6 +1,4 @@
 node_modules/
-test/
-1.0.9/
-package-lock.json
 yarn*
 test/
+dist/

@@ -1,0 +1,139 @@
+import fetch, { HeadersInit, RequestInit, Headers } from "node-fetch"
+import { FetchClientOptions, FetchResponse, GraphQLErrorResponse } from "../structures"
+import Utils from "./"
+import { GraphQLError, InvalidResponseError } from "./errors"
+import Cache from "./cache"
+
+class FetchClient {
+    #token: Required<string>
+    #headers: HeadersInit
+    public options: FetchClientOptions
+    public cache: Cache
+    public endpointCache: Cache
+    public baseURL: string
+
+    constructor(options: FetchClientOptions) {
+        this.#token = options.token
+
+        this.options = options
+        this.options.hideToken = options.hideToken
+        this.options.token = this.options.hideToken ? Utils.hide(options.token) : options.token
+        this.options.apiVersion = options.apiVersion ?? 2
+        this.options.avoidRateLimit = options.avoidRateLimit ?? true
+        this.options.noWarning = options.noWarning ?? false
+        this.options.cacheTTL = options.cacheTTL ?? 60000 * 60 * 3
+
+        this.baseURL = `https://api.beta.koreanbots.dev/v${this.options.apiVersion}`
+
+        this.#headers = {
+            authorization: `Bearer ${this.#token}`,
+            "Content-Type": "application/json"
+        }
+
+        this.cache = new Cache(this.options.cacheTTL)
+        this.endpointCache = new Cache(this.options.cacheTTL)
+
+        this.validate()
+    }
+
+    private async validate() {
+        const res = await this.fetch("/", { headers: this.#headers })
+
+        if (res.code !== 200 && res.code !== 304) throw new InvalidResponseError("[koreanbots/FetchClient#constructor] 해당 API 버젼은 유효한 버젼이 아닙니다.")
+    }
+
+    async gqlFetch(data: string): Promise<FetchResponse> {
+        const obj = {
+            query: `
+            ${data}
+            `
+        }
+
+        const res = await this.fetch("/graphql", {
+            method: "POST",
+            headers: {
+                ...this.#headers,
+                "Content-Type": "application/json",
+                "Real-HTTP-Method": (obj.query.includes("mutation {") || obj.query.includes("mutation {")) ? "POST" : "GET"
+            },
+            body: JSON.stringify(obj)
+        })
+
+        return res
+    }
+
+    async fetch(endpoint: string, opt?: RequestInit): Promise<FetchResponse> {
+        const options = { ...opt, headers: { ...opt?.headers, ...this.#headers } }
+        const realMethod = (endpoint === "/graphql"
+            ? options?.headers instanceof Headers
+                ? options.headers.get("Real-HTTP-Method")
+                : typeof options?.headers === "object"
+                    // @ts-ignore
+                    ? options.headers["Real-HTTP-Method"]
+                    : options?.headers
+            : (options?.method ?? "GET"))
+
+        if (
+            this.options.avoidRateLimit
+            && this.endpointCache.get(endpoint)
+            && parseInt(this.endpointCache.get(endpoint), 10) <= 10
+            && this.cache.get(endpoint)
+        ) return this.cache.get(endpoint)
+
+        if (
+            this.cache.get(endpoint)
+            && (Date.now() - this.cache.get(endpoint).updatedTimestamp) <= 5000
+            && options?.body === this.cache.get(endpoint).requestedBody
+        ) return this.cache.get(endpoint)
+
+        const r = await fetch(`${this.baseURL}${encodeURI(endpoint)}`, options)
+        const text = await r.text()
+        const json = Utils.isJSON(text) ? JSON.parse(text) : text
+
+        const data: FetchResponse = {
+            code: r.status,
+            statusText: r.statusText,
+            data: json.data,
+            message: json.message,
+            isCache: false,
+            ratelimitRemaining: parseInt(r.headers.get("x-ratelimit-remaining") ?? ""),
+            endpoint, updatedTimestamp: void 0
+        }
+
+        if (Array.isArray(json.errors) && json.errors.length > 0) data.errors = json.errors
+
+        if (r.status === 429) {
+            if (!this.options.noWarning) process.emitWarning(`Rate limited from ${r.url}`, "RateLimitWarning")
+
+            if (this.cache.has(endpoint) && realMethod === "GET") return this.cache.get(endpoint)
+
+            return {
+                ...data,
+                isCache: false,
+                code: 429,
+                statusText: "Too Many Requests",
+                message: `Rate limited from ${r.url}`,
+                data: {},
+                ratelimitRemaining: 0
+            }
+        }
+
+        // TODO: Do not replace older datas when GraphQL Query Fields are different.
+        if (data.code === 200 && realMethod === "GET") { // @ts-ignore
+            this.cache.set(endpoint, { ...data, isCache: true, updatedTimestamp: Date.now(), requestedBody: endpoint === "/graphql" ? options?.body : void 0 })
+            this.endpointCache.set(endpoint, parseInt(r.headers.get("x-ratelimit-remaining") ?? ""))
+        }
+
+        if (Array.isArray(data.errors) && data.errors.length > 0 && endpoint === "graphql") {
+            const uniqueErrors = [] as GraphQLErrorResponse[]
+            for(const error of data.errors) if(!uniqueErrors.some(f => f.message === error.message)) uniqueErrors.push(error)
+
+            throw new GraphQLError(`[koreanbots/FetchClient#fetch] ${uniqueErrors.map(e => JSON.stringify(e)).join("\n\n")}`)
+        }
+        if(data.code.toString().startsWith("4") || data.code.toString().startsWith("5")) throw new InvalidResponseError(`[koreanbots/FetchClient#fetch] ${data.message || JSON.stringify(data)}`)
+
+        return data
+    }
+}
+
+export default FetchClient

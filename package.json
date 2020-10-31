@@ -1,20 +1,24 @@
 {
   "name": "koreanbots",
-  "version": "2.0.6",
-  "description": "JS SDK for Koreanbots",
-  "main": "src/index.js",
+  "version": "3.0.0-beta",
+  "description": "JavaScript/TypeScript SDK for koreanbots.dev",
+  "main": "dist/src/index.js",
   "types": "typings/index.d.ts",
+  "license": "MIT",
   "scripts": {
-    "test": "node test",
-    "build": "npm install",
-    "build:dev": "npm run build && npm i -D",
+    "test": "tsc && node test",
+    "test:notsc": "node test",
+    "build": "tsc",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix"
   },
+  "repository": {
+    "type": "git",
+    "url": "ssh://git@github.com:koreanbots/js-sdk.git"
+  },
   "author": {
-    "name": "zero734kr",
     "email": "zero734kr@gmail.com",
-    "url": "https://github.com/zero734kr"
+    "name": "zero734kr"
   },
   "contributors": [
     {
@@ -26,26 +30,33 @@
   "engines": {
     "node": ">=12.0.0"
   },
-  "license": "MIT",
   "dependencies": {
-    "@discordjs/collection": "^0.1.6",
-    "discord.js": "^12.2.0",
-    "node-fetch": "^2.6.0",
-    "sharp": "^0.25.4"
+    "discord.js": ">=12",
+    "node-fetch": "^2.6.1",
+    "sharp": "^0.26.2"
   },
   "devDependencies": {
-    "eslint": "^7.1.0"
+    "@tsconfig/recommended": "^1.0.1",
+    "@types/node": "^14.14.6",
+    "@types/node-fetch": "^2.5.7",
+    "@types/sharp": "^0.26.0",
+    "@typescript-eslint/eslint-plugin": "^4.6.0",
+    "@typescript-eslint/parser": "^4.6.0",
+    "eslint": "^7.12.1",
+    "husky": "^4.3.0",
+    "typescript": "^4.0.3"
   },
-  "exports": {
-    ".": [
-      {
-        "require": "./src/index.js"
-      },
-      "./src/index.js"
-    ]
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/koreanbots/js-sdk.git"
-  }
+  "optionalDependencies": {},
+  "files": [
+    "src/structures/index.d.ts",
+    "utils/errors.ts",
+    "utils/FetchClient.ts",
+    "utils/bots.ts",
+    "utils/index.ts",
+    "src/bots.ts",
+    "src/index.ts",
+    "src/KoreanbotsClient.ts",
+    "typings/index.ts",
+    "typings/index.d.ts"
+  ]
 }

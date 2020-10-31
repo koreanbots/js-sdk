@@ -1,0 +1,11 @@
+{
+    "extends": "@tsconfig/recommended/tsconfig.json",
+    "compilerOptions": {
+        "allowJs": true,
+        "moduleResolution": "node",
+        "module": "CommonJS",
+        "removeComments": true,
+        "outDir": "dist",
+    },
+    "exclude": ["node_modules", "dist", "test"]
+}
