@@ -154,7 +154,14 @@ class MyBot {
     async checkVote(id: string): Promise<FetchResponse> {
         if (!id || typeof id !== "string") throw new ValidationError("[koreanbots/MyBot#checkVote] 올바르지 않은 'id' 값입니다.")
 
-
+        return {
+            code: 404,
+            statusText: "Not Found",
+            message: "아직 준비 중입니다.",
+            isCache: false,
+            ratelimitRemaining: Number.MAX_SAFE_INTEGER,
+            endpoint: "/graphql"
+        }
     }
 }
 
