@@ -152,9 +152,9 @@ const Widgets = koreanbots.Widgets
 
 **❯ vote**
 ```diff
-- await bots.vote("아저녁뭐먹지", 1)
+- await bots.vote()
 # 반환 값: TypeError: bots.vote is not a function
-+ await bots.vote("아저녁뭐먹지", 1)
++ await bots.vote()
 # 반환 값: {
 #     // ...
 #     data: {
@@ -167,9 +167,9 @@ const Widgets = koreanbots.Widgets
 
 **❯ newList**
 ```diff
-- await bots.newList("심심해", 1)
+- await bots.newList()
 # 반환 값: TypeError: bots.newList is not a function
-+ await bots.newList("심심해", 1)
++ await bots.newList()
 # 반환 값: {
 #     // ...
 #     data: {
@@ -182,9 +182,9 @@ const Widgets = koreanbots.Widgets
 
 **❯ trusted**
 ```diff
-- await bots.trusted("이걸읽는사람이있으려나", 1)
+- await bots.trusted()
 # 반환 값: TypeError: bots.trusted is not a function
-+ await bots.trusted("이걸읽는사람이있으려나", 1)
++ await bots.trusted()
 # 반환 값: {
 #     // ...
 #     data: {
@@ -197,9 +197,9 @@ const Widgets = koreanbots.Widgets
 
 **❯ partnered**
 ```diff
-- await bots.partnered("AMD조아", 1)
+- await bots.partnered()
 # 반환 값: TypeError: bots.partnered is not a function
-+ await bots.partnered("AMD조아", 1)
++ await bots.partnered()
 # 반환 값: {
 #     // ...
 #     data: {
