@@ -1,6 +1,6 @@
 {
   "name": "koreanbots",
-  "version": "3.0.0-beta",
+  "version": "3.0.0-alpha1",
   "description": "JavaScript/TypeScript SDK for koreanbots.dev",
   "main": "dist/src/index.js",
   "types": "typings/index.d.ts",
@@ -32,8 +32,7 @@
   },
   "dependencies": {
     "discord.js": ">=12",
-    "node-fetch": "^2.6.1",
-    "sharp": "^0.26.2"
+    "node-fetch": "^2.6.1"
   },
   "devDependencies": {
     "@tsconfig/recommended": "^1.0.1",
@@ -46,7 +45,9 @@
     "husky": "^4.3.0",
     "typescript": "^4.0.3"
   },
-  "optionalDependencies": {},
+  "optionalDependencies": {
+    "sharp": "^0.26.2"
+  },
   "files": [
     "src/structures/index.d.ts",
     "utils/errors.ts",

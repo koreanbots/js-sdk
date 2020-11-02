@@ -9,15 +9,26 @@ class MyBot {
     public lastGuildCount: number
     public updatedTimestamp: number | null
     public updatedAt: Date | null
-    private fetchClient: FetchClient
+    public fetchClient: FetchClient
 
-
+    /**
+     * @param {KoreanbotsOptions} [options] MyBot의 옵션
+     */
     constructor(options: KoreanbotsOptions) {
         if (!options.token || typeof options.token !== "string") throw new ValidationError("[koreanbots/MyBot#constructor] 올바르지 않은 'token' 값입니다.")
         if (!options.clientID || typeof options.clientID !== "string") throw new ValidationError("[koreanbots/MyBot#constructor] 올바르지 않은 'clientID' 값입니다.")
 
+        /**
+         * Koreanbots API에 접속할 토큰
+         * @type {string}
+         * @private
+         */
         this.#token = options.token
 
+        /**
+         * MyBot의 옵션
+         * @type {KoreanbotsOptions}
+         */
         this.options = options
         this.options.clientID = options.clientID
         this.options.hideToken = options.hideToken ?? false
@@ -27,6 +38,10 @@ class MyBot {
         this.options.apiVersion = options.apiVersion
         this.options.cacheTTL = options.cacheTTL
 
+        /**
+         * Koreanbots API에 요청할 GraphQL/HTTP 클라이언트
+         * @type {FetchClient}
+         */
         this.fetchClient = new FetchClient({
             hideToken: this.options.hideToken as boolean,
             token: this.#token as string,
@@ -36,18 +51,33 @@ class MyBot {
             cacheTTL: this.options.cacheTTL as number
         })
 
+        /**
+         * 마지막으로 업데이트한 서버 수
+         * @type {number}
+         */
         this.lastGuildCount = 0
+
+        /**
+         * 마지막으로 업데이트한 시간
+         * @type {Date|null}
+         */
         this.updatedAt = null
+
+        /**
+         * 마지막으로 업데이트한 시간 (타임스탬프)
+         * @type {number|null}
+         */
         this.updatedTimestamp = null
 
         this.validate()
     }
 
+    /**
+     * 올바른 옵션이 기입됬는지 검증합니다
+     * @private
+     * @returns {Promise<FetchResponse | void>}
+     */
     private async validate(): Promise<FetchResponse | void> {
-        const res = await this.fetchClient.fetch("/")
-
-        if (res.code !== 200 && res.code !== 304) throw new InvalidResponseError("[koreanbots/MyBot#validate] 선택한 API 버젼 엔드포인트에서 올바르지 않은 응답이 전송 되었습니다.")
-
         let user
         if((this.options.apiVersion ?? 2) >= 2) user = await this.fetchClient.gqlFetch(`
             {
@@ -64,7 +94,14 @@ class MyBot {
         return user
     }
 
-
+    /**
+     * 봇의 서버 수를 업데이트합니다
+     * @param {number} count - 업데이트할 서버 수
+     * @example
+     * mybot.update(100)
+     *     .then(console.log)
+     *     .catch(console.error)
+     */
     async update(count: number): Promise<FetchResponse> {
         if ((this.options.apiVersion ?? 2) >= 2) {
             const res = await this.fetchClient.gqlFetch(`
@@ -106,10 +143,18 @@ class MyBot {
         return res
     }
 
-    async checkVote(id: string) {
+    /**
+     * 유저가 하트를 눌렀는지 체크합니다
+     * @param {string} id - 유저 ID
+     * @example
+     * mybot.checkVote("462355431071809537")
+     *     .then(console.log)
+     *     .catch(console.error)
+     */
+    async checkVote(id: string): Promise<FetchResponse> {
         if (!id || typeof id !== "string") throw new ValidationError("[koreanbots/MyBot#checkVote] 올바르지 않은 'id' 값입니다.")
 
-        
+
     }
 }
 

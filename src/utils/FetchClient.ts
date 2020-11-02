@@ -1,7 +1,7 @@
 import fetch, { HeadersInit, RequestInit, Headers } from "node-fetch"
 import { FetchClientOptions, FetchResponse, GraphQLErrorResponse } from "../structures"
 import Utils from "./"
-import { GraphQLError, InvalidResponseError } from "./errors"
+import { GraphQLError, InvalidResponseError, ValidationError } from "./errors"
 import Cache from "./cache"
 
 class FetchClient {
@@ -12,9 +12,22 @@ class FetchClient {
     public endpointCache: Cache
     public baseURL: string
 
+    /**
+     * 
+     * @param {FetchClientOptions} [options] - FetchClient의 옵션
+     */
     constructor(options: FetchClientOptions) {
+        /**
+         * Koreanbots API에 접속할 토큰
+         * @type {string}
+         * @private
+        */
         this.#token = options.token
 
+        /**
+         * FetchClient의 옵션
+         * @type {FetchClientOptions}
+         */
         this.options = options
         this.options.hideToken = options.hideToken
         this.options.token = this.options.hideToken ? Utils.hide(options.token) : options.token
@@ -23,26 +36,63 @@ class FetchClient {
         this.options.noWarning = options.noWarning ?? false
         this.options.cacheTTL = options.cacheTTL ?? 60000 * 60 * 3
 
-        this.baseURL = `https://api.beta.koreanbots.dev/v${this.options.apiVersion}`
+        /**
+         * Koreanbots API의 기본 URL
+         * @type {string}
+         */
+        this.baseURL = Utils.getAPI(this.options.apiVersion)
 
+        /**
+         * 기본 헤더
+         * @type {Record<string, string>}
+         * @private
+         */
         this.#headers = {
             authorization: `Bearer ${this.#token}`,
             "Content-Type": "application/json"
         }
 
+        /**
+         * 캐시
+         * @type {Cache}
+         */
         this.cache = new Cache(this.options.cacheTTL)
+
+        /**
+         * 엔드포인트 레이트리밋 캐시
+         * @type {Cache}
+         */
         this.endpointCache = new Cache(this.options.cacheTTL)
 
         this.validate()
     }
 
-    private async validate() {
+    /**
+     * 올바른 옵션이 기입됬는지 검증합니다
+     * @private
+     * @returns {Promise<void>}
+    */
+    private async validate(): Promise<void> {
         const res = await this.fetch("/", { headers: this.#headers })
 
         if (res.code !== 200 && res.code !== 304) throw new InvalidResponseError("[koreanbots/FetchClient#constructor] 해당 API 버젼은 유효한 버젼이 아닙니다.")
     }
 
+    /**
+     * GraphQL 쿼리를 합니다.
+     * @param {string} data - GraphQL fetch 데이터
+     * @example
+     * fclient.gqlFetch(`
+     * {
+     *     bot(id: "${client.user.id}")
+     * }
+     * `)
+     *     .then(console.log)
+     *     .catch(console.error)
+     */
     async gqlFetch(data: string): Promise<FetchResponse> {
+        if((this.options.apiVersion ?? 2) < 2) throw new ValidationError("[koreanbots/FetchClient#gqlFetch] 'gqlFetch' 함수는 Koreanbots API v1에서 사용할수 없습니다.")
+
         const obj = {
             query: `
             ${data}
@@ -62,6 +112,15 @@ class FetchClient {
         return res
     }
 
+    /**
+     * Koreanbots API에 요청을 합니다.
+     * @param {string} endpoint - Koreanbots 엔드포인트
+     * @param {RequestInit} [opt] - Fetch 옵션
+     * @example
+     * fclient.fetch("/")
+     *     .then(async r => console.log(await r.json()))
+     *     .catch(console.error)
+     */
     async fetch(endpoint: string, opt?: RequestInit): Promise<FetchResponse> {
         const options = { ...opt, headers: { ...opt?.headers, ...this.#headers } }
         const realMethod = (endpoint === "/graphql"

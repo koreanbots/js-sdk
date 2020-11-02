@@ -1,4 +1,10 @@
 node_modules/
 yarn*
 test/
-dist/
+.github/
+tsconfig.json
+src/
+docs/
+.eslintrc.json
+.gitattributes
+.gitignore

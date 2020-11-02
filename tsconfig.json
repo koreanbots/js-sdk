@@ -4,8 +4,9 @@
         "allowJs": true,
         "moduleResolution": "node",
         "module": "CommonJS",
-        "removeComments": true,
+        "removeComments": false,
         "outDir": "dist",
+        "checkJs": true
     },
-    "exclude": ["node_modules", "dist", "test"]
+    "exclude": ["node_modules", "dist", "test", "husky.config.js"]
 }

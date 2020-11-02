@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { ClientOptions } from "discord.js"
 
-type Versions = 1 | 2
+export type Versions = 1 | 2
 
 export interface Version {
     version: Versions
@@ -19,7 +19,7 @@ interface BaseOptions {
 
 export interface KoreanbotsOptions extends BaseOptions {
     clientID: Required<string>
-    cacheTTL: Required<number>
+    cacheTTL?: number
 }
 
 export interface BotsOptions extends BaseOptions {
@@ -41,7 +41,7 @@ export interface WidgetsOptions {
 
 export interface FetchResponse {
     code: number
-    statusText: string //keyof typeof HttpCodes
+    statusText: string 
     message: string
     isCache: boolean
     ratelimitRemaining: number | string | null
@@ -49,10 +49,6 @@ export interface FetchResponse {
     updatedTimestamp?: number
     data?: Record<string, any>
     errors?: GraphQLErrorResponse[]
-}
-
-export interface BotResponse extends FetchResponse {
-    data: Bot
 }
 
 export interface User {

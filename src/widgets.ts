@@ -1,4 +1,5 @@
 import Cache from "./utils/cache"
+import Utils from "./utils"
 import fetch from "node-fetch"
 import { WidgetsOptions, Formats, WidgetType } from "./structures"
 
@@ -7,22 +8,45 @@ class Widgets {
     public cache: Cache
     public allowedFormats: Formats[]
 
+    /**
+     * 
+     * @param {WidgetsOptions} [options] - WIdgets의 옵션
+     */
     constructor(options: WidgetsOptions) {
+        /**
+         * Widgets의 옵션
+         * @type {WidgetsOptions} 
+         */
         this.options = options
         this.options.apiVersion = options.apiVersion ?? 2
         this.options.cacheTTL = options.cacheTTL ?? 60000 * 60
 
+        /**
+         * 위젯 버퍼(Buffer) 캐시
+         * @type {Cache}
+         */
         this.cache = new Cache(this.options.cacheTTL)
 
-        this.allowedFormats = ["jpeg", "png", "webp", "svg"] 
+        /**
+         * 허용된 위젯 확장자
+         * @type {Formats}
+         */
+        this.allowedFormats = ["jpeg", "png", "webp", "svg"]
     }
 
+    /**
+     * Koreanbots의 위젯을 불러옵니다.
+     * @param {WidgetType} type - 위젯 종류 
+     * @param {string} id - 위젯 ID 
+     * @param {Formats} format - 위젯 확장자 
+     * @private
+     */
     private async mkWidget(type: WidgetType, id: string, format: Formats): Promise<Buffer> {
         if (!this.allowedFormats.includes(format)) throw new Error(`[koreanbots/Wtdgets#mkWidget] 해당 포맷은 지원되지 않습니다. 지원되는 포맷: ${this.allowedFormats.join(", ")}`)
         if (this.cache.get(`${id}/${format}`)) return this.cache.get(`${id}/${format}`)
 
         // @ts-ignore
-        const genURL = this[`get${type}WidgetURL`].bind(this) as (id: string) => string 
+        const genURL = this[`get${type}WidgetURL`].bind(this) as (id: string) => string
         const res = await fetch(genURL(id)).then(r => r.buffer())
 
         let widget: Buffer
@@ -37,18 +61,48 @@ class Widgets {
         return widget
     }
 
+    /**
+     * 하트 수 위젯 URL을 얻습니다.
+     * @param {string} id - 위젯 ID 
+     * @example
+     * console.log(widgets.getVoteWidgetURL("387548561816027138"))
+     */
     getVoteWidgetURL(id: string): string {
-        return `https://api.koreanbots.dev/v${this.options.apiVersion}/widget/bots/votes/${id}.svg`
+        return `${Utils.getAPI(this.options.apiVersion)}/widget/bots/votes/${id}.svg`
     }
 
+    /**
+     * 하트 수 위젯을 불러옵니다.
+     * @param {string} id - 위젯 ID 
+     * @param {Formats} [format="png"] - 위젯 확장자
+     * @example
+     * widgets.getVoteWidget("387548561816027138")
+     *     .then(buffer => require("fs").writeFileSync(`${__dirname}/widget.png`, buffer))
+     *     .catch(console.error)
+     */
     async getVoteWidget(id: string, format: Formats = "png"): Promise<Buffer> {
         return this.mkWidget("Vote", id, format)
     }
 
+    /**
+     * 서버 수 위젯 URL을 얻습니다.
+     * @param {string} id - 위젯 ID
+     * @example
+     * console.log(widgets.getServerWidgetURL("387548561816027138"))
+    */
     getServerWidgetURL(id: string): string {
-        return `https://api.koreanbots.dev/v${this.options.apiVersion}/widget/bots/servers/${id}.svg`
+        return `${Utils.getAPI(this.options.apiVersion)}/widget/bots/servers/${id}.svg`
     }
 
+    /**
+     * 서버 수 위젯을 불러옵니다.
+     * @param {string} id - 위젯 ID
+     * @param {Formats} [format="png"] - 위젯 확장자
+     * @example
+     * widgets.getServerWidget("387548561816027138")
+     *     .then(buffer => require("fs").writeFileSync(`${__dirname}/widget.png`, buffer))
+     *     .catch(console.error)
+    */
     async getServerWidget(id: string, format: Formats = "png"): Promise<Buffer> {
         return this.mkWidget("Server", id, format)
     }
