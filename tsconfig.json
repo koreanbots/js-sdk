@@ -1,12 +1,12 @@
 {
     "extends": "@tsconfig/recommended/tsconfig.json",
     "compilerOptions": {
+        "rootDir": "./",
         "allowJs": true,
         "moduleResolution": "node",
         "module": "CommonJS",
         "removeComments": false,
-        "outDir": "dist",
-        "resolveJsonModule": true
+        "outDir": "dist"
     },
     "exclude": ["node_modules", "dist", "test", "husky.config.js"]
 }

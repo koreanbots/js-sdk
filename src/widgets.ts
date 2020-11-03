@@ -106,6 +106,44 @@ class Widgets {
     async getServerWidget(id: string, format: Formats = "png"): Promise<Buffer> {
         return this.mkWidget("Server", id, format)
     }
+
+    /**
+     * 모든 위젯을 불러옵니다.
+     * @param {string} id - 위젯 ID
+     * @param {Formats|Formats[]} format - 위젯 확장자
+     * @example
+     * const formats = { server: "jpeg", vote: "png" }
+     * widgets.getAllWidgets("387548561816027138", formats)
+     *     .then(obj => {
+     *         const fs = require("fs")
+     *         for (const name in obj) fs.writeFileSync(`${__dirname}/${name}.${formats[name]}`, obj[name])
+     *     }).catch(console.error)
+     */
+    async getAllWidgets(id: string, format: Formats | Record<string, Formats> = "png"): Promise<Record<string, Buffer>> {
+        const widgets: Record<string, Buffer> = {
+            server: Buffer.from("null"),
+            vote: Buffer.from("null")
+        }
+
+        if (typeof format === "object") {
+            const { server = "png", vote = "png" } = format
+
+            widgets["server"] = await this.getServerWidget(id, server) 
+            widgets["vote"] = await this.getVoteWidget(id, vote)
+        } else {
+            const func = [this.getServerWidget, this.getVoteWidget].map(e => e.bind(this)(id, format))
+
+            const obj = {
+                0: "server",
+                1: "vote"
+            }
+
+            // @ts-ignore
+            for(let i = 0; i < func.length; i++) widgets[obj[i]] = await func[i]
+        }
+
+        return widgets
+    }
 }
 
 export default Widgets

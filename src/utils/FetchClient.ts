@@ -156,7 +156,7 @@ class FetchClient {
             message: json.message,
             isCache: false,
             ratelimitRemaining: parseInt(r.headers.get("x-ratelimit-remaining") ?? ""),
-            endpoint, updatedTimestamp: void 0
+            endpoint, updatedTimestamp: void 0, errors: json.errors ?? []
         }
 
         if (Array.isArray(json.errors) && json.errors.length > 0) data.errors = json.errors
