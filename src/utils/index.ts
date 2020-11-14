@@ -60,7 +60,10 @@ class Utils {
      * // "https://api.koreanbots.dev/v1"
      */
     static getAPI(version?: Versions): string {
-        return `https://api.${process.env.KOREANBOTS_USE_BETA === "true" ? "beta." : ""}koreanbots.dev/v${version}`
+        if(!version) version = 2
+        
+        if(process.env.KOREANBOTS_USE_BETA === "true") return `https://beta.koreanbots.dev/api/v${version}`
+        else return `https://${version < 2 ? "api." : ""}koreanbots.dev/${version < 2 ? "" : "api/"}v${version}`
     }
 
     /**
