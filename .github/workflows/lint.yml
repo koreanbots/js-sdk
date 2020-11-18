@@ -7,9 +7,9 @@ jobs:
     name: ESLint
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v1
+    - uses: actions/checkout@v2
 
-    - name: install node v12
+    - name: setup node v12
       uses: actions/setup-node@v1
       with:
         node-version: 12
@@ -21,3 +21,12 @@ jobs:
       uses: icrawl/action-eslint@v1
       with:
         custom-glob: src
+  commitlint:
+    name: Commitlint
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Commitlint
+      uses: wagoid/commitlint-github-action@v2
+      
