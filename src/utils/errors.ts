@@ -1,5 +1,5 @@
 
-class ArgumentError extends Error {
+export class ArgumentError extends Error {
     constructor(err: string) {
         super(err)
 
@@ -7,7 +7,7 @@ class ArgumentError extends Error {
     }
 }
 
-class ValidationError extends Error {
+export class ValidationError extends Error {
     constructor(err: string) {
         super(err)
 
@@ -15,7 +15,7 @@ class ValidationError extends Error {
     }
 }
 
-class InvalidResponseError extends Error {
+export class InvalidResponseError extends Error {
     constructor(err: string) {
         super(err)
 
@@ -23,36 +23,10 @@ class InvalidResponseError extends Error {
     }
 }
 
-class GraphQLError extends Error {
+export class GraphQLError extends Error {
     constructor(err: string) {
         super(err)
 
         this.name = "GraphQLError"
     }
 }
-
-class Errors {
-    constructor() {
-        throw new Error(`The ${this.constructor.name} class may not be instantiated.`)
-    }
-
-    static get ArgumentError(): new (err: string) => ArgumentError {
-        return ArgumentError
-    }
-
-    static get ValidationError(): new (err: string) => ValidationError {
-        return ValidationError
-    }
-
-    static get InvalidResponseError(): new (err: string) => InvalidResponseError {
-        return InvalidResponseError
-    }
-
-    static get GraphQLError(): new (err: string) => GraphQLError {
-        return GraphQLError
-    }
-}
-
-
-export default Errors
-export { ArgumentError, ValidationError, InvalidResponseError, GraphQLError }

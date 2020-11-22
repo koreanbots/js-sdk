@@ -6,7 +6,8 @@
         "moduleResolution": "node",
         "module": "CommonJS",
         "removeComments": false,
-        "outDir": "dist"
+        "outDir": "dist",
+        "resolveJsonModule": true
     },
     "exclude": ["node_modules", "dist", "test", "husky.config.js"]
 }

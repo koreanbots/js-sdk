@@ -1,9 +1,9 @@
-import Cache from "./utils/cache"
-import Utils from "./utils"
+import { Cache } from "./utils/cache"
+import * as Utils from "./utils"
 import fetch from "node-fetch"
 import { WidgetsOptions, Formats, WidgetType } from "./structures"
 
-class Widgets {
+export class Widgets {
     public options: WidgetsOptions
     public cache: Cache
     public allowedFormats: Formats[]
@@ -145,5 +145,3 @@ class Widgets {
         return widgets
     }
 }
-
-export default Widgets

@@ -1,6 +1,6 @@
 import { Collection } from "discord.js"
 
-class Cache extends Collection<string, any> {
+export class Cache extends Collection<string, any> {
     public ttl: number
     public timeouts: Record<string, NodeJS.Timeout>
 
@@ -41,5 +41,3 @@ class Cache extends Collection<string, any> {
         super.clear()
     }
 }
-
-export default Cache 

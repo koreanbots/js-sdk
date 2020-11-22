@@ -1,9 +1,9 @@
 import { FetchResponse, KoreanbotsOptions } from "./structures"
-import Utils from "./utils"
+import * as Utils from "./utils"
 import { InvalidResponseError, ValidationError } from "./utils/errors"
-import FetchClient from "./utils/FetchClient"
+import { FetchClient } from "./utils/FetchClient"
 
-class MyBot {
+export class MyBot {
     #token: Required<string>
     public options: KoreanbotsOptions
     public lastGuildCount: number
@@ -74,10 +74,10 @@ class MyBot {
 
     /**
      * 올바른 옵션이 기입됬는지 검증합니다
-     * @private
+     * @protected
      * @returns {Promise<FetchResponse | void>}
      */
-    private async validate(): Promise<FetchResponse | void> {
+    protected async validate(): Promise<FetchResponse | void> {
         let user
         if((this.options.apiVersion ?? 2) >= 2) user = await this.fetchClient.gqlFetch(`
             {
@@ -164,5 +164,3 @@ class MyBot {
         }
     }
 }
-
-export default MyBot

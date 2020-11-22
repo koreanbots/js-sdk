@@ -1,10 +1,10 @@
 import fetch, { HeadersInit, RequestInit, Headers } from "node-fetch"
 import { FetchClientOptions, FetchResponse, GraphQLErrorResponse } from "../structures"
-import Utils from "./"
+import * as Utils from "./"
 import { GraphQLError, InvalidResponseError, ValidationError } from "./errors"
-import Cache from "./cache"
+import { Cache } from "./cache"
 
-class FetchClient {
+export class FetchClient {
     #token: Required<string>
     #headers: HeadersInit
     public options: FetchClientOptions
@@ -194,5 +194,3 @@ class FetchClient {
         return data
     }
 }
-
-export default FetchClient

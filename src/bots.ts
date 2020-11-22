@@ -1,9 +1,9 @@
-import FetchClient from "./utils/FetchClient"
+import { FetchClient } from "./utils/FetchClient"
 import { BotsOptions, Category, FetchResponse, ListType, ListTypes } from "./structures/"
-import Utils from "./utils"
+import * as Utils from "./utils"
 import { ValidationError } from "./utils/errors"
 
-class Bots {
+export class Bots {
     #token: string
     public options: BotsOptions
     public fetchClient: FetchClient
@@ -302,5 +302,3 @@ class Bots {
         return this.list("PARTNERED", "리스팅에반영되지않는값", page, query)
     }
 }
-
-export default Bots

@@ -1,9 +1,9 @@
-import FetchClient from "./utils/FetchClient"
+import { FetchClient } from "./utils/FetchClient"
 import { BotsOptions, FetchResponse, UsersOptions } from "./structures/"
-import Utils from "./utils"
+import * as Utils from "./utils"
 import { ValidationError } from "./utils/errors"
 
-class Users {
+export class Users {
     #token: string
     public options: BotsOptions
     public fetchClient: FetchClient
@@ -293,5 +293,3 @@ class Users {
         throw new ValidationError("[koreanbots/Users#stars] 스타 정보는 v1 API에서 제공되지 않습니다.")
     }
 }
-
-export default Users

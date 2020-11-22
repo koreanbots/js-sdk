@@ -1,10 +1,11 @@
 import { Client } from "discord.js"
-import MyBot from "./mybot"
+import { MyBot } from "./mybot"
 import { FetchResponse, KoreanbotsClientOptions, KoreanbotsOptionsForKoreanbosClient } from "./structures"
-import Utils from "./utils"
+import * as Utils from "./utils"
 
 
-class KoreanbotsClient extends Client {
+export class KoreanbotsClient extends Client {
+    #retryCount: number
     public koreanbotsInterval: NodeJS.Timeout | number | null
     public koreanbots: MyBot | null
     public koreanbotsOptions: KoreanbotsOptionsForKoreanbosClient
@@ -34,6 +35,7 @@ class KoreanbotsClient extends Client {
          * @type {NodeJS.Timeout|null}
          */
         this.koreanbotsInterval = null
+        this.#retryCount = 0
 
         /**
          * MyBot
@@ -47,10 +49,10 @@ class KoreanbotsClient extends Client {
     /**
      * 서버 수 불러오기
      * @type {number}
-     * @private
+     * @pritected
      */
-    private get getGuildCount() {
-        return this.guilds.cache.size as number
+    protected get getGuildCount(): number {
+        return this.guilds.cache.size
     }
 
     /**
@@ -58,11 +60,11 @@ class KoreanbotsClient extends Client {
      * @type {number}
      */
     private get retryCount() {
-        return 0
+        return this.#retryCount
     }
 
     private set retryCount(value) {
-        this.retryCount = value
+        this.#retryCount = value
     }
 
     /**
@@ -103,5 +105,3 @@ class KoreanbotsClient extends Client {
         this.koreanbotsInterval = setInterval(this.update.bind(this), this.koreanbotsOptions.updateInterval)
     }
 }
-
-export default KoreanbotsClient
