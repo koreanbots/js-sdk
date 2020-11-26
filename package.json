@@ -1,6 +1,6 @@
 {
   "name": "koreanbots",
-  "version": "2.0.7",
+  "version": "2.0.8",
   "description": "JS SDK for Koreanbots",
   "main": "src/index.js",
   "types": "typings/index.d.ts",

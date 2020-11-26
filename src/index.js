@@ -31,7 +31,7 @@ class MyBot {
         this.options.noWarning = options.noWarning === true
         this.options.avoidRateLimit = options.avoidRateLimit === undefined ? true : options.avoidRateLimit === true
         this.options.autoFlush = options.autoFlush || 100
-        this.options.autoFlushInterval = options.autoFlushInterval || 60000 * 60
+        this.options.autoFlushInterval = options.autoFlushInterval || 60000
 
         this.updatedAt = null
         this.updatedTimestamp = null

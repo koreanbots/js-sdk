@@ -41,7 +41,7 @@ npm install koreanbots
 | `options.noWarning`         | Boolean     |     |    false   | 모듈의 경고 알림을 끕니다                                                         |
 | `options.avoidRateLimit`    | Boolean     |     |    true    | 레이트리밋을 최대한 피합니다                                                       |
 | `options.autoFlush`         | Number      |     |    100     | 캐시에 저장된 데이터 수가 `options.autoFlush`를 넘을시 캐시를 초기화합니다. (자동 캐시 관리) |
-| `options.autoFlushInterval` | Number      |     |  3600000   | `options.autoFlushInterval`(밀리초)마다 캐시를 관리합니다                          |
+| `options.autoFlushInterval` | Number      |     |   60000    | `options.autoFlushInterval`(밀리초)마다 캐시를 관리합니다                          |
 
 ### Koreanbots.Bots
 
@@ -52,7 +52,7 @@ npm install koreanbots
 | `options.noWarning`         | Boolean     |     |    false   | 모듈의 경고 알림을 끕니다                                                         |
 | `options.avoidRateLimit`    | Boolean     |     |    true    | 레이트리밋을 최대한 피합니다                                                       |
 | `options.autoFlush`         | Number      |     |    100     | 캐시에 저장된 데이터 수가 `options.autoFlush`를 넘을시 캐시를 초기화합니다. (자동 캐시 관리) |
-| `options.autoFlushInterval` | Number      |     |  3600000   | `options.autoFlushInterval`(밀리초)마다 캐시를 관리합니다                          |
+| `options.autoFlushInterval` | Number      |     |   900000   | `options.autoFlushInterval`(밀리초)마다 캐시를 관리합니다                          |
 
 ### Koreanbots.Widgets
 
