@@ -2,8 +2,6 @@ node_modules/
 yarn*
 test/
 .github/
-tsconfig.json
-src/
 docs/
 .eslintrc.json
 .gitattributes

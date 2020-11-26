@@ -23,12 +23,12 @@ const Widgets = koreanbots.Widgets
 ```diff
 - const mybot = new MyBot("토큰", {
 -     autoFlush: 100,
--     autoFlushInterval: 60000 * 30,
+-     autoFlushInterval: 60000 * 5,
 -     ...옵션
 - })
 + const mybot = new MyBot({
 +     token: "토큰",
-+     cacheTTL: 60000 * 30,
++     cacheTTL: 60000 * 5,
 +     ...옵션
 + })
 ```
@@ -42,12 +42,12 @@ const Widgets = koreanbots.Widgets
 ```diff
 - const bots = new Bots({
 -     autoFlush: 100,
--     autoFlushInterval: 60000 * 30,
+-     autoFlushInterval: 60000 * 15,
 -     ...옵션
 - })
 + const bots = new Bots({
 +     token: "토큰",
-+     cacheTTL: 60000 * 30,
++     cacheTTL: 60000 * 15,
 +     ...옵션
 + })
 ```

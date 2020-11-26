@@ -98,7 +98,7 @@ export class KoreanbotsClient extends Client {
             ...this.koreanbotsOptions,
             clientID: this.user?.id,
 
-            cacheTTL: this.koreanbotsOptions.cacheTTL ?? 60000 * 60 * 3
+            cacheTTL: this.koreanbotsOptions.cacheTTL
         })
 
         this.update()

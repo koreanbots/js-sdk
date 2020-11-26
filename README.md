@@ -51,7 +51,7 @@ $ yarn add koreanbots
 | `options.hideToken`         | Boolean     |  X  |    false   | 외부로 유출될수 있는 `options.token`을 가립니다.                                                      |
 | `options.noWarning`         | Boolean     |  X  |    false   | 모듈의 경고 알림을 끕니다                                                                           |
 | `options.avoidRateLimit`    | Boolean     |  X  |    true    | 레이트리밋을 최대한 피합니다                                                                         |
-| `options.cacheTTL`          | Number      |  x  |  10800000  | Time-to-Live의 약자로써 `options.cacheTTL`(밀리초) 뒤에 해당 내용을 삭제합니다.                          |
+| `options.cacheTTL`          | Number      |  x  |    60000   | Time-to-Live의 약자로써 `options.cacheTTL`(밀리초) 뒤에 해당 내용을 삭제합니다.                          |
 | `options.apiVersion`        | Number      |  x  |      2     | Koreanbots API의 버전을 선택합니다.                                                                |
 
 ### Koreanbots.Bots
@@ -65,7 +65,7 @@ $ yarn add koreanbots
 | `options.hideToken`         | Boolean     |  X  |    false   | 외부로 유출될수 있는 `options.token`을 가립니다.                                                      |
 | `options.noWarning`         | Boolean     |  x  |    false   | 모듈의 경고 알림을 끕니다                                                                           |
 | `options.avoidRateLimit`    | Boolean     |  x  |    true    | 레이트리밋을 최대한 피합니다                                                                         |
-| `options.cacheTTL`          | Number      |  x  |  10800000  | Time-to-Live의 약자로써 `options.cacheTTL`(밀리초) 뒤에 해당 내용을 삭제합니다.                          |
+| `options.cacheTTL`          | Number      |  x  |   3600000  | Time-to-Live의 약자로써 `options.cacheTTL`(밀리초) 뒤에 해당 내용을 삭제합니다.                          |
 | `options.apiVersion`        | Number      |  x  |      2     | Koreanbots API의 버전을 선택합니다.                                                                |
 
 ### Koreanbots.KoreanbotsClient
@@ -76,7 +76,7 @@ $ yarn add koreanbots
 |-----------------------------------------------|-------------|-----|------------|------------------------------------------------------------------------------|
 | `options.koreanbotsOptions.token`             | String      |  O  |      -     | Koreanbots의 토큰                                                             |
 | `options.koreanbotsOptions.hideToken`         | Boolean     |  X  |    false   | 외부로 유출될수 있는 `options.token`을 가립니다.                                    |
-| `options.koreanbotsOptions.cacheTTL`          | Number      |  x  |  10800000  | Time-to-Live의 약자로써 `options.cacheTTL`(밀리초) 뒤에 해당 내용을 삭제합니다.        |
+| `options.koreanbotsOptions.cacheTTL`          | Number      |  x  |    60000   | Time-to-Live의 약자로써 `options.cacheTTL`(밀리초) 뒤에 해당 내용을 삭제합니다.        |
 | `options.koreanbotsOptions.apiVersion`        | Number      |  x  |      2     | Koreanbots API의 버전을 선택합니다.                                              |
 | `options.koreanbotsOptions.noWarning`         | Boolean     |  x  |    false   | 모듈의 경고 알림을 끕니다                                                         |
 | `options.koreanbotsOptions.avoidRateLimit`    | Boolean     |  x  |    true    | 레이트리밋을 최대한 피합니다                                                       |
@@ -92,7 +92,7 @@ $ yarn add koreanbots
 | `options.hideToken`         | Boolean     |  X  |    false   | 외부로 유출될수 있는 `options.token`을 가립니다.                                                      |
 | `options.noWarning`         | Boolean     |  x  |    false   | 모듈의 경고 알림을 끕니다                                                                           |
 | `options.avoidRateLimit`    | Boolean     |  x  |    true    | 레이트리밋을 최대한 피합니다                                                                         |
-| `options.cacheTTL`          | Number      |  x  |  10800000  | Time-to-Live의 약자로써 `options.cacheTTL`(밀리초) 뒤에 해당 내용을 삭제합니다.                          |
+| `options.cacheTTL`          | Number      |  x  |   3600000  | Time-to-Live의 약자로써 `options.cacheTTL`(밀리초) 뒤에 해당 내용을 삭제합니다.                          |
 | `options.apiVersion`        | Number      |  x  |      2     | Koreanbots API의 버전을 선택합니다.                                                                |
 
 ### Koreanbots.FetchClient 
@@ -103,7 +103,7 @@ $ yarn add koreanbots
 | `options.hideToken`         | Boolean     |  X  |    false   | 외부로 유출될수 있는 `options.token`을 가립니다.                                                      |
 | `options.noWarning`         | Boolean     |  x  |    false   | 모듈의 경고 알림을 끕니다                                                                           |
 | `options.avoidRateLimit`    | Boolean     |  x  |    true    | 레이트리밋을 최대한 피합니다                                                                         |
-| `options.cacheTTL`          | Number      |  x  |  10800000  | Time-to-Live의 약자로써 `options.cacheTTL`(밀리초) 뒤에 해당 내용을 삭제합니다.                          |
+| `options.cacheTTL`          | Number      |  x  |    60000   | Time-to-Live의 약자로써 `options.cacheTTL`(밀리초) 뒤에 해당 내용을 삭제합니다.                          |
 | `options.apiVersion`        | Number      |  x  |      2     | Koreanbots API의 버전을 선택합니다.                                                                |
 
 ### Koreanbots.Cache

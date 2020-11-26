@@ -34,7 +34,7 @@ export class FetchClient {
         this.options.apiVersion = options.apiVersion ?? 2
         this.options.avoidRateLimit = options.avoidRateLimit ?? true
         this.options.noWarning = options.noWarning ?? false
-        this.options.cacheTTL = options.cacheTTL ?? 60000 * 60 * 3
+        this.options.cacheTTL = options.cacheTTL ?? 60000
 
         /**
          * Koreanbots API의 기본 URL
