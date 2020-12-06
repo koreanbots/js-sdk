@@ -1,11 +1,27 @@
-const { MyBot, Bots } = require("../../dist/src/")
+const { MyBot, Bots, Utils } = require("../../dist/src")
 const { token, clientID } = require("../config.json")
-const mybot = new MyBot({
-    token, clientID
-})
-const bots = new Bots({ token, clientID })
 
 describe("Real-World Test", () => {
+    let bots
+    let mybot
+    beforeAll(() => {
+        Utils.toggleBeta("true")
+        bots = new Bots({ token, clientID })
+        mybot = new MyBot({
+            token, clientID
+        })
+    })
+
+    afterAll(() => {
+        Utils.toggleBeta("false")
+
+        bots.fetchClient.cache.clear()
+        mybot.fetchClient.cache.clear()
+
+        bots = null
+        mybot = null
+    })
+
     it("should be able to update server count", async done => {
         const serverCount = Math.round(Math.random() * 750)
         await mybot.update(serverCount)
@@ -13,8 +29,8 @@ describe("Real-World Test", () => {
         const botInfo = await bots.get(clientID, ["servers", "id"])
 
         expect(botInfo.code).toBe(200)
-        expect(botInfo.data.id).toBe(clientID)
-        expect(botInfo.data.servers).toBe(serverCount)
+        expect(botInfo.data.bot.id).toBe(clientID)
+        expect(botInfo.data.bot.servers).toBe(serverCount)
 
         done()
     })
@@ -24,7 +40,7 @@ describe("Real-World Test", () => {
 
         expect(typeof botInfo).toBe("object")
         expect(botInfo.code).toBe(200)
-        expect(botInfo.data.id).toBe("387548561816027138")
+        expect(botInfo.data.bot.id).toBe("387548561816027138")
         
         const keysList = [
             "id", "lib", "prefix",
@@ -37,7 +53,7 @@ describe("Real-World Test", () => {
             "banner", "status", "bg"
         ]
 
-        for(const key of keysList) expect(Object.keys(botInfo).includes(key)).toBe(true)
+        for(const key of keysList) expect(Object.keys(botInfo.data.bot).includes(key)).toBe(true)
 
         done()
     })
@@ -47,7 +63,9 @@ describe("Real-World Test", () => {
 
         expect(typeof botInfo).toBe("object")
         expect(botInfo.code).toBe(200)
-        expect(botInfo.data).toBe({ id: "387548561816027138", lib: "discord.js" })
+        expect(Object.keys(botInfo.data.bot).length).toBe(2)
+        expect(botInfo.data.bot.id).toBe("387548561816027138")
+        expect(botInfo.data.bot.lib).toBe("discord.js")
 
         done()
     })

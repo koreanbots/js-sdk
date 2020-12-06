@@ -6,9 +6,10 @@
   "types": "typings/index.d.ts",
   "license": "MIT",
   "scripts": {
-    "test": "eslint . --fix && tsc && cross-env NODE_ENV=test jest --runInBand --detectOpenHandles",
-    "test:notsc": "eslint . --fix && cross-env NODE_ENV=test jest --runInBand --detectOpenHandles",
+    "test": "eslint . --fix && tsc && cross-env NODE_ENV=test jest --forceExit",
+    "test:notsc": "eslint . --fix && cross-env NODE_ENV=test jest --forceExit",
     "test:onlylint": "eslint . --fix",
+    "test:onlyjest": "cross-env NODE_ENV=test jest --forceExit",
     "build": "tsc",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
@@ -35,8 +36,6 @@
   },
   "dependencies": {
     "discord.js": ">=12",
-    "jest": "^26.6.3",
-    "koreanbots": "koreanbots/js-sdk",
     "node-fetch": "^2.6.1"
   },
   "devDependencies": {
@@ -53,6 +52,7 @@
     "cross-env": "^7.0.3",
     "eslint": "^7.12.1",
     "husky": "^4.3.0",
+    "jest": "^26.6.3",
     "typescript": "^4.0.3"
   },
   "optionalDependencies": {

@@ -48,7 +48,7 @@ export class FetchClient {
          * @private
          */
         this.#headers = {
-            authorization: `Bearer ${this.#token}`,
+            authorization: this.#token,
             "Content-Type": "application/json"
         }
 

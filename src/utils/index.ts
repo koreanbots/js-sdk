@@ -67,8 +67,8 @@ export function getAPI(version?: Versions): string {
      * @example
      * Utils.toggleBeta()
      */
-export function toggleBeta(): string {
+export function toggleBeta(override?: string): string {
     const toggle = Boolean(process.env.KOREANBOTS_USE_BETA)
 
-    return process.env.KOREANBOTS_USE_BETA = String(!toggle)
+    return process.env.KOREANBOTS_USE_BETA = override || String(!toggle)
 }

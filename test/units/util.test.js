@@ -58,9 +58,11 @@ describe("Utils", () => {
     })
 
     it("should be able to toggle beta and stable API version", done => {
+        Utils.toggleBeta("false")
+
         const stableVersion = Utils.getAPI(2)
         
-        Utils.toggleBeta()
+        Utils.toggleBeta("true")
 
         const betaVersion = Utils.getAPI(1)
 
