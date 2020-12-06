@@ -10,11 +10,11 @@
     "test:notsc": "eslint . --fix && cross-env NODE_ENV=test jest --forceExit",
     "test:onlylint": "eslint . --fix",
     "test:onlyjest": "cross-env NODE_ENV=test jest --forceExit",
-    "build": "tsc",
+    "build": "gulp build",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "commit": "git-cz",
-    "postinstall": "tsc"
+    "postinstall": "gulp build"
   },
   "repository": {
     "type": "git",
