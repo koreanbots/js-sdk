@@ -49,7 +49,7 @@ export function hide(raw: string): string {
      * @example
      * Utils.toggleBeta()
      * console.log(Utils.getAPI(2))
-     * // "https://api.beta.koreanbots.dev/v2"
+     * // "https://beta.koreanbots.dev/api/v2"
      * 
      * Utils.toggleBeta()
      * console.log(Utils.getAPI(1))
