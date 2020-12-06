@@ -1,9 +1,9 @@
 {
-  "name": "koreanbots",
-  "version": "3.0.0-alpha2",
+  "name": "koreanbots.test",
+  "version": "3.0.0-alpha4",
   "description": "JavaScript/TypeScript SDK for koreanbots.dev",
   "main": "dist/src/index.js",
-  "types": "typings/index.d.ts",
+  "typings": "typings/index.d.ts",
   "license": "MIT",
   "scripts": {
     "test": "eslint . --fix && tsc && cross-env NODE_ENV=test jest --forceExit",
@@ -13,8 +13,7 @@
     "build": "tsc",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
-    "commit": "git-cz",
-    "postinstall": "tsc"
+    "commit": "git-cz"
   },
   "repository": {
     "type": "git",
