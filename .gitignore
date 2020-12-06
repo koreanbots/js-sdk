@@ -1,4 +1,4 @@
 node_modules/
-yarn*
-test/
+yarn-*
 dist/
+test/config.json

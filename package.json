@@ -8,6 +8,7 @@
   "scripts": {
     "test": "eslint . --fix && tsc && cross-env NODE_ENV=test jest --runInBand --detectOpenHandles",
     "test:notsc": "eslint . --fix && cross-env NODE_ENV=test jest --runInBand --detectOpenHandles",
+    "test:onlylint": "eslint . --fix",
     "build": "tsc",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",

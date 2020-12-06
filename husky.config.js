@@ -6,7 +6,7 @@ module.exports = {
         "pre-commit": tasks(
             "yarn lint:fix",
             "yarn build",
-            "yarn test"
+            "yarn test:onlylint" // server update is probabily not working
         )
     }
 }
