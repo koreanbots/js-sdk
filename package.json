@@ -1,6 +1,6 @@
 {
-  "name": "koreanbots.test",
-  "version": "3.0.0-alpha4",
+  "name": "koreanbots",
+  "version": "3.0.0-alpha3",
   "description": "JavaScript/TypeScript SDK for koreanbots.dev",
   "main": "dist/src/index.js",
   "typings": "typings/index.d.ts",
@@ -57,18 +57,6 @@
   "optionalDependencies": {
     "sharp": "^0.26.2"
   },
-  "files": [
-    "src/structures/index.d.ts",
-    "utils/errors.ts",
-    "utils/FetchClient.ts",
-    "utils/bots.ts",
-    "utils/index.ts",
-    "src/bots.ts",
-    "src/index.ts",
-    "src/KoreanbotsClient.ts",
-    "typings/index.ts",
-    "typings/index.d.ts"
-  ],
   "config": {
     "commitizen": {
       "path": "@commitlint/prompt"
