@@ -1,4 +1,4 @@
-import { FetchResponse, KoreanbotsOptions } from "./structures"
+import { FetchResponse, KoreanbotsOptions } from "../typings"
 import * as Utils from "./utils"
 import { InvalidResponseError, ValidationError } from "./utils/errors"
 import { FetchClient } from "./utils/FetchClient"

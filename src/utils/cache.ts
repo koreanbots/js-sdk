@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import { Collection } from "discord.js"
 
 export class Cache extends Collection<string, any> {

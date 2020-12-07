@@ -1,5 +1,5 @@
 import fetch, { HeadersInit, RequestInit, Headers } from "node-fetch"
-import { FetchClientOptions, FetchResponse, GraphQLErrorResponse } from "../structures"
+import { FetchClientOptions, FetchResponse, GraphQLErrorResponse } from "../../typings"
 import * as Utils from "./"
 import { GraphQLError, InvalidResponseError, ValidationError } from "./errors"
 import { Cache } from "./cache"

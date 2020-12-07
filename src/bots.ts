@@ -1,7 +1,33 @@
 import { FetchClient } from "./utils/FetchClient"
-import { BotsOptions, Category, FetchResponse, ListType, ListTypes } from "./structures/"
+import { BotsOptions, FetchResponse, ListType } from "../typings"
 import * as Utils from "./utils"
 import { ValidationError } from "./utils/errors"
+
+
+enum Category {
+    "관리",
+    "뮤직",
+    "전적",
+    "웹 대시보드",
+    "로깅",
+    "도박",
+    "게임",
+    "밈",
+    "레벨링",
+    "유틸리티",
+    "번역",
+    "대화",
+    "검색"
+}
+
+enum ListTypes {
+    "VOTE",
+    "NEW",
+    "TRUSTED",
+    "PARTNERED",
+    "SEARCH",
+    "CATEGORY"
+}
 
 export class Bots {
     #token: string

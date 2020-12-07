@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { ClientOptions } from "discord.js"
 
 export type Versions = 1 | 2
@@ -41,12 +40,13 @@ export interface WidgetsOptions {
 
 export interface FetchResponse {
     code: number
-    statusText: string 
+    statusText: string
     message: string
     isCache: boolean
     ratelimitRemaining: number | string | null
     endpoint: string
     updatedTimestamp?: number
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     data?: Record<string, any>
     errors?: GraphQLErrorResponse[]
 }
@@ -188,4 +188,10 @@ export interface GraphQLErrorResponse {
     message: string
     err_type: string
     locations: ErrorLocation[]
+}
+
+declare module "koreanbots" {
+    export class MyBot {
+        constructor(options: KoreanbotsOptions)
+    }
 }

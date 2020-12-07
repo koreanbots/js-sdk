@@ -1,4 +1,4 @@
-import { Versions } from "../structures"
+import { Versions } from "../../typings"
 
 
 /**

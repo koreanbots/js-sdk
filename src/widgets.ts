@@ -1,7 +1,7 @@
 import { Cache } from "./utils/cache"
 import * as Utils from "./utils"
 import fetch from "node-fetch"
-import { WidgetsOptions, Formats, WidgetType } from "./structures"
+import { WidgetsOptions, Formats, WidgetType } from "../typings"
 
 export class Widgets {
     public options: WidgetsOptions
@@ -52,7 +52,7 @@ export class Widgets {
         let widget: Buffer
         if (format === "svg") widget = res
         else {
-            const sharp = (await import("sharp")).default || await import("sharp")
+            const sharp = (await import("sharp")).default
             widget = await sharp(res)[format]().toBuffer() //eslint-disable-line no-redeclare
         }
 
@@ -128,7 +128,7 @@ export class Widgets {
         if (typeof format === "object") {
             const { server = "png", vote = "png" } = format
 
-            widgets["server"] = await this.getServerWidget(id, server) 
+            widgets["server"] = await this.getServerWidget(id, server)
             widgets["vote"] = await this.getVoteWidget(id, vote)
         } else {
             const func = [this.getServerWidget, this.getVoteWidget].map(e => e.bind(this)(id, format))
@@ -139,7 +139,7 @@ export class Widgets {
             }
 
             // @ts-ignore
-            for(let i = 0; i < func.length; i++) widgets[obj[i]] = await func[i]
+            for (let i = 0; i < func.length; i++) widgets[obj[i]] = await func[i]
         }
 
         return widgets

@@ -1,6 +1,6 @@
 import { Client } from "discord.js"
 import { MyBot } from "./mybot"
-import { FetchResponse, KoreanbotsClientOptions, KoreanbotsOptionsForKoreanbosClient } from "./structures"
+import { FetchResponse, KoreanbotsClientOptions, KoreanbotsOptionsForKoreanbosClient } from "../typings"
 import * as Utils from "./utils"
 
 

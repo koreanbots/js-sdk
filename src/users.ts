@@ -1,5 +1,5 @@
 import { FetchClient } from "./utils/FetchClient"
-import { BotsOptions, FetchResponse, UsersOptions } from "./structures/"
+import { BotsOptions, FetchResponse, UsersOptions } from "../typings"
 import * as Utils from "./utils"
 import { ValidationError } from "./utils/errors"
 
