@@ -45,7 +45,7 @@ export class Widgets {
         if (!this.allowedFormats.includes(format)) throw new Error(`[koreanbots/Wtdgets#mkWidget] 해당 포맷은 지원되지 않습니다. 지원되는 포맷: ${this.allowedFormats.join(", ")}`)
         if (this.cache.get(`${id}/${format}`)) return this.cache.get(`${id}/${format}`)
 
-        // @ts-ignore
+        // @ts-expect-error ignore 
         const genURL = this[`get${type}WidgetURL`].bind(this) as (id: string) => string
         const res = await fetch(genURL(id)).then(r => r.buffer())
 
@@ -133,12 +133,11 @@ export class Widgets {
         } else {
             const func = [this.getServerWidget, this.getVoteWidget].map(e => e.bind(this)(id, format))
 
-            const obj = {
+            const obj: Record<number, string> = {
                 0: "server",
                 1: "vote"
             }
 
-            // @ts-ignore
             for (let i = 0; i < func.length; i++) widgets[obj[i]] = await func[i]
         }
 

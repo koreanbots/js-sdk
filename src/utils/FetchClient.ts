@@ -122,13 +122,13 @@ export class FetchClient {
      *     .catch(console.error)
      */
     async fetch(endpoint: string, opt?: RequestInit): Promise<FetchResponse> {
-        const options = { ...opt, headers: { ...opt?.headers, ...this.#headers } }
+        const headers: Headers | string[][] | { [key: string]: string; } | undefined = { ...opt?.headers, ...this.#headers }
+        const options = { ...opt, headers }
         const realMethod = (endpoint === "/graphql"
             ? options?.headers instanceof Headers
                 ? options.headers.get("Real-HTTP-Method")
                 : typeof options?.headers === "object"
-                    // @ts-ignore
-                    ? options.headers["Real-HTTP-Method"]
+                    ? (options.headers as { [key: string]: string })["Real-HTTP-Method"]
                     : options?.headers
             : (options?.method ?? "GET"))
 
@@ -137,6 +137,7 @@ export class FetchClient {
             && this.endpointCache.get(endpoint)
             && parseInt(this.endpointCache.get(endpoint), 10) <= 10
             && this.cache.get(endpoint)
+            && options?.body === this.cache.get(endpoint).requestedBody
         ) return this.cache.get(endpoint)
 
         if (
@@ -164,7 +165,7 @@ export class FetchClient {
         if (r.status === 429) {
             if (!this.options.noWarning) process.emitWarning(`Rate limited from ${r.url}`, "RateLimitWarning")
 
-            if (this.cache.has(endpoint) && realMethod === "GET") return this.cache.get(endpoint)
+            if (this.cache.has(endpoint) && realMethod === "GET" && options?.body === this.cache.get(endpoint).requestedBody) return this.cache.get(endpoint)
 
             return {
                 ...data,
@@ -176,9 +177,8 @@ export class FetchClient {
                 ratelimitRemaining: 0
             }
         }
-
-        // TODO: Do not replace older datas when GraphQL Query Fields are different.
-        if (data.code === 200 && realMethod === "GET") { // @ts-ignore
+        
+        if (data.code === 200 && realMethod === "GET") {
             this.cache.set(endpoint, { ...data, isCache: true, updatedTimestamp: Date.now(), requestedBody: endpoint === "/graphql" ? options?.body : void 0 })
             this.endpointCache.set(endpoint, parseInt(r.headers.get("x-ratelimit-remaining") ?? ""))
         }

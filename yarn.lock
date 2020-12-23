@@ -1944,6 +1944,11 @@ escodegen@^1.14.1:
   optionalDependencies:
     source-map "~0.6.1"
 
+eslint-plugin-security-node@^1.0.14:
+  version "1.0.14"
+  resolved "https://registry.yarnpkg.com/eslint-plugin-security-node/-/eslint-plugin-security-node-1.0.14.tgz#14fdba09e8aafb6f6bc53110ff72dcd3c2dc2e91"
+  integrity sha512-PVN8vGDzXHiQJcGLB6Db/yqC2o43ZnTWgckjSiZKRu0jqpyFPCkT4tZPJ1FPqPDQsdgHHD//f18EOb7yw+N/Ig==
+
 eslint-scope@^5.0.0, eslint-scope@^5.1.1:
   version "5.1.1"
   resolved "https://registry.yarnpkg.com/eslint-scope/-/eslint-scope-5.1.1.tgz#e786e59a66cb92b3f6c1fb0d508aab174848f48c"

@@ -24,9 +24,8 @@ export function isJSON(raw: string): boolean {
      * Utils.validateNumber(0xFFF, 10)
      * // false
      */
-export function validateNumber(n: string, base: number): boolean {
-    // @ts-ignore
-    return n == parseInt(n, base)
+export function validateNumber(n: string | number, base: number): boolean {
+    return n == parseInt(n as string, base)
 }
 
 /**
