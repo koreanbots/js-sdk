@@ -1,6 +1,6 @@
 {
   "name": "koreanbots",
-  "version": "2.0.8",
+  "version": "2.0.9",
   "description": "JS SDK for Koreanbots",
   "main": "src/index.js",
   "types": "typings/index.d.ts",
@@ -33,7 +33,8 @@
     "node-fetch": "^2.6.0"
   },
   "devDependencies": {
-    "eslint": "^7.1.0"
+    "eslint": "^7.1.0",
+    "eslint-plugin-security-node": "^1.0.14"
   },
   "optionalDependencies": {
     "sharp": "^0.25.4"

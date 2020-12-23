@@ -6,7 +6,7 @@ class KoreanbotsWidgets {
     constructor(options = {}) {
         this.options = options = {}
         this.options.autoFlush = options.autoFlush || 100
-        this.options.autoFlushInterval = options.autoFlushInterval || 60000 * 60
+        this.options.autoFlushInterval = options.autoFlushInterval || 60000 * 15
 
         this.cache = WidgetsCache
 
