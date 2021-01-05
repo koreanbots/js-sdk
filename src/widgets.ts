@@ -129,7 +129,7 @@ export class Widgets {
             const { server = "png", vote = "png" } = format
 
             await Promise.all([
-                this.getServerWidget(id, server)
+                this.getServerWidget(id, server),
                 this.getVoteWidget(id, vote)
             ]).then((a, i) => {
                 if(!i) widgets["server"] = a
