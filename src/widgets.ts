@@ -110,7 +110,7 @@ export class Widgets {
     /**
      * 모든 위젯을 불러옵니다.
      * @param {string} id - 위젯 ID
-     * @param {Formats|Formats[]} format - 위젯 확장자
+     * @param {Record<string, Formats>|Formats} format - 위젯 확장자
      * @example
      * const formats = { server: "jpeg", vote: "png" }
      * widgets.getAllWidgets("387548561816027138", formats)
@@ -119,7 +119,7 @@ export class Widgets {
      *         for (const name in obj) fs.writeFileSync(`${__dirname}/${name}.${formats[name]}`, obj[name])
      *     }).catch(console.error)
      */
-    async getAllWidgets(id: string, format: Formats | Record<string, Formats> = "png"): Promise<Record<string, Buffer>> {
+    async getAllWidgets(id: string, format: (Formats | Record<string, Formats>) = "png"): Promise<Record<string, Buffer>> {
         const widgets: Record<string, Buffer> = {
             server: Buffer.from("null"),
             vote: Buffer.from("null")
@@ -128,18 +128,20 @@ export class Widgets {
         if (typeof format === "object") {
             const { server = "png", vote = "png" } = format
 
-            widgets["server"] = await this.getServerWidget(id, server)
-            widgets["vote"] = await this.getVoteWidget(id, vote)
-        } else {
-            const func = [this.getServerWidget, this.getVoteWidget].map(e => e.bind(this)(id, format))
+            await Promise.all([
+                this.getServerWidget(id, server),
+                this.getVoteWidget(id, vote)
+            ]).then((a, i) => {
+                if(!i) widgets["server"] = a
+                else widgets["vote"] = a
+            })
+        } else if (typeof format === "string") {
+            const func = await Promise.all([this.getServerWidget, this.getVoteWidget].map(e => e.bind(this)(id, format)))
 
-            const obj: Record<number, string> = {
-                0: "server",
-                1: "vote"
-            }
+            const arr: string[] = ["server", "vote"]
 
-            for (let i = 0; i < func.length; i++) widgets[obj[i]] = await func[i]
-        }
+            for (let i = 0; i < func.length; i++) widgets[arr[i]] = func[i]
+        } else throw new TypeError("[koreanbots/Widgets#getAllWidgets] 위젯 포맷 설정에는 \"string\"과 \"object\" 데이터 타입만 지원됩니다.")
 
         return widgets
     }
