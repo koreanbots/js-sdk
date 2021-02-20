@@ -1,4 +1,4 @@
-const tasks = (...args) => args.join(" && ")
+const tasks = (...args) => args.join(" & ")
 
 module.exports = {
     "hooks": {
@@ -6,7 +6,7 @@ module.exports = {
         "pre-commit": tasks(
             "yarn lint:fix",
             "yarn build",
-            "yarn test:onlyjest"
+            "yarn test"
         )
     }
 }

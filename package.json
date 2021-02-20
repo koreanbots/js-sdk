@@ -6,11 +6,11 @@
   "typings": "typings/index.d.ts",
   "license": "MIT",
   "scripts": {
-    "test": "eslint . --fix && tsc && cross-env NODE_ENV=test jest --forceExit",
-    "test:notsc": "eslint . --fix && cross-env NODE_ENV=test jest --forceExit",
+    "test": "cross-env NODE_ENV=test jest --forceExit",
+    "test:withlint": "eslint . --fix && cross-env NODE_ENV=test jest --forceExit",
     "test:onlylint": "eslint . --fix",
-    "test:onlyjest": "cross-env NODE_ENV=test jest --forceExit",
-    "build": "tsc",
+    "build:typecheck": "tsc",
+    "build": "etsc",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "commit": "git-cz"
@@ -42,6 +42,7 @@
     "@commitlint/config-conventional": "^11.0.0",
     "@commitlint/prompt": "^11.0.0",
     "@tsconfig/recommended": "^1.0.1",
+    "@types/jest": "^26.0.20",
     "@types/node": "^14.14.6",
     "@types/node-fetch": "^2.5.7",
     "@types/sharp": "^0.26.0",
@@ -49,6 +50,9 @@
     "@typescript-eslint/parser": "^4.6.0",
     "commitizen": "^4.2.2",
     "cross-env": "^7.0.3",
+    "esbuild": "^0.8.49",
+    "esbuild-jest": "^0.4.0",
+    "esbuild-node-tsc": "^1.2.0",
     "eslint": "^7.12.1",
     "eslint-plugin-security-node": "^1.0.14",
     "husky": "^4.3.0",
@@ -57,10 +61,5 @@
   },
   "optionalDependencies": {
     "sharp": "^0.26.2"
-  },
-  "config": {
-    "commitizen": {
-      "path": "@commitlint/prompt"
-    }
   }
 }

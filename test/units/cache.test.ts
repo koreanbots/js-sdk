@@ -1,5 +1,5 @@
-const { Cache } = require("../../dist/src/utils/cache")
-const { Collection } = require("discord.js")
+import { Cache } from "../../src/utils/cache"
+import { Collection } from "discord.js"
 
 describe("Cache Test", () => {
     it("should be able to set and delete as Collection", done => {
@@ -22,6 +22,6 @@ describe("Cache Test", () => {
 
         const arr = "aadagdf".repeat(100).split("")
 
-        for(const v of arr) cache.set(v, v)
+        for (const v of arr) cache.set(v, v)
     })
 })

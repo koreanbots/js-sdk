@@ -1,12 +1,13 @@
-const { MyBot, Bots, Utils } = require("../../dist/src")
-const { token, clientID } = require("../config.json")
+import { MyBot, Bots, Utils } from "../../src"
+import { token, clientID } from "../config.json"
 
 describe("Real-World Test", () => {
     let bots
     let mybot
+    
     beforeAll(() => {
         Utils.toggleBeta("true")
-        bots = new Bots({ token, clientID })
+        bots = new Bots({ token })
         mybot = new MyBot({
             token, clientID
         })
@@ -41,7 +42,7 @@ describe("Real-World Test", () => {
         expect(typeof botInfo).toBe("object")
         expect(botInfo.code).toBe(200)
         expect(botInfo.data.bot.id).toBe("387548561816027138")
-        
+
         const keysList = [
             "id", "lib", "prefix",
             "name", "servers", "votes",
@@ -53,7 +54,7 @@ describe("Real-World Test", () => {
             "banner", "status", "bg"
         ]
 
-        for(const key of keysList) expect(Object.keys(botInfo.data.bot).includes(key)).toBe(true)
+        for (const key of keysList) expect(Object.keys(botInfo.data.bot).includes(key)).toBe(true)
 
         done()
     })

@@ -1,5 +1,4 @@
-const Utils = require("../../dist/src/utils")
-
+import * as Utils from "../../src/utils"
 
 describe("Utils", () => {
     it("should be able to hide messages with *", done => {
