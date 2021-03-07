@@ -6,6 +6,7 @@ import { version } from "../util/Constants"
 import AbortController, { AbortSignal } from "abort-controller"
 import https from "https"
 import { FetchError } from "./FetchError"
+import buildRoute from "./APIRouter"
 
 import type { Version, FetchResponse, APIClientOptions, InternalFetchCache } from "../structures/core"
 import type { RequestInit, Response } from "node-fetch"
@@ -62,6 +63,7 @@ class APIClient {
     private _timeouts: Set<NodeJS.Timeout | number>
     private _agent?: https.Agent
     private _retries: { id: AbortSignal, retry: number }[]
+    protected api: ReturnType<typeof buildRoute>
 
     constructor(options: APIClientOptions) {
         this.options = options ?? {}
@@ -101,6 +103,11 @@ class APIClient {
          * API를 향한 요청들의 캐시
          */
         this.cache = new LRU<string, FetchResponse>(this.options.cacheOptions)
+
+        /**
+         * API 라우트 빌더
+         */
+        this.api = buildRoute(this)
 
         this._internals = new Set<InternalFetchCache>()
         this._timeouts = new Set<NodeJS.Timeout | number>()
@@ -165,6 +172,11 @@ class APIClient {
             this.setTimeout(() => {
                 this.request(method, url, options)
             }, delay + 1000)
+        }
+
+        return {
+            status: r.status,
+            data: res.data
         }
     }
 }

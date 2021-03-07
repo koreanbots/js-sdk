@@ -5,7 +5,7 @@ const defaultVersion = 2
 const minVersion = 1
 const maxVersion = 2
 
-const baseUri = "https://koreanbots.dev/api"
+const baseUri = "https://beta.koreanbots.dev/api"
 
 const genRange = (min: number, max: number): string => `${min} ~ ${max}`
 const diff = (min: number, max: number, curr: number): string => curr < min ? `최소보다 '${min - curr}' 작음` : `최대보다 '${curr - max}' 더 큼`
