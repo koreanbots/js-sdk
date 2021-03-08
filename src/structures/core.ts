@@ -18,6 +18,7 @@ export interface APIClientOptions extends BaseOptions {
     cacheOptions: Options<unknown, unknown>
     requestTimeout: number
     retryLimit: number
+    unstable: boolean
 }
 
 export interface InternalFetchCache {

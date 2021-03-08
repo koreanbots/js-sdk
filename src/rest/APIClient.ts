@@ -2,7 +2,7 @@ import fetch from "node-fetch"
 import { getVersionRoute } from "./getRoute"
 import Utils from "../util"
 import LRU from "lru-cache"
-import { version } from "../util/Constants"
+import { version, snowflakeRegex } from "../util/Constants"
 import AbortController, { AbortSignal } from "abort-controller"
 import https from "https"
 import { FetchError } from "./FetchError"
@@ -14,13 +14,13 @@ import type { RequestInit, Response } from "node-fetch"
 
 type ValueOf<T> = T[keyof T]
 
-const snowflakeRegex = /\d{16,19}/g
 const defaultCacheMaxSize = 250
 const defaultCacheMaxAge = 60000 * 5
 const defaultRetryLimit = 5
 const defaultRequestTimeout = 15_000
 const defaultApiVersion = 2
 const defaultNoWarning = false
+const defaultUnstableOption = false
 
 const handler = <T>() => ({
     set: (obj: T, prop: keyof T, value: ValueOf<T>) => {
@@ -43,7 +43,15 @@ const handler = <T>() => ({
             break
         case "requestTimeout":
             if (typeof value !== "number") throw new TypeError(`"requestTimeout" 옵션은 숫자여야 합니다. (받은 타입: ${typeof value})`)
-            if (value <= 0) throw new RangeError(`"requestTimeout" 옵션은 0보다 커야 합니다. (받은 값: ${value}, 최소 '${1 - value}' 작음)`)
+            if (value <= 0) throw new RangeError(`"requestTimeout" 옵션은 0보다 커야 합니다. (받은 값: ${value}, 최소보다 '${1 - value}' 작음)`)
+            break
+        case "retryLimit":
+            if (typeof value !== "number") throw new TypeError(`"retryLimit" 옵션은 숫자여야 합니다.  (받은 타입: ${typeof value})`)
+            if (value <= 0) throw new RangeError(`"retryLimit" 옵션은 0보다 커야 합니다. (받은 값: ${value}, 최소보다 '${1 - value}' 작음)`)
+            if (!Number.isSafeInteger(value)) throw new RangeError(`"retryLimit" 옵션은 32비트 정수만 허용됩니다. (받은 값: ${value})`)
+            break
+        case "unstable":
+            if (typeof value !== "boolean") throw new TypeError(`"unstable" 옵션의 타입은 boolean이여야 합니다. (받은 타입: ${typeof value})`)
             break
         }
 
@@ -71,10 +79,12 @@ class APIClient {
 
         optionsProxy.token = options.token
         optionsProxy.version = options.version ?? defaultApiVersion
+        // TODO(zero734kr): stop using warning and use event emitter
         optionsProxy.noWarning = options.noWarning ?? defaultNoWarning
         optionsProxy.cacheOptions = options.cacheOptions ?? { max: defaultCacheMaxSize, maxAge: defaultCacheMaxAge }
         optionsProxy.requestTimeout = options.requestTimeout ?? defaultRequestTimeout
         optionsProxy.retryLimit = options.retryLimit ?? defaultRetryLimit
+        optionsProxy.unstable = options.unstable ?? defaultUnstableOption
 
         Object.defineProperties(this, {
             version: {
@@ -83,7 +93,7 @@ class APIClient {
             },
             baseUri: {
                 writable: false,
-                value: getVersionRoute(this.options.version)
+                value: getVersionRoute(this.options.version, this.options.unstable)
             },
             token: {
                 writable: false,

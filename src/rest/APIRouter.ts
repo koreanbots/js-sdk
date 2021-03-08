@@ -1,3 +1,5 @@
+import { snowflakeRegex as userIdRegex } from "../util/Constants"
+
 import type { RequestInit } from "node-fetch"
 import type APIClient from "./APIClient"
 
@@ -24,7 +26,6 @@ interface APIHandler<T> {
 // eslint-disable-next-line @typescript-eslint/no-empty-function
 const noop = () => { }
 const methods = ["get", "post", "delete", "patch", "put"]
-const userIdRegex = /\d{16,19}/g
 const routesWithId = /bots|users/
 const reflectors = [
     "toString",
