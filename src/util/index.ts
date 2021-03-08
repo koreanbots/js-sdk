@@ -18,7 +18,7 @@ class Utils {
         }
     }
 
-    static wait(delay: number): Promise<void> {
+    static waitFor(delay: number): Promise<void> {
         return promisify(setTimeout)(delay)
     }
 }

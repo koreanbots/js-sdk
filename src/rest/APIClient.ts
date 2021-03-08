@@ -7,6 +7,7 @@ import AbortController, { AbortSignal } from "abort-controller"
 import https from "https"
 import { FetchError } from "./FetchError"
 import buildRoute from "./APIRouter"
+import { EventEmitter } from "events"
 
 import type { Version, FetchResponse, APIClientOptions, InternalFetchCache } from "../structures/core"
 import type { RequestInit, Response } from "node-fetch"
@@ -60,7 +61,7 @@ const handler = <T>() => ({
     }
 })
 
-class APIClient {
+class APIClient extends EventEmitter {
     protected readonly headers!: Record<string, string>
     public readonly version!: Version
     public readonly baseUri!: string
@@ -70,10 +71,13 @@ class APIClient {
     private _internals: Set<InternalFetchCache>
     private _timeouts: Set<NodeJS.Timeout | number>
     private _agent?: https.Agent
-    private _retries: { id: AbortSignal, retry: number }[]
+    private _destroyed: boolean
+    private _retries: Set<{ id: AbortSignal, retry: number }>
     protected api: ReturnType<typeof buildRoute>
 
     constructor(options: APIClientOptions) {
+        super()
+
         this.options = options ?? {}
         const optionsProxy = new Proxy(this.options, handler<APIClientOptions>())
 
@@ -119,10 +123,12 @@ class APIClient {
          */
         this.api = buildRoute(this)
 
+        this._destroyed = false
+
         this._internals = new Set<InternalFetchCache>()
         this._timeouts = new Set<NodeJS.Timeout | number>()
-        this._agent = https.Agent ? new https.Agent({ keepAlive: true }) : void 0
-        this._retries = []
+        this._agent = https.Agent ? new https.Agent({ keepAlive: !this._destroyed }) : void 0
+        this._retries = new Set<{ id: AbortSignal, retry: number }>()
     }
 
     /**
@@ -147,6 +153,16 @@ class APIClient {
         return clearTimeout(tid)
     }
 
+    destroy(): void {
+        this._destroyed = true
+
+        for (const timeout of [...this._timeouts]) this.clearTimeout(timeout as NodeJS.Timeout)
+        this._internals.clear()
+        this._retries.clear()
+
+        this.removeAllListeners()
+    }
+
     async request<T = unknown>(method: string, url: string, options?: RequestInit): Promise<FetchResponse<T>> {
         const controller = new AbortController()
         const timeout = this.setTimeout(() => controller.abort(), this.options.requestTimeout)
@@ -158,30 +174,69 @@ class APIClient {
         }
 
         const [res, r]: [FetchResponse<T>, Response] = await fetch(`${this.baseUri}${encodeURI(url)}`, mergedOptions)
+            // Use Promise.all to normalize type conflict 
             .then(r => Promise.all([r.json() as Promise<FetchResponse<T>>, r]))
             .finally(() => this.clearTimeout(timeout))
 
         if ((r.status >= 400 || r.status < 600) && r.status !== 429 && r.status !== 404) {
-            const { retry } = this._retries.find(e => e.id === controller.signal) ?? { retry: 0 }
+            const { retry } = [...this._retries].find(e => e.id === controller.signal) ?? { retry: 0 }
 
             if (retry >= this.options.retryLimit) throw new FetchError(
                 // @ts-expect-error check
-                `올바르지 않은 응답이 반환 되었습니다. ${res.data.message || JSON.stringify(res.data)}`,
+                `올바르지 않은 응답이 반환 되었습니다. ${res.data?.message || JSON.stringify(res.data)}`,
                 r.status,
                 method,
                 url
             )
-            this._retries.push({ id: controller.signal, retry: retry + 1 })
+            this._retries.add({ id: controller.signal, retry: retry + 1 })
         }
 
         // TODO(zero734kr): bypass this and add to 'this._internals' if is global rate limit
         if (r.status === 429) {
             const delay = parseInt(r.headers.get("x-ratelimit-reset") ?? "0")
-            if (delay === 0) throw new RangeError
 
-            this.setTimeout(() => {
-                this.request(method, url, options)
-            }, delay + 1000)
+            this.emit("rateLimit", {
+                isGlobal: Boolean(r.headers.get("x-ratelimit-global")),
+                path: url,
+                limit: parseInt(r.headers.get("x-ratelimit-limit") ?? "0"),
+                retryAfter: parseInt(r.headers.get("x-ratelimit-reset") ?? "0"),
+                [Symbol("requestOptions")]: options
+            })
+
+            // handle endpoint specific rate limit
+            if (r.headers.get("x-ratelimit-global") === "false") {
+                if (delay === 0) return this.request(method, url, options)
+
+                await Utils.waitFor(delay + 1000)
+                return this.request(method, url, options)
+            }
+
+            // handle global rate limit from here
+            // if global rate limit handler is already started
+            if (this._internals.size === 0) {
+                // change to other task (or the first global rate limited request will be freezed waiting for return)
+                process.nextTick(async () => {
+                    await Utils.waitFor(delay + 1000)
+
+                    // store requests informations inside 'this._internals' cache and retry
+                    await Promise.allSettled(
+                        [...this._internals].map(({ method, url, options }) => (
+                            this.request(method, url, options)
+                        ))
+                    )
+                })
+            }
+
+            this._internals.add({
+                method,
+                url,
+                options
+            })
+
+            return {
+                status: 429,
+                data: null
+            }
         }
 
         return {

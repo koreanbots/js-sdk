@@ -5,7 +5,7 @@ export type Version = 1 | 2
 
 export interface FetchResponse<T = unknown> {
     status: number
-    data: T
+    data: T | null
 }
 
 export interface BaseOptions {
@@ -24,5 +24,5 @@ export interface APIClientOptions extends BaseOptions {
 export interface InternalFetchCache {
     method: string
     url: string
-    options: RequestInit
+    options?: RequestInit
 }
