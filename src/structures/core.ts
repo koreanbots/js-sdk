@@ -4,8 +4,13 @@ import type { RequestInit } from "node-fetch"
 export type Version = 1 | 2
 
 export interface FetchResponse<T = unknown> {
-    status: number
+    code: number
     data: T | null
+    message?: string
+    isCache: boolean
+    ratelimitRemaining: number
+    url: string
+    updatedTimestamp?: number
 }
 
 export interface BaseOptions {

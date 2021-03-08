@@ -168,10 +168,16 @@ class APIClient extends EventEmitter {
         const timeout = this.setTimeout(() => controller.abort(), this.options.requestTimeout)
         const mergedOptions: RequestInit = {
             ...options,
+            headers: this.headers,
             method,
             agent: this._agent,
             signal: controller.signal
         }
+
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        if (this.cache.get(url) && (Date.now() - this.cache.get(url)!.updatedTimestamp!) <= 5000) 
+            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+            return this.cache.get(url)! as FetchResponse<T>
 
         const [res, r]: [FetchResponse<T>, Response] = await fetch(`${this.baseUri}${encodeURI(url)}`, mergedOptions)
             // Use Promise.all to normalize type conflict 
@@ -194,9 +200,10 @@ class APIClient extends EventEmitter {
         // TODO(zero734kr): bypass this and add to 'this._internals' if is global rate limit
         if (r.status === 429) {
             const delay = parseInt(r.headers.get("x-ratelimit-reset") ?? "0")
+            const isGlobal = Boolean(r.headers.get("x-ratelimit-global"))
 
             this.emit("rateLimit", {
-                isGlobal: Boolean(r.headers.get("x-ratelimit-global")),
+                isGlobal,
                 path: url,
                 limit: parseInt(r.headers.get("x-ratelimit-limit") ?? "0"),
                 retryAfter: parseInt(r.headers.get("x-ratelimit-reset") ?? "0"),
@@ -204,7 +211,7 @@ class APIClient extends EventEmitter {
             })
 
             // handle endpoint specific rate limit
-            if (r.headers.get("x-ratelimit-global") === "false") {
+            if (!isGlobal) {
                 if (delay === 0) return this.request(method, url, options)
 
                 await Utils.waitFor(delay + 1000)
@@ -234,15 +241,32 @@ class APIClient extends EventEmitter {
             })
 
             return {
-                status: 429,
-                data: null
+                code: 429,
+                data: null,
+                message: `Rate limited ${isGlobal ? "globally" : `from ${url}`}`,
+                isCache: false,
+                ratelimitRemaining: 0,
+                url
             }
         }
 
-        return {
-            status: r.status,
-            data: res.data
+        const response = {
+            code: r.status,
+            data: res.data,
+            // @ts-expect-error generic
+            message: res.data?.message,
+            isCache: false,
+            ratelimitRemaining: parseInt(r.headers.get("x-ratelimit-remaining") ?? "0"),
+            url
         }
+
+        if (method === "GET" && r.status === 200) this.cache.set(url, { 
+            ...response, 
+            isCache: true,
+            updatedTimestamp: Date.now()
+        })
+
+        return response
     }
 }
 
