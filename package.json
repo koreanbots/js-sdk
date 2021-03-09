@@ -40,7 +40,7 @@
   },
   "devDependencies": {
     "@commitlint/cli": "^12.0.1",
-    "@commitlint/config-conventional": "^11.0.0",
+    "@commitlint/config-conventional": "^12.0.1",
     "@commitlint/prompt": "^12.0.1",
     "@tsconfig/recommended": "^1.0.1",
     "@types/jest": "^26.0.20",
@@ -52,7 +52,7 @@
     "@typescript-eslint/parser": "^4.6.0",
     "commitizen": "^4.2.2",
     "cross-env": "^7.0.3",
-    "esbuild": "^0.8.49",
+    "esbuild": "^0.9.0",
     "esbuild-jest": "^0.4.0",
     "esbuild-node-tsc": "^1.2.0",
     "eslint": "^7.12.1",
