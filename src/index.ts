@@ -1,2 +1,2 @@
-export { default as APIClient } from "./rest/APIClient"
-export { default as APIRouter } from "./rest/APIRouter"
+
+export { default as Koreanbots } from "./managers/Koreanbots"

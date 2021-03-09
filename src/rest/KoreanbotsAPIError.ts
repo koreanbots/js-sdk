@@ -1,4 +1,4 @@
-export class FetchError extends Error {
+export class KoreanbotsAPIError extends Error {
     constructor(
         public readonly message: string,
         public readonly code: number,
@@ -7,6 +7,6 @@ export class FetchError extends Error {
     ) {
         super(message)
 
-        this.name = "FetchError[Koreanbots]"
+        this.name = "KoreanbotsAPIError"
     }
 }

@@ -8,7 +8,7 @@
         "removeComments": false,
         "outDir": "dist",
         "resolveJsonModule": true,
-        "target": "es2018",
+        "target": "es2019",
         "sourceMap": true,
         "baseUrl": "./",
         "lib": ["es2020"]

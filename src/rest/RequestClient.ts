@@ -5,15 +5,15 @@ import LRU from "lru-cache"
 import { version, snowflakeRegex } from "../util/Constants"
 import AbortController, { AbortSignal } from "abort-controller"
 import https from "https"
-import { FetchError } from "./FetchError"
-import buildRoute from "./APIRouter"
+import { KoreanbotsAPIError } from "./KoreanbotsAPIError"
 import { EventEmitter } from "events"
 
-import type { Version, FetchResponse, APIClientOptions, InternalFetchCache } from "../structures/core"
+import type {
+    Version, FetchResponse, APIClientOptions, InternalFetchCache,
+    ProxyValidator, ValueOf
+} from "../structures/core"
 import type { RequestInit, Response } from "node-fetch"
 
-
-type ValueOf<T> = T[keyof T]
 
 const defaultCacheMaxSize = 250
 const defaultCacheMaxAge = 60000 * 5
@@ -23,43 +23,6 @@ const defaultApiVersion = 2
 const defaultNoWarning = false
 const defaultUnstableOption = false
 
-const handler = <T>() => ({
-    set: (obj: T, prop: keyof T, value: ValueOf<T>) => {
-        switch (prop) {
-        case "token":
-            if (typeof value !== "string") throw new TypeError(`"token" 옵션은 숫자여야 합니다. (받은 타입: ${typeof value})`)
-
-            // eslint-disable-next-line no-case-declarations
-            const [algorithm, info] = value.split(".").map(e => {
-                const serialized = `${Buffer.from(e, "base64")}`
-                const deserializable = Utils.isJSON(serialized)
-
-                return deserializable ? JSON.parse(serialized) : serialized
-            })
-
-            if (algorithm.typ !== "JWT" || !snowflakeRegex.test(info.id)) throw new TypeError("주어진 \"token\" 옵션은 정상적인 KOREANBOTS JWT 토큰이 아닙니다.")
-            break
-        case "noWarning":
-            if (typeof value !== "boolean") throw new TypeError(`"noWarning" 옵션의 타입은 boolean이여야 합니다. (받은 타입: ${typeof value})`)
-            break
-        case "requestTimeout":
-            if (typeof value !== "number") throw new TypeError(`"requestTimeout" 옵션은 숫자여야 합니다. (받은 타입: ${typeof value})`)
-            if (value <= 0) throw new RangeError(`"requestTimeout" 옵션은 0보다 커야 합니다. (받은 값: ${value}, 최소보다 '${1 - value}' 작음)`)
-            break
-        case "retryLimit":
-            if (typeof value !== "number") throw new TypeError(`"retryLimit" 옵션은 숫자여야 합니다.  (받은 타입: ${typeof value})`)
-            if (value <= 0) throw new RangeError(`"retryLimit" 옵션은 0보다 커야 합니다. (받은 값: ${value}, 최소보다 '${1 - value}' 작음)`)
-            if (!Number.isSafeInteger(value)) throw new RangeError(`"retryLimit" 옵션은 32비트 정수만 허용됩니다. (받은 값: ${value})`)
-            break
-        case "unstable":
-            if (typeof value !== "boolean") throw new TypeError(`"unstable" 옵션의 타입은 boolean이여야 합니다. (받은 타입: ${typeof value})`)
-            break
-        }
-
-        obj[prop] = value
-        return true
-    }
-})
 
 class APIClient extends EventEmitter {
     protected readonly headers!: Record<string, string>
@@ -73,13 +36,50 @@ class APIClient extends EventEmitter {
     private _agent?: https.Agent
     private _destroyed: boolean
     private _retries: Set<{ id: AbortSignal, retry: number }>
-    protected api: ReturnType<typeof buildRoute>
+
+    protected static validator = <T>(): ProxyValidator<T> => ({
+        set: (obj: T, prop: keyof T, value: ValueOf<T>) => {
+            switch (prop) {
+            case "token":
+                if (typeof value !== "string") throw new TypeError(`"token" 옵션은 숫자여야 합니다. (받은 타입: ${typeof value})`)
+
+                // eslint-disable-next-line no-case-declarations
+                const [algorithm, info] = value.split(".").map(e => {
+                    const serialized = `${Buffer.from(e, "base64")}`
+                    const deserializable = Utils.isJSON(serialized)
+
+                    return deserializable ? JSON.parse(serialized) : serialized
+                })
+
+                if (algorithm.typ !== "JWT" || !snowflakeRegex.test(info.id)) throw new TypeError("주어진 \"token\" 옵션은 정상적인 KOREANBOTS JWT 토큰이 아닙니다.")
+                break
+            case "noWarning":
+                if (typeof value !== "boolean") throw new TypeError(`"noWarning" 옵션의 타입은 boolean이여야 합니다. (받은 타입: ${typeof value})`)
+                break
+            case "requestTimeout":
+                if (typeof value !== "number") throw new TypeError(`"requestTimeout" 옵션은 숫자여야 합니다. (받은 타입: ${typeof value})`)
+                if (value <= 0) throw new RangeError(`"requestTimeout" 옵션은 0보다 커야 합니다. (받은 값: ${value}, 최소보다 '${1 - value}' 작음)`)
+                break
+            case "retryLimit":
+                if (typeof value !== "number") throw new TypeError(`"retryLimit" 옵션은 숫자여야 합니다.  (받은 타입: ${typeof value})`)
+                if (value <= 0) throw new RangeError(`"retryLimit" 옵션은 0보다 커야 합니다. (받은 값: ${value}, 최소보다 '${1 - value}' 작음)`)
+                if (!Number.isSafeInteger(value)) throw new RangeError(`"retryLimit" 옵션은 32비트 정수만 허용됩니다. (받은 값: ${value})`)
+                break
+            case "unstable":
+                if (typeof value !== "boolean") throw new TypeError(`"unstable" 옵션의 타입은 boolean이여야 합니다. (받은 타입: ${typeof value})`)
+                break
+            }
+
+            obj[prop] = value
+            return true
+        }
+    })
 
     constructor(options: APIClientOptions) {
         super()
 
         this.options = options ?? {}
-        const optionsProxy = new Proxy(this.options, handler<APIClientOptions>())
+        const optionsProxy = new Proxy(this.options, APIClient.validator<APIClientOptions>())
 
         optionsProxy.token = options.token
         optionsProxy.version = options.version ?? defaultApiVersion
@@ -90,6 +90,23 @@ class APIClient extends EventEmitter {
         optionsProxy.retryLimit = options.retryLimit ?? defaultRetryLimit
         optionsProxy.unstable = options.unstable ?? defaultUnstableOption
 
+        /**
+         * API를 향한 요청들의 캐시
+         */
+        this.cache = new LRU<string, FetchResponse>(this.options.cacheOptions)
+
+        this._destroyed = false
+
+        this._internals = new Set<InternalFetchCache>()
+        this._timeouts = new Set<NodeJS.Timeout | number>()
+        this._agent = https.Agent ? new https.Agent({ keepAlive: !this._destroyed }) : void 0
+        this._retries = new Set<{ id: AbortSignal, retry: number }>()
+
+
+        this.setupReadonly()
+    }
+
+    private setupReadonly() {
         Object.defineProperties(this, {
             version: {
                 writable: false,
@@ -112,23 +129,6 @@ class APIClient extends EventEmitter {
                 }
             }
         })
-
-        /**
-         * API를 향한 요청들의 캐시
-         */
-        this.cache = new LRU<string, FetchResponse>(this.options.cacheOptions)
-
-        /**
-         * API 라우트 빌더
-         */
-        this.api = buildRoute(this)
-
-        this._destroyed = false
-
-        this._internals = new Set<InternalFetchCache>()
-        this._timeouts = new Set<NodeJS.Timeout | number>()
-        this._agent = https.Agent ? new https.Agent({ keepAlive: !this._destroyed }) : void 0
-        this._retries = new Set<{ id: AbortSignal, retry: number }>()
     }
 
     /**
@@ -165,7 +165,14 @@ class APIClient extends EventEmitter {
 
     async request<T = unknown>(method: string, url: string, options?: RequestInit): Promise<FetchResponse<T>> {
         const controller = new AbortController()
-        const timeout = this.setTimeout(() => controller.abort(), this.options.requestTimeout)
+        const timeout = this.setTimeout(() => {
+            this.emit("timeout", {
+                url,
+                method,
+                [Symbol("requestOptions")]: options
+            })
+            controller.abort()
+        }, this.options.requestTimeout)
         const mergedOptions: RequestInit = {
             ...options,
             headers: this.headers,
@@ -175,19 +182,25 @@ class APIClient extends EventEmitter {
         }
 
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        if (this.cache.get(url) && (Date.now() - this.cache.get(url)!.updatedTimestamp!) <= 5000) 
+        if (this.cache.get(url) && (Date.now() - this.cache.get(url)!.updatedTimestamp!) <= 5000)
             // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
             return this.cache.get(url)! as FetchResponse<T>
 
-        const [res, r]: [FetchResponse<T>, Response] = await fetch(`${this.baseUri}${encodeURI(url)}`, mergedOptions)
-            // Use Promise.all to normalize type conflict 
-            .then(r => Promise.all([r.json() as Promise<FetchResponse<T>>, r]))
-            .finally(() => this.clearTimeout(timeout))
+        let res: FetchResponse<T>
+        let r: Response
+        try {
+            const response = await fetch(`${this.baseUri}${encodeURI(url)}`, mergedOptions)
+
+            res = await response.json()
+            r = response
+        } finally {
+            this.clearTimeout(timeout)
+        }
 
         if ((r.status >= 400 || r.status < 600) && r.status !== 429 && r.status !== 404) {
             const { retry } = [...this._retries].find(e => e.id === controller.signal) ?? { retry: 0 }
 
-            if (retry >= this.options.retryLimit) throw new FetchError(
+            if (retry >= this.options.retryLimit) throw new KoreanbotsAPIError(
                 // @ts-expect-error check
                 `올바르지 않은 응답이 반환 되었습니다. ${res.data?.message || JSON.stringify(res.data)}`,
                 r.status,
@@ -205,6 +218,7 @@ class APIClient extends EventEmitter {
             this.emit("rateLimit", {
                 isGlobal,
                 path: url,
+                method,
                 limit: parseInt(r.headers.get("x-ratelimit-limit") ?? "0"),
                 retryAfter: parseInt(r.headers.get("x-ratelimit-reset") ?? "0"),
                 [Symbol("requestOptions")]: options
@@ -220,19 +234,7 @@ class APIClient extends EventEmitter {
 
             // handle global rate limit from here
             // if global rate limit handler is already started
-            if (this._internals.size === 0) {
-                // change to other task (or the first global rate limited request will be freezed waiting for return)
-                process.nextTick(async () => {
-                    await Utils.waitFor(delay + 1000)
-
-                    // store requests informations inside 'this._internals' cache and retry
-                    await Promise.allSettled(
-                        [...this._internals].map(({ method, url, options }) => (
-                            this.request(method, url, options)
-                        ))
-                    )
-                })
-            }
+            this.scheduleRequests(delay)
 
             this._internals.add({
                 method,
@@ -260,13 +262,29 @@ class APIClient extends EventEmitter {
             url
         }
 
-        if (method === "GET" && r.status === 200) this.cache.set(url, { 
-            ...response, 
+        if (method === "GET" && r.status === 200) this.cache.set(url, {
+            ...response,
             isCache: true,
             updatedTimestamp: Date.now()
         })
 
         return response
+    }
+
+    private scheduleRequests(delay: number) {
+        if (this._internals.size === 0) {
+            // change to other task (or the first global rate limited request will be freezed waiting for return)
+            process.nextTick(async () => {
+                await Utils.waitFor(delay + 1000)
+
+                // store requests informations inside 'this._internals' cache and retry
+                await Promise.allSettled(
+                    [...this._internals].map(({ method, url, options }) => (
+                        this.request(method, url, options)
+                    ))
+                )
+            })
+        }
     }
 }
 

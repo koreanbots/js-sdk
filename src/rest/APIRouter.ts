@@ -1,15 +1,16 @@
 import { snowflakeRegex as userIdRegex } from "../util/Constants"
+import APIClient from "./RequestClient"
 
 import type { RequestInit } from "node-fetch"
-import type APIClient from "./APIClient"
+import { APIClientOptions } from "src/structures/core"
 
 type Serialize = () => string
 type APIRequest<T> = (options?: RequestInit) => T
-type Proxy = () => void
+type Proxy = <A>() => A
 
 interface APIHandler<T> {
-    get(target: never, name: string): Serialize | APIRequest<T> | Proxy
-    apply(target: never, _: never, args: string[]): Proxy
+    get(target: never, name: string): Serialize | APIRequest<T> | unknown
+    apply(target: never, _: never, args: string[]): unknown
 }
 
 /**
@@ -36,7 +37,8 @@ const reflectors = [
     Symbol.for("nodejs.util.inspect.custom"),
 ]
 
-function buildRoute(client: APIClient): Proxy {
+function buildRoute(options: APIClientOptions): Proxy {
+    const client = new APIClient(options)
     const route = [""]
     const handler: APIHandler<ReturnType<typeof client.request>> = {
         get(target, name) {
@@ -66,7 +68,8 @@ function buildRoute(client: APIClient): Proxy {
             return new Proxy(noop, handler)
         }
     }
-    return new Proxy(noop, handler)
+
+    return <A = null>() => new Proxy(noop, handler) as unknown as A
 }
 
 export default buildRoute
