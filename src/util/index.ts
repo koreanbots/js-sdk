@@ -21,6 +21,37 @@ class Utils {
     static waitFor(delay: number): Promise<void> {
         return promisify(setTimeout)(delay)
     }
+
+    /**
+     * 비동기적으로 역직렬화 합니다.
+     */
+    static deserializeAsync<T = Record<string, unknown>>(content: string): Promise<T> {
+        const asynchronized = new Promise<T>((resolve, reject) => {
+            try {
+                return resolve(JSON.parse(content))
+            } catch (e) {
+                if (e instanceof SyntaxError)
+                    return reject("Not deserializable.")
+            }
+        })
+        return asynchronized
+    }
+
+    /**
+     * 비동기적으로 직렬화 합니다.
+     */
+    static serializeAsync(content: Record<string, unknown>): Promise<string> {
+        const asynchronized = new Promise<string>((resolve, reject) => {
+            try {
+                const serialized = JSON.stringify(content)
+
+                return resolve(serialized)
+            } catch (e) {
+                reject(e)
+            }
+        })
+        return asynchronized
+    }
 }
 
 export default Utils

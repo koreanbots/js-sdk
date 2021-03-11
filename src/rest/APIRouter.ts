@@ -2,11 +2,14 @@ import { snowflakeRegex as userIdRegex } from "../util/Constants"
 import APIClient from "./RequestClient"
 
 import type { RequestInit } from "node-fetch"
-import { APIClientOptions } from "src/structures/core"
+import { APIClientOptions } from "../structures/core"
 
 type Serialize = () => string
 type APIRequest<T> = (options?: RequestInit) => T
-type Proxy = <A>() => A
+type Proxy = {
+    client: APIClient
+    <A>(): A
+}
 
 interface APIHandler<T> {
     get(target: never, name: string): Serialize | APIRequest<T> | unknown
@@ -39,37 +42,44 @@ const reflectors = [
 
 function buildRoute(options: APIClientOptions): Proxy {
     const client = new APIClient(options)
-    const route = [""]
-    const handler: APIHandler<ReturnType<typeof client.request>> = {
-        get(target, name) {
-            if (reflectors.includes(name)) return () => route.join("/")
+    
+    const api = <A extends unknown>() => {
+        const route = [""]
+        const handler: APIHandler<ReturnType<typeof client.request>> = {
+            get(target, name) {
+                if (reflectors.includes(name)) return () => route.join("/")
 
-            if (methods.includes(name)) {
-                const routeBucket: string[] = []
-                for (let i = 0; i < route.length; i++) {
-                    // Literal IDs should only be taken account if they are the Major ID (the Channel/Guild ID)
-                    if (userIdRegex.test(route[i]) && !routesWithId.test(route[i - 1])) routeBucket.push(":id")
-                    // All other parts of the route should be considered as part of the bucket identifier
-                    else routeBucket.push(route[i])
+                if (methods.includes(name)) {
+                    const routeBucket: string[] = []
+                    for (let i = 0; i < route.length; i++) {
+                        // Literal IDs should only be taken account if they are the Major ID (the Channel/Guild ID)
+                        if (userIdRegex.test(route[i]) && !routesWithId.test(route[i - 1])) routeBucket.push(":id")
+                        // All other parts of the route should be considered as part of the bucket identifier
+                        else routeBucket.push(route[i])
+                    }
+                    return (options?: RequestInit) =>
+                        client.request(
+                            name.toUpperCase(),
+                            route.join("/"),
+                            options
+                        )
                 }
-                return (options?: RequestInit) =>
-                    client.request(
-                        name,
-                        route.join("/"),
-                        options
-                    )
+
+                route.push(name)
+                return new Proxy(noop, handler)
+            },
+            apply(target, _, args) {
+                route.push(...args.filter(x => x != null))
+                return new Proxy(noop, handler)
             }
-
-            route.push(name)
-            return new Proxy(noop, handler)
-        },
-        apply(target, _, args) {
-            route.push(...args.filter(x => x != null))
-            return new Proxy(noop, handler)
         }
-    }
 
-    return <A = null>() => new Proxy(noop, handler) as unknown as A
+        return new Proxy(noop, handler) as unknown as A
+    }
+    
+    api.client = client
+
+    return api
 }
 
 export default buildRoute

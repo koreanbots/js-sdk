@@ -102,11 +102,10 @@ class APIClient extends EventEmitter {
         this._agent = https.Agent ? new https.Agent({ keepAlive: !this._destroyed }) : void 0
         this._retries = new Set<{ id: AbortSignal, retry: number }>()
 
-
-        this.setupReadonly()
+        this.setupReadonly(options)
     }
 
-    private setupReadonly() {
+    private setupReadonly(options: APIClientOptions) {
         Object.defineProperties(this, {
             version: {
                 writable: false,
@@ -123,7 +122,8 @@ class APIClient extends EventEmitter {
             headers: {
                 writable: false,
                 value: {
-                    authorization: this.token,
+                    // idk why, but here was resulting 'undefined' when is 'this.token'
+                    authorization: options.token,
                     "Content-Type": "application/json",
                     "User-Agent": `js-sdk/${version}`
                 }
@@ -186,7 +186,7 @@ class APIClient extends EventEmitter {
             // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
             return this.cache.get(url)! as FetchResponse<T>
 
-        let res: FetchResponse<T>
+        let res: T
         let r: Response
         try {
             const response = await fetch(`${this.baseUri}${encodeURI(url)}`, mergedOptions)
@@ -254,9 +254,10 @@ class APIClient extends EventEmitter {
 
         const response = {
             code: r.status,
-            data: res.data,
             // @ts-expect-error generic
-            message: res.data?.message,
+            data: res?.data ? res?.data : res,
+            // @ts-expect-error generic
+            message: res?.message,
             isCache: false,
             ratelimitRemaining: parseInt(r.headers.get("x-ratelimit-remaining") ?? "0"),
             url

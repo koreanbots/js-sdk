@@ -6,22 +6,22 @@ export type Version = 1 | 2
 export type ValueOf<T> = T[keyof T]
 export type Nullable<T> = T | null
 
-export interface BotStates {
-    NONE: 0
-    OFFICIAL: 1
-    KOREANBOTS_VERIFIED: 4
-    PARTNER: 8
-    DISCORD_VERIFIED: 16
-    PREMIUM: 32
-    HACKATHON_BOT: 64
+export enum BotFlags {
+    NONE = 0 << 0,
+    OFFICIAL = 1 << 0,
+    KOREANBOTS_VERIFIED = 1 << 2,
+    PARTNER = 1 << 3,
+    DISCORD_VERIFIED = 1 << 4,
+    PREMIUM = 1 << 5,
+    HACKATHON_BOT = 1 << 6
 }
 
-export interface UserFlags {
-    NONE: 0,
-    ADMINISTRATOR: 1
-    BUG_HUNTER: 2
-    BOT_REVIEWER: 4
-    PREMIUM_USER: 8
+export enum UserFlags {
+    NONE = 0 << 0,
+    ADMINISTRATOR = 1 << 0,
+    BUG_HUNTER = 1 << 1,
+    BOT_REVIEWER = 1 << 2,
+    PREMIUM_USER = 1 << 3
 }
 
 export type BotStatus =
@@ -30,6 +30,14 @@ export type BotStatus =
     "dnd" |
     "streaming" |
     "offline"
+
+
+export type BotState =
+    "ok" |
+    "reported" |
+    "blocked" |
+    "private" |
+    "archived"
 
 export type Category =
     "관리" |
@@ -141,7 +149,7 @@ export interface RawBotInstance {
     bg: Nullable<string>
     banner: Nullable<string>
     status?: Nullable<BotStatus>
-    state: number & ValueOf<BotStates>
+    state: BotState
 }
 
 export interface RawUserInstance {
@@ -149,6 +157,6 @@ export interface RawUserInstance {
     username: string
     tag: string
     github: Nullable<string>
-    flags: number & ValueOf<UserFlags>
-    bots: RawBotInstance[]
+    flags: UserFlags
+    bots: string[]
 }

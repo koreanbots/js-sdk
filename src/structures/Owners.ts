@@ -1,28 +1,30 @@
 import { Collection } from "discord.js"
-import Koreanbots from "src/managers/Koreanbots"
-import { FetchResponse } from "./core"
+import Koreanbots from "../managers/Koreanbots"
+import { User } from "./User"
 
-import type { Owner } from "./Owner"
+import type { FetchResponse, RawUserInstance } from "./core"
 
 interface UserQuery {
     users(id: string): {
-        get: () => Promise<FetchResponse<Owner>>
+        get: () => Promise<FetchResponse<RawUserInstance>>
     }
 }
 
-export class Owners extends Collection<string, Owner> {
-    constructor(public readonly koreanbots: Koreanbots, private readonly data: Owner[]) {
+export class Owners extends Collection<string, User> {
+    constructor(public readonly koreanbots: Koreanbots, protected readonly data: User[]) {
         super()
+
+        for (const owner of data) this.set(owner.id, owner)
     }
 
-    public async fetch(): Promise<(FetchResponse<Owner>)[]> {
+    public async fetch(): Promise<(FetchResponse<RawUserInstance>)[]> {
         const result = await Promise.all(this.map(user => (
             this.koreanbots.api<UserQuery>().users(user.id).get()
         )))
 
         result.filter(f => f.code === 200).forEach(owner => {
             // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-            this.set(owner.data!.id, owner.data!)
+            this.set(owner.data!.id, new User(this.koreanbots, owner.data!))
         })
 
         return result
