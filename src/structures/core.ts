@@ -105,6 +105,8 @@ export interface BaseOptions {
 
 export interface KoreanbotsOptions extends BaseOptions {
     apiOptions: APIClientOptions
+    botOptions: BotManagerOptions
+    userOptions: UserManagerOptions
     clientID: string
 }
 
@@ -116,6 +118,13 @@ export interface APIClientOptions extends BaseOptions {
     retryLimit: number
     unstable: boolean
 }
+
+export interface BotManagerOptions extends BaseOptions {
+    max?: number
+    maxAge?: number
+}
+
+export type UserManagerOptions = BotManagerOptions
 
 export interface InternalFetchCache {
     method: string
@@ -158,5 +167,5 @@ export interface RawUserInstance {
     tag: string
     github: Nullable<string>
     flags: UserFlags
-    bots: string[]
+    bots: (string | RawBotInstance)[]
 }

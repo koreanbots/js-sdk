@@ -1,7 +1,8 @@
 import { snowflakeRegex } from "../util/Constants"
 import APIRouter from "../rest/APIRouter"
-import { Mybot } from "./Mybot"
-import { BotManager } from "./BotManager"
+import { Mybot } from "../managers/Mybot"
+import { BotManager } from "../managers/BotManager"
+import { UserManager } from "../managers/UserManager"
 
 import type { KoreanbotsOptions, ProxyValidator } from "../structures/core"
 
@@ -10,13 +11,15 @@ export class Koreanbots {
     public readonly api!: ReturnType<typeof APIRouter>
     public mybot!: Mybot
     public bots: BotManager
+    public users: UserManager
 
     static validator = <T>(): ProxyValidator<T> => ({
         set(obj, prop, value) {
             switch (prop) {
             case "clientID":
                 if (typeof value !== "string") throw new TypeError(`"clientID" 옵션은 문자열이여야 합니다. (받은 타입: ${typeof value})`)
-                if (snowflakeRegex.test(value)) throw new TypeError("\"clientID\" 옵션은 디스코드의 ID 체계인 Snowflake여야 합니다.")
+                if (!snowflakeRegex.test(obj[prop] as unknown as string)) 
+                    throw new TypeError("\"clientID\" 옵션은 디스코드의 ID 체계인 Snowflake여야 합니다.")
                 break
             }
 
@@ -37,7 +40,8 @@ export class Koreanbots {
 
         optionsProxy.clientID = options.clientID
 
-        this.bots = new BotManager(this)
+        this.bots = new BotManager(this, options.botOptions)
+        this.users = new UserManager(this, options.userOptions)
         this.mybot = new Mybot(this, options.clientID)
     }
 }

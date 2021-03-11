@@ -1,9 +1,10 @@
 import { Base } from "./Base"
-import { UserFlags } from "./core"
+import { RawBotInstance, UserFlags } from "./core"
 import { Github } from "./Github"
 import { Collection } from "discord.js"
+import Utils from "../util"
 
-import type { Koreanbots } from "../managers/Koreanbots"
+import type { Koreanbots } from "../client/Koreanbots"
 import type { RawUserInstance, Nullable, FetchResponse } from "./core"
 import type { Bot } from "./Bot"
 
@@ -37,7 +38,31 @@ export class User extends Base {
 
         this.fullTag = `${data.username}#${data.tag}`
 
-        this.bots = new Collection(data.bots.map(bot => [bot, this.koreanbots.bots.cache.get(bot)]))
+        this.bots = new Collection((data.bots as RawBotInstance[]).map(bot => [
+            bot.id, this.koreanbots.bots.cache.get(bot.id)
+        ]))
+
+        this.cacheAfterCacheMiss(data)
+    }
+
+    private async cacheAfterCacheMiss(data: RawUserInstance) {
+        const botsFromApi = await Promise.all(
+            data.bots
+                .filter(f => !this.koreanbots.bots.cache.get(typeof f === "string" ? f : f.id))
+                .map(b => this.koreanbots.bots.fetch(typeof b === "string" ? b : b.id))
+        )
+
+        process.nextTick(async () => {
+            await Utils.waitFor(1000)
+
+            const cache = (bot: FetchResponse<Bot>) => {
+                if (!bot.data?.id) return
+
+                this.bots.set(bot.data?.id, this.koreanbots.bots.cache.get(bot.data?.id))
+            }
+
+            botsFromApi.map(cache)
+        })
     }
 
     is(type: keyof typeof UserFlags | UserFlags): boolean {

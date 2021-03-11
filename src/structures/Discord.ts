@@ -1,6 +1,6 @@
 import { Base } from "./Base"
 
-import type { Koreanbots } from "../managers/Koreanbots"
+import type { Koreanbots } from "../client/Koreanbots"
 
 export class Discord extends Base {
     public readonly inviteUrl: string

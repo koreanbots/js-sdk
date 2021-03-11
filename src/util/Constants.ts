@@ -1,3 +1,3 @@
 export { version } from "../../package.json"
 
-export const snowflakeRegex = /\d{16,19}/gi
+export const snowflakeRegex = /(\d){16,19}/i

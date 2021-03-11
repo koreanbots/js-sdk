@@ -1,2 +1,4 @@
-
-export { Koreanbots } from "./managers/Koreanbots"
+/**
+ * @type {import("./client/Koreanbots")}
+ */
+export { Koreanbots } from "./client/Koreanbots"

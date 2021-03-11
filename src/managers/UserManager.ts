@@ -1,24 +1,24 @@
 import LRU from "lru-cache"
-import { Bot } from "../structures/Bot"
+import { User } from "../structures/User"
 
 import type {
-    BotManagerOptions, FetchResponse, Nullable, RawBotInstance,
+    UserManagerOptions, FetchResponse, Nullable, RawUserInstance,
     ProxyValidator
 } from "../structures/core"
 import type { Koreanbots } from "../client/Koreanbots"
 import type { RequestInit } from "node-fetch"
 
-interface BotQuery {
-    bots(botID: string): {
-        get(options?: RequestInit): Promise<FetchResponse<RawBotInstance>>
+interface UserQuery {
+    users(userID: string): {
+        get(options?: RequestInit): Promise<FetchResponse<RawUserInstance>>
     }
 }
 
 const defaultCacheMaxSize = 100
 const defaultCacheMaxAge = 60000 * 60
 
-export class BotManager {
-    public cache: LRU<string, Nullable<Bot>>
+export class UserManager {
+    public cache: LRU<string, Nullable<User>>
 
     static validator = <T>(): ProxyValidator<T> => ({
         set(obj, prop, value) {
@@ -39,9 +39,9 @@ export class BotManager {
         }
     })
 
-    constructor(public readonly koreanbots: Koreanbots, public readonly options: BotManagerOptions) {
+    constructor(public readonly koreanbots: Koreanbots, public readonly options: UserManagerOptions) {
         this.options = options ?? {}
-        const optionsProxy = new Proxy(this.options, BotManager.validator<BotManagerOptions>())
+        const optionsProxy = new Proxy(this.options, UserManager.validator<UserManagerOptions>())
 
         optionsProxy.max = options?.max ?? defaultCacheMaxSize
         optionsProxy.maxAge = options?.maxAge ?? defaultCacheMaxAge
@@ -52,17 +52,17 @@ export class BotManager {
         })
     }
 
-    async fetch(botID: string): Promise<FetchResponse<Bot>> {
-        if (!botID || typeof botID !== "string") throw new Error(`"botID" 값은 주어지지 않았거나 문자열이어야 합니다. (받은 타입: ${typeof botID})`)
+    async fetch(userID: string): Promise<FetchResponse<User>> {
+        if (!userID || typeof userID !== "string") throw new Error(`"userID" 값은 주어지지 않았거나 문자열이어야 합니다. (받은 타입: ${typeof userID})`)
 
-        const res = await this.koreanbots.api<BotQuery>().bots(botID).get()
+        const res = await this.koreanbots.api<UserQuery>().users(userID).get()
 
         if (!res.data) throw new Error(res.message || `API에서 알 수 없는 응답이 돌아왔습니다. ${JSON.stringify(res.data)}`)
 
-        const bot = new Bot(this.koreanbots, res.data)
+        const user = new User(this.koreanbots, res.data)
 
-        this.cache.set(botID, bot)
+        this.cache.set(userID, user)
 
-        return { ...res, data: bot }
+        return { ...res, data: user }
     }
 }
