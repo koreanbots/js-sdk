@@ -40,8 +40,11 @@ const reflectors = [
     Symbol.for("nodejs.util.inspect.custom"),
 ]
 
+let cachedClient: APIClient | undefined
 function buildRoute(options: APIClientOptions): Proxy {
-    const client = new APIClient(options)
+    if (!cachedClient) cachedClient = new APIClient(options)
+
+    const client = cachedClient
     
     const api = <A extends unknown>() => {
         const route = [""]
