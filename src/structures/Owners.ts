@@ -1,7 +1,7 @@
 import { Collection } from "discord.js"
-import Koreanbots from "../managers/Koreanbots"
 import { User } from "./User"
 
+import type { Koreanbots } from "../managers/Koreanbots"
 import type { FetchResponse, RawUserInstance } from "./core"
 
 interface UserQuery {

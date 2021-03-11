@@ -5,7 +5,7 @@ import { BotManager } from "./BotManager"
 
 import type { KoreanbotsOptions, ProxyValidator } from "../structures/core"
 
-class Koreanbots {
+export class Koreanbots {
     public readonly options!: KoreanbotsOptions
     public readonly api!: ReturnType<typeof APIRouter>
     public mybot!: Mybot
@@ -41,5 +41,3 @@ class Koreanbots {
         this.mybot = new Mybot(this, options.clientID)
     }
 }
-
-export default Koreanbots 

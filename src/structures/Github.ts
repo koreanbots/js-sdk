@@ -1,6 +1,6 @@
 import { Base } from "./Base"
 
-import type Koreanbots from "../managers/Koreanbots"
+import type { Koreanbots } from "../managers/Koreanbots"
 
 export class Github extends Base {
     public readonly username: string

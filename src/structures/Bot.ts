@@ -4,7 +4,7 @@ import { User } from "./User"
 import { Discord } from "./Discord"
 
 import type { RawBotInstance, BotFlags, Nullable, Category, BotState, BotStatus } from "./core"
-import type Koreanbots from "../managers/Koreanbots"
+import type { Koreanbots } from "../managers/Koreanbots"
 
 export class Bot extends Base {
     protected readonly data!: RawBotInstance

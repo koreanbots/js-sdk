@@ -2,7 +2,7 @@ import { Collection } from "discord.js"
 import { Bot } from "../structures/Bot"
 import { Nullable } from "../structures/core"
 
-import type Koreanbots from "./Koreanbots"
+import type { Koreanbots } from "./Koreanbots"
 
 export class BotManager {
     public cache: Collection<string, Nullable<Bot>>

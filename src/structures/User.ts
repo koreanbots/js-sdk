@@ -3,7 +3,7 @@ import { UserFlags } from "./core"
 import { Github } from "./Github"
 import { Collection } from "discord.js"
 
-import type Koreanbots from "../managers/Koreanbots"
+import type { Koreanbots } from "../managers/Koreanbots"
 import type { RawUserInstance, Nullable, FetchResponse } from "./core"
 import type { Bot } from "./Bot"
 

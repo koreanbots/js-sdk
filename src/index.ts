@@ -1,2 +1,2 @@
 
-export { default as Koreanbots } from "./managers/Koreanbots"
+export { Koreanbots } from "./managers/Koreanbots"

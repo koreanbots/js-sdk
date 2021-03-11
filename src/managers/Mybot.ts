@@ -1,6 +1,6 @@
 import { Bot } from "../structures/Bot"
 
-import type Koreanbots from "./Koreanbots"
+import type { Koreanbots } from "./Koreanbots"
 import type { RequestInit } from "node-fetch"
 import type { FetchResponse, RawBotInstance } from "../structures/core"
 
