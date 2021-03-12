@@ -1,11 +1,11 @@
 import { Base } from "./Base"
-import { RawBotInstance, UserFlags } from "./core"
+import { RawBotInstance, UserFlags } from "../util/types"
 import { Github } from "./Github"
 import { Collection } from "discord.js"
 import Utils from "../util"
 
 import type { Koreanbots } from "../client/Koreanbots"
-import type { RawUserInstance, Nullable, FetchResponse } from "./core"
+import type { RawUserInstance, Nullable, FetchResponse } from "../util/types"
 import type { Bot } from "./Bot"
 
 interface UserQuery {
@@ -15,7 +15,6 @@ interface UserQuery {
 }
 
 export class User extends Base {
-    protected readonly data!: RawUserInstance
     public readonly id: string
     public readonly flags: UserFlags
     public readonly github: Nullable<Github>
@@ -25,11 +24,6 @@ export class User extends Base {
 
     constructor(public koreanbots: Koreanbots, data: RawUserInstance) {
         super()
-
-        Object.defineProperty(this, "data", {
-            writable: false,
-            value: data
-        })
 
         this.id = data.id
         this.flags = data.flags

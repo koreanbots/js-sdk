@@ -4,7 +4,7 @@ import { User } from "../structures/User"
 import type {
     UserManagerOptions, FetchResponse, Nullable, RawUserInstance,
     ProxyValidator
-} from "../structures/core"
+} from "../util/types"
 import type { Koreanbots } from "../client/Koreanbots"
 import type { RequestInit } from "node-fetch"
 
@@ -40,15 +40,15 @@ export class UserManager {
     })
 
     constructor(public readonly koreanbots: Koreanbots, public readonly options: UserManagerOptions) {
-        this.options = options ?? {}
+        this.options = options ?? { cache: {} }
         const optionsProxy = new Proxy(this.options, UserManager.validator<UserManagerOptions>())
 
-        optionsProxy.max = options?.max ?? defaultCacheMaxSize
-        optionsProxy.maxAge = options?.maxAge ?? defaultCacheMaxAge
+        optionsProxy.cache.max = options?.cache?.max ?? defaultCacheMaxSize
+        optionsProxy.cache.maxAge = options?.cache?.maxAge ?? defaultCacheMaxAge
 
         this.cache = new LRU({
-            max: this.options.max,
-            maxAge: this.options.maxAge
+            max: this.options.cache.max,
+            maxAge: this.options.cache.maxAge
         })
     }
 

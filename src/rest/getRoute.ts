@@ -1,4 +1,4 @@
-import type { Version } from "../structures/core"
+import type { Version } from "../util/types"
 
 
 const defaultVersion = 2
@@ -21,3 +21,6 @@ export function getVersionRoute(version: Version = defaultVersion, unstable = fa
 
     return `${unstable ? unstableBaseUri : stableBaseUri}/v${version}`
 }
+
+export const getGlobalRoute = (unstable = false): string => 
+    unstable ? unstableBaseUri : stableBaseUri

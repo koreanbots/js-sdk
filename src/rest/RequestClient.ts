@@ -1,8 +1,8 @@
 import fetch from "node-fetch"
-import { getVersionRoute } from "./getRoute"
+import { getVersionRoute, getGlobalRoute } from "./getRoute"
 import Utils from "../util"
 import LRU from "lru-cache"
-import { version, snowflakeRegex } from "../util/Constants"
+import { version, snowflakeRegex, KoreanbotsInternal } from "../util/Constants"
 import AbortController, { AbortSignal } from "abort-controller"
 import https from "https"
 import { KoreanbotsAPIError } from "./KoreanbotsAPIError"
@@ -10,9 +10,10 @@ import { EventEmitter } from "events"
 
 import type {
     Version, FetchResponse, APIClientOptions, InternalFetchCache,
-    ProxyValidator, ValueOf
-} from "../structures/core"
-import type { RequestInit, Response } from "node-fetch"
+    ProxyValidator, ValueOf, RequestInitWithInternals
+} from "../util/types"
+import type { Response } from "node-fetch"
+import { URLSearchParams } from "node:url"
 
 
 const defaultCacheMaxSize = 250
@@ -28,6 +29,7 @@ class APIClient extends EventEmitter {
     protected readonly headers!: Record<string, string>
     public readonly version!: Version
     public readonly baseUri!: string
+    public readonly globalUri!: string
     public readonly token!: string
     public options: APIClientOptions
     public cache: LRU<string, FetchResponse>
@@ -115,6 +117,10 @@ class APIClient extends EventEmitter {
                 writable: false,
                 value: getVersionRoute(this.options.version, this.options.unstable)
             },
+            globalUri: {
+                writable: false,
+                value: getGlobalRoute(this.options.unstable)
+            },
             token: {
                 writable: false,
                 value: this.options.token
@@ -163,7 +169,7 @@ class APIClient extends EventEmitter {
         this.removeAllListeners()
     }
 
-    async request<T = unknown>(method: string, url: string, options?: RequestInit): Promise<FetchResponse<T>> {
+    async request<T = unknown>(method: string, url: string, options?: RequestInitWithInternals): Promise<FetchResponse<T>> {
         const controller = new AbortController()
         const timeout = this.setTimeout(() => {
             this.emit("timeout", {
@@ -173,25 +179,36 @@ class APIClient extends EventEmitter {
             })
             controller.abort()
         }, this.options.requestTimeout)
-        const mergedOptions: RequestInit = {
+        const mergedOptions = {
             ...options,
             headers: this.headers,
             method,
             agent: this._agent,
             signal: controller.signal
-        }
+        } as RequestInitWithInternals
 
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         if (this.cache.get(url) && (Date.now() - this.cache.get(url)!.updatedTimestamp!) <= 5000)
             // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
             return this.cache.get(url)! as FetchResponse<T>
 
+        const baseRoute = mergedOptions[KoreanbotsInternal]?.global
+            ? this.globalUri
+            : this.baseUri
+        const query = typeof mergedOptions[KoreanbotsInternal]?.query === "string"
+            ? `?${mergedOptions[KoreanbotsInternal]?.query}`
+            : mergedOptions[KoreanbotsInternal]?.query instanceof URLSearchParams 
+                ? `?${mergedOptions[KoreanbotsInternal]?.query?.toString()}`
+                : ""
+
+        const fetchUrl = `${baseRoute}${encodeURI(url)}${query}`
+
         let res: T
         let r: Response
         try {
-            const response = await fetch(`${this.baseUri}${encodeURI(url)}`, mergedOptions)
+            const response = await fetch(fetchUrl, mergedOptions)
 
-            res = await response.json()
+            res = await (mergedOptions[KoreanbotsInternal]?.bodyResolver ?? response.json())
             r = response
         } finally {
             this.clearTimeout(timeout)
@@ -273,19 +290,19 @@ class APIClient extends EventEmitter {
     }
 
     private scheduleRequests(delay: number) {
-        if (this._internals.size === 0) {
-            // change to other task (or the first global rate limited request will be freezed waiting for return)
-            process.nextTick(async () => {
-                await Utils.waitFor(delay + 1000)
+        if (this._internals.size !== 0) return
 
-                // store requests informations inside 'this._internals' cache and retry
-                await Promise.allSettled(
-                    [...this._internals].map(({ method, url, options }) => (
-                        this.request(method, url, options)
-                    ))
-                )
-            })
-        }
+        // change to other task (or the first global rate limited request will be freezed waiting for return)
+        process.nextTick(async () => {
+            await Utils.waitFor(delay + 1000)
+
+            // store requests informations inside 'this._internals' cache and retry
+            await Promise.allSettled(
+                [...this._internals].map(({ method, url, options }) => (
+                    this.request(method, url, options)
+                ))
+            )
+        })
     }
 }
 

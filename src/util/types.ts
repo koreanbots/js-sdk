@@ -1,10 +1,34 @@
 import type { Options } from "lru-cache"
-import type { RequestInit } from "node-fetch"
+import type { RequestInit, Response } from "node-fetch"
+import type { URLSearchParams } from "node:url"
+import type { KoreanbotsInternal } from "./Constants"
 
 export type Version = 1 | 2
 
 export type ValueOf<T> = T[keyof T]
 export type Nullable<T> = T | null
+
+export type WidgetType = "status" | "servers" | "votes"
+export type WidgetTarget = "bots"
+export type WidgetStyle = "classic" | "flat"
+export type WidgetFormat = "webp" | "png" | "jpg" | "jpeg" | "svg"
+
+export interface WidgetOptions {
+    style?: WidgetStyle
+    scale?: number
+    icon?: boolean
+    format?: WidgetFormat
+}
+
+export interface RequestInitWithInternals extends RequestInit {
+    [KoreanbotsInternal]?: InternalOptions
+}
+
+export interface InternalOptions {
+    global?: boolean
+    query?: URLSearchParams | string
+    bodyResolver?: <T = unknown>(res: Response) => Promise<T>
+}
 
 export enum BotFlags {
     NONE = 0 << 0,
@@ -103,9 +127,15 @@ export interface BaseOptions {
     noWarning?: boolean
 }
 
+export interface DefaultCacheOptions {
+    max?: number
+    maxAge?: number
+}
+
 export interface KoreanbotsOptions extends BaseOptions {
     apiOptions: APIClientOptions
     botOptions: BotManagerOptions
+    widgetOptions: WidgetManagerOptions
     userOptions: UserManagerOptions
     clientID: string
 }
@@ -120,16 +150,16 @@ export interface APIClientOptions extends BaseOptions {
 }
 
 export interface BotManagerOptions extends BaseOptions {
-    max?: number
-    maxAge?: number
+    cache: DefaultCacheOptions
 }
 
 export type UserManagerOptions = BotManagerOptions
+export type WidgetManagerOptions = BotManagerOptions
 
 export interface InternalFetchCache {
     method: string
     url: string
-    options?: RequestInit
+    options?: RequestInitWithInternals
 }
 
 export interface ProxyValidator<T> {

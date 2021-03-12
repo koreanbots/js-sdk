@@ -2,7 +2,7 @@ import { Bot } from "../structures/Bot"
 
 import type { Koreanbots } from "../client/Koreanbots"
 import type { RequestInit } from "node-fetch"
-import type { FetchResponse, RawBotInstance } from "../structures/core"
+import type { FetchResponse, RawBotInstance } from "../util/types"
 
 interface UpdateResponse {
     code: number

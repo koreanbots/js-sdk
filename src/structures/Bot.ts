@@ -3,12 +3,10 @@ import { Owners } from "./Owners"
 import { User } from "./User"
 import { Discord } from "./Discord"
 
-import type { RawBotInstance, BotFlags, Nullable, Category, BotState, BotStatus } from "./core"
+import type { RawBotInstance, BotFlags, Nullable, Category, BotState, BotStatus } from "../util/types"
 import type { Koreanbots } from "../client/Koreanbots"
 
 export class Bot extends Base {
-    protected readonly data!: RawBotInstance
-
     public id: string
     public name: string
     public tag: string
@@ -35,11 +33,6 @@ export class Bot extends Base {
 
     constructor(public readonly koreanbots: Koreanbots, data: RawBotInstance) {
         super()
-
-        Object.defineProperty(this, "data", {
-            writable: false,
-            value: data
-        })
 
         this.id = data.id
         this.name = data.name

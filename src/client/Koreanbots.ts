@@ -4,7 +4,7 @@ import { Mybot } from "../managers/Mybot"
 import { BotManager } from "../managers/BotManager"
 import { UserManager } from "../managers/UserManager"
 
-import type { KoreanbotsOptions, ProxyValidator } from "../structures/core"
+import type { KoreanbotsOptions, ProxyValidator } from "../util/types"
 
 export class Koreanbots {
     public readonly options!: KoreanbotsOptions

@@ -1,14 +1,13 @@
-import { snowflakeRegex as userIdRegex } from "../util/Constants"
+import { snowflakeRegex as userIdRegex, KoreanbotsInternal } from "../util/Constants"
 import APIClient from "./RequestClient"
 
-import type { RequestInit } from "node-fetch"
-import { APIClientOptions } from "../structures/core"
+import type { APIClientOptions, InternalOptions, RequestInitWithInternals } from "../util/types"
 
 type Serialize = () => string
-type APIRequest<T> = (options?: RequestInit) => T
+type APIRequest<T> = (options?: RequestInitWithInternals) => T
 type Proxy = {
     client: APIClient
-    <A>(): A
+    <A>(routeOptions?: InternalOptions): A
 }
 
 interface APIHandler<T> {
@@ -45,8 +44,8 @@ function buildRoute(options: APIClientOptions): Proxy {
     if (!cachedClient) cachedClient = new APIClient(options)
 
     const client = cachedClient
-    
-    const api = <A extends unknown>() => {
+
+    const api = <A extends unknown>(internalOptions: InternalOptions = { global: false }) => {
         const route = [""]
         const handler: APIHandler<ReturnType<typeof client.request>> = {
             get(target, name) {
@@ -60,11 +59,14 @@ function buildRoute(options: APIClientOptions): Proxy {
                         // All other parts of the route should be considered as part of the bucket identifier
                         else routeBucket.push(route[i])
                     }
-                    return (options?: RequestInit) =>
+                    return (options?: RequestInitWithInternals) =>
                         client.request(
                             name.toUpperCase(),
                             route.join("/"),
-                            options
+                            {
+                                ...options,
+                                [KoreanbotsInternal as symbol]: internalOptions
+                            }
                         )
                 }
 
@@ -79,7 +81,7 @@ function buildRoute(options: APIClientOptions): Proxy {
 
         return new Proxy(noop, handler) as unknown as A
     }
-    
+
     api.client = client
 
     return api

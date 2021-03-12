@@ -2,7 +2,7 @@ import { Collection } from "discord.js"
 import { User } from "./User"
 
 import type { Koreanbots } from "../client/Koreanbots"
-import type { FetchResponse, RawUserInstance } from "./core"
+import type { FetchResponse, RawUserInstance } from "../util/types"
 
 interface UserQuery {
     users(id: string): {
@@ -11,7 +11,7 @@ interface UserQuery {
 }
 
 export class Owners extends Collection<string, User> {
-    constructor(public readonly koreanbots: Koreanbots, protected readonly data: User[]) {
+    constructor(public readonly koreanbots: Koreanbots, data: User[]) {
         super()
 
         for (const owner of data) this.set(owner.id, owner)
