@@ -29,7 +29,7 @@ interface APIHandler<T> {
 // eslint-disable-next-line @typescript-eslint/no-empty-function
 const noop = () => { }
 const methods = ["get", "post", "delete", "patch", "put"]
-const routesWithId = /bots|users/
+const routesWithId = /bots|users|widget/
 const reflectors = [
     "toString",
     "valueOf",
