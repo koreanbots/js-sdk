@@ -3,7 +3,8 @@ import { User } from "../structures/User"
 
 import type {
     UserManagerOptions, FetchResponse, Nullable, RawUserInstance,
-    ProxyValidator
+    ProxyValidator,
+    FetchOptions
 } from "../util/types"
 import type { Koreanbots } from "../client/Koreanbots"
 import type { RequestInit } from "node-fetch"
@@ -52,8 +53,21 @@ export class UserManager {
         })
     }
 
-    async fetch(userID: string): Promise<FetchResponse<User>> {
+    async fetch(userID: string, options: FetchOptions = { force: false }): Promise<FetchResponse<User>> {
         if (!userID || typeof userID !== "string") throw new Error(`"userID" 값은 주어지지 않았거나 문자열이어야 합니다. (받은 타입: ${typeof userID})`)
+
+        const cache = this.cache.get(userID)
+        if (!options?.force && cache) {
+            const cacheObject: FetchResponse<User> = {
+                code: 304,
+                data: cache,
+                isCache: true,
+                ratelimitRemaining: 3,
+                url: `/users/${userID}`
+            }
+
+            return cacheObject
+        }
 
         const res = await this.koreanbots.api<UserQuery>().users(userID).get()
 

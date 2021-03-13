@@ -59,15 +59,23 @@ function buildRoute(options: APIClientOptions): Proxy {
                         // All other parts of the route should be considered as part of the bucket identifier
                         else routeBucket.push(route[i])
                     }
-                    return (options?: RequestInitWithInternals) =>
-                        client.request(
+                    return (options?: RequestInitWithInternals) => {
+                        let kInternal = {
+                            ...internalOptions
+                        }
+
+                        if (options?.[KoreanbotsInternal])
+                            kInternal = { ...internalOptions, ...options[KoreanbotsInternal] }
+
+                        return client.request(
                             name.toUpperCase(),
                             route.join("/"),
                             {
                                 ...options,
-                                [KoreanbotsInternal as symbol]: internalOptions
+                                [KoreanbotsInternal]: kInternal
                             }
                         )
+                    }
                 }
 
                 route.push(name)

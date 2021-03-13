@@ -1,6 +1,6 @@
 import type { Options } from "lru-cache"
 import type { RequestInit, Response } from "node-fetch"
-import type { URLSearchParams } from "node:url"
+import type { URLSearchParams } from "url"
 import type { KoreanbotsInternal } from "./Constants"
 
 export type Version = 1 | 2
@@ -19,6 +19,18 @@ export interface WidgetOptions {
     icon?: boolean
     format?: WidgetFormat
 }
+
+export interface FetchOptions {
+    force?: boolean
+}
+
+export interface WidgetData {
+    target: WidgetTarget
+    type: WidgetType
+    id: string
+}
+
+export type WidgetMakeOptions = WidgetData & WidgetOptions
 
 export interface RequestInitWithInternals extends RequestInit {
     [KoreanbotsInternal]?: InternalOptions

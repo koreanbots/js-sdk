@@ -3,6 +3,7 @@ import APIRouter from "../rest/APIRouter"
 import { Mybot } from "../managers/Mybot"
 import { BotManager } from "../managers/BotManager"
 import { UserManager } from "../managers/UserManager"
+import { WidgetManager } from "../managers/WidgetManager"
 
 import type { KoreanbotsOptions, ProxyValidator } from "../util/types"
 
@@ -12,6 +13,7 @@ export class Koreanbots {
     public mybot!: Mybot
     public bots: BotManager
     public users: UserManager
+    public widgets: WidgetManager
 
     static validator = <T>(): ProxyValidator<T> => ({
         set(obj, prop, value) {
@@ -42,6 +44,7 @@ export class Koreanbots {
 
         this.bots = new BotManager(this, options.botOptions)
         this.users = new UserManager(this, options.userOptions)
+        this.widgets = new WidgetManager(this, options.widgetOptions)
         this.mybot = new Mybot(this, options.clientID)
     }
 }

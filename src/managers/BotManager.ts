@@ -3,7 +3,7 @@ import { Bot } from "../structures/Bot"
 
 import type {
     BotManagerOptions, FetchResponse, Nullable, RawBotInstance,
-    ProxyValidator
+    ProxyValidator, FetchOptions
 } from "../util/types"
 import type { Koreanbots } from "../client/Koreanbots"
 import type { RequestInit } from "node-fetch"
@@ -52,8 +52,22 @@ export class BotManager {
         })
     }
 
-    async fetch(botID: string): Promise<FetchResponse<Bot>> {
+    async fetch(botID: string, options: FetchOptions = { force: false }): Promise<FetchResponse<Bot>> {
         if (!botID || typeof botID !== "string") throw new Error(`"botID" 값은 주어지지 않았거나 문자열이어야 합니다. (받은 타입: ${typeof botID})`)
+
+        const cache = this.cache.get(botID)
+
+        if (!options?.force && cache) {
+            const cacheObject: FetchResponse<Bot> = {
+                code: 304,
+                data: cache,
+                isCache: true,
+                ratelimitRemaining: 3,
+                url: `/bots/${botID}`
+            }
+
+            return cacheObject
+        }
 
         const res = await this.koreanbots.api<BotQuery>().bots(botID).get()
 

@@ -7,13 +7,13 @@ import AbortController, { AbortSignal } from "abort-controller"
 import https from "https"
 import { KoreanbotsAPIError } from "./KoreanbotsAPIError"
 import { EventEmitter } from "events"
+import { URLSearchParams } from "url"
 
 import type {
     Version, FetchResponse, APIClientOptions, InternalFetchCache,
     ProxyValidator, ValueOf, RequestInitWithInternals
 } from "../util/types"
 import type { Response } from "node-fetch"
-import { URLSearchParams } from "node:url"
 
 
 const defaultCacheMaxSize = 250
@@ -208,7 +208,7 @@ class APIClient extends EventEmitter {
         try {
             const response = await fetch(fetchUrl, mergedOptions)
 
-            res = await (mergedOptions[KoreanbotsInternal]?.bodyResolver ?? response.json())
+            res = await (mergedOptions[KoreanbotsInternal]?.bodyResolver?.(response) ?? response.json())
             r = response
         } finally {
             this.clearTimeout(timeout)
@@ -277,13 +277,13 @@ class APIClient extends EventEmitter {
             message: res?.message,
             isCache: false,
             ratelimitRemaining: parseInt(r.headers.get("x-ratelimit-remaining") ?? "0"),
-            url
+            url,
+            updatedTimestamp: Date.now()
         }
 
         if (method === "GET" && r.status === 200) this.cache.set(url, {
             ...response,
-            isCache: true,
-            updatedTimestamp: Date.now()
+            isCache: true
         })
 
         return response
