@@ -21,7 +21,7 @@ export class Koreanbots {
             case "clientID":
                 if (typeof value !== "string") throw new TypeError(`"clientID" 옵션은 문자열이여야 합니다. (받은 타입: ${typeof value})`)
                 if (!snowflakeRegex.test(obj[prop] as unknown as string)) 
-                    throw new TypeError("\"clientID\" 옵션은 디스코드의 ID 체계인 Snowflake여야 합니다.")
+                    throw new TypeError("\"clientID\" 옵션은 Snowflake여야 합니다.")
                 break
             }
 
