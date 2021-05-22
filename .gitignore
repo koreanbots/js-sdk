@@ -1,5 +1,6 @@
 node_modules
-test/self/
+tests/local/
 yarn-*
-test/config.json
+tests/config.json
 dist/
+coverage/

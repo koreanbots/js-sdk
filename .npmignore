@@ -1,5 +1,6 @@
 node_modules/
 yarn-*
-test/
+tests/
 .github/
 *.config.js
+coverage/
