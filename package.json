@@ -3,20 +3,19 @@
   "version": "3.0.0-alpha3",
   "description": "JavaScript/TypeScript SDK for KOREANBOTS",
   "main": "dist/src/index.js",
+  "typings": "diist/src/index.d.ts",
   "license": "MIT",
   "scripts": {
-    "test": "cross-env NODE_ENV=test jest --forceExit",
-    "test:withlint": "eslint . --fix && cross-env NODE_ENV=test jest --forceExit",
-    "test:onlylint": "eslint . --fix",
-    "build:typecheck": "tsc",
-    "build": "etsc",
+    "test": "cross-env NODE_ENV=test jest --forceExit --detectOpenHandles",
+    "test:local": "SWC_NODE_PROJECT=./tsconfig.test.json node -r @swc-node/register tests/local/index.ts",
+    "build ": "tsc",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "commit": "git-cz"
   },
   "repository": {
     "type": "git",
-    "url": "ssh://git@github.com:koreanbots/js-sdk.git"
+    "url": "https://github.com/koreanbots/js-sdk.git"
   },
   "author": {
     "email": "zero734kr@gmail.com",
@@ -35,16 +34,16 @@
   "dependencies": {
     "abort-controller": "^3.0.0",
     "discord.js": ">=12",
-    "lru-cache": "^6.0.0",
     "node-fetch": "^2.6.1"
   },
   "devDependencies": {
     "@commitlint/cli": "^12.0.1",
     "@commitlint/config-conventional": "^12.0.1",
     "@commitlint/prompt": "^12.0.1",
+    "@swc-node/jest": "^1.3.0",
+    "@swc-node/register": "^1.3.0",
     "@tsconfig/recommended": "^1.0.1",
     "@types/jest": "^26.0.20",
-    "@types/lru-cache": "^5.1.0",
     "@types/node": "^14.14.6",
     "@types/node-fetch": "^2.5.7",
     "@types/sharp": "^0.27.1",
@@ -52,9 +51,6 @@
     "@typescript-eslint/parser": "^4.6.0",
     "commitizen": "^4.2.2",
     "cross-env": "^7.0.3",
-    "esbuild": "^0.9.0",
-    "esbuild-jest": "^0.5.0",
-    "esbuild-node-tsc": "^1.2.0",
     "eslint": "^7.12.1",
     "husky": "^5.1.3",
     "jest": "^26.6.3",
