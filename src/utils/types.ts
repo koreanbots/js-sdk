@@ -12,6 +12,10 @@ export type WidgetTarget = "bots"
 export type WidgetStyle = "classic" | "flat"
 export type WidgetFormat = "webp" | "png" | "jpg" | "jpeg" | "svg"
 
+export interface Vote { 
+    voted: boolean
+    lastVote: number 
+}
 export interface WidgetOptions {
     style?: WidgetStyle
     scale?: number
@@ -135,8 +139,8 @@ export interface FetchResponse<T = unknown> {
     updatedTimestamp?: number
 }
 
-export interface BaseOptions {
-    noWarning?: boolean
+export type BaseOptions = {
+
 }
 
 export interface DefaultCacheOptions {
@@ -166,13 +170,6 @@ export interface BotManagerOptions extends BaseOptions {
 
 export type UserManagerOptions = BotManagerOptions
 export type WidgetManagerOptions = BotManagerOptions
-
-export interface InternalFetchCache {
-    method: string
-    url: string
-    options?: RequestInitWithInternals
-}
-
 export interface ProxyValidator<T> {
     set(obj: T, prop: keyof T, value: ValueOf<T>): boolean
 }
