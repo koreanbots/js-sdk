@@ -10,7 +10,7 @@ export abstract class Base {
     }
 
     toJSON(): this {
-        return this._deserialize(this._serialize(this))
+        return this._deserialize(this._serialize({ ...this }))
     }
 
     valueOf(): string {
