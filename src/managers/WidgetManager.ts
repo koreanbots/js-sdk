@@ -1,12 +1,14 @@
-import LRU from "lru-cache"
+import LifetimeCollection from "../utils/Collection"
 import { Widget } from "../structures/Widget"
-import { CacheOptionsValidator, KoreanbotsInternal } from "../util/Constants"
+import { KoreanbotsInternal } from "../utils/Constants"
 import { URLSearchParams } from "url"
+import { CacheOptionsValidator } from "../utils"
+import { createHash } from "crypto"
 
 import type {
     WidgetManagerOptions, FetchResponse, Nullable, WidgetOptions, WidgetMakeOptions,
     WidgetTarget, WidgetType, RequestInitWithInternals, DefaultCacheOptions, FetchOptions
-} from "../util/types"
+} from "../utils/types"
 import type { Koreanbots } from "../client/Koreanbots"
 import type { Response } from "node-fetch"
 
@@ -22,9 +24,9 @@ const defaultCacheMaxSize = 100
 const defaultCacheMaxAge = 60000 * 60
 
 export class WidgetManager {
-    public cache: LRU<string, Nullable<Widget>>
+    public cache: LifetimeCollection<string, Nullable<Widget>>
 
-    constructor(public readonly koreanbots: Koreanbots, public readonly options: WidgetManagerOptions) {
+    constructor(public readonly koreanbots: Koreanbots, public readonly options?: WidgetManagerOptions) {
         this.options = options ?? { cache: {} }
 
         const cacheOptionsProxy = new Proxy(this.options.cache, CacheOptionsValidator<DefaultCacheOptions>())
@@ -33,7 +35,7 @@ export class WidgetManager {
         cacheOptionsProxy.max = options?.cache?.max ?? defaultCacheMaxSize
         cacheOptionsProxy.maxAge = options?.cache?.maxAge ?? defaultCacheMaxAge
 
-        this.cache = new LRU({
+        this.cache = new LifetimeCollection({
             max: this.options.cache.max,
             maxAge: this.options.cache.maxAge
         })
@@ -51,7 +53,7 @@ export class WidgetManager {
         return `${this.koreanbots.api.client.globalUri}/widget/bots/servers/${id}.svg`
     }
 
-    async getVoteWidget(id: string, options: WidgetOptions = { format: "png" }): Promise<Buffer> {
+    async getVoteWidget(id: string, options: WidgetOptions = { format: "png" }): Promise<Widget> {
         const res = await this._fetch({
             target: "bots",
             type: "votes",
@@ -59,14 +61,14 @@ export class WidgetManager {
             ...options
         })
 
-        const { buffer } = res.data ?? { buffer: new Error(`"${id}" 봇에 대한 투표 수 위젯을 불러오는 것에 실패 했습니다.`) }
+        const buffer = res ?? new Error(`"${id}" 봇에 대한 투표 수 위젯을 불러오는 것에 실패 했습니다.`)
 
         if (buffer instanceof Error) throw buffer
 
         return buffer
     }
 
-    async getServerWidget(id: string, options: WidgetOptions = { format: "png" }): Promise<Buffer> {
+    async getServerWidget(id: string, options: WidgetOptions = { format: "png" }): Promise<Widget> {
         const res = await this._fetch({
             target: "bots",
             type: "servers",
@@ -74,14 +76,14 @@ export class WidgetManager {
             ...options
         })
 
-        const { buffer } = res.data ?? { buffer: new Error(`"${id}" 봇에 대한 서버 수 위젯을 불러오는 것에 실패 했습니다.`) }
+        const buffer = res ?? new Error(`"${id}" 봇에 대한 서버 수 위젯을 불러오는 것에 실패 했습니다.`)
 
         if (buffer instanceof Error) throw buffer
 
         return buffer
     }
 
-    async getStatusWidget(id: string, options: WidgetOptions = { format: "png" }): Promise<Buffer> {
+    async getStatusWidget(id: string, options: WidgetOptions = { format: "png" }): Promise<Widget> {
         const res = await this._fetch({
             target: "bots",
             type: "status",
@@ -89,7 +91,7 @@ export class WidgetManager {
             ...options
         })
 
-        const { buffer } = res.data ?? { buffer: new Error(`"${id}" 봇에 대한 상태 위젯을 불러오는 것에 실패 했습니다.`) }
+        const buffer = res ?? new Error(`"${id}" 봇에 대한 상태 위젯을 불러오는 것에 실패 했습니다.`)
 
         if (buffer instanceof Error) throw buffer
 
@@ -99,23 +101,23 @@ export class WidgetManager {
     /**
      * 직접적인 사용이 권장되지 않습니다.
      */
-    async _fetch(options: WidgetMakeOptions, fetchOptions: FetchOptions = { force: false }): Promise<FetchResponse<Widget>> {
+    async _fetch(options: WidgetMakeOptions, fetchOptions: FetchOptions = { cache: true, force: false }): Promise<Widget> {
         const query = new URLSearchParams()
         const queryOptions: (keyof WidgetOptions)[] = ["icon", "scale", "style"]
 
-        const cache = this.cache.get(Object.keys(options).join("/"))
-
-        if (fetchOptions?.force && cache) {
-            const cacheObject: FetchResponse<Widget> = {
-                code: 304,
-                data: cache,
-                isCache: true,
-                ratelimitRemaining: 3,
-                url: `/widget/${options.target}/${options.type}/${options.id}.svg`
-            }
-
-            return cacheObject
+        const cacheKey = {
+            id: options.id,
+            style: options.style,
+            scale: options.scale,
+            icon: options.icon,
+            target: options.target,
+            type: options.type
         }
+
+        const key = createHash("sha256").update(JSON.stringify(cacheKey)).digest("hex")
+        const cache = this.cache.get(key)
+
+        if (!fetchOptions?.force && cache) return cache
 
         for (const queryOption of queryOptions) {
             const value = options[queryOption]?.toString?.() || options[queryOption] as string
@@ -129,12 +131,14 @@ export class WidgetManager {
                     bodyResolver: <T>(res: Response) => res.buffer() as unknown as T
                 }
             }),
-            options?.format !== "svg" ? import("sharp") : (() => { throw new Error(`"${options.format}" 파일 형식으로 변환하기 위한 모듈 "sharp"를 찾을 수 없습니다.`) })()
+            import("sharp").catch(() => {
+                throw new Error(`"${options.format}" 파일 형식으로 변환하기 위한 모듈 "sharp"를 찾을 수 없습니다.`)
+            })
         ])
 
         if (sharp.status === "rejected") throw new Error(sharp.reason)
 
-        if (res.status === "fulfilled") {
+        if (res.status === "fulfilled" && options?.format !== "svg") {
             const sh = sharp.value.default
             const buffer = res.value.data
 
@@ -160,17 +164,16 @@ export class WidgetManager {
             res.value.data = await converted
         }
 
-        const instance = res.status === "fulfilled" && 
-            new Widget(this.koreanbots, res.value.data ?? Buffer.from("0"), options)
+        const instance = res.status === "fulfilled" &&
+            new Widget(this.koreanbots, res.value.data ?? Buffer.alloc(0), options)
 
         if (!instance) throw new Error((res as PromiseRejectedResult).reason)
 
-        this.cache.set(
-            Object.keys(options).join("/"), 
+        if (fetchOptions.cache) this.cache.set(
+            key,
             instance
         )
 
-        // @ts-expect-error PromiseRejectedResult is being filtered above
-        return { ...res.value, data: instance }
+        return instance
     }
 }
