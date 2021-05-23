@@ -1,8 +1,8 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import fetch from "node-fetch"
 import { getVersionRoute, getGlobalRoute } from "./getRoute"
-import Utils from "../util"
-import LRU from "lru-cache"
-import { version, snowflakeRegex, KoreanbotsInternal } from "../util/Constants"
+import * as Utils from "../utils"
+import { version, snowflakeRegex, KoreanbotsInternal } from "../utils/Constants"
 import AbortController, { AbortSignal } from "abort-controller"
 import https from "https"
 import { KoreanbotsAPIError } from "./KoreanbotsAPIError"
@@ -10,20 +10,15 @@ import { EventEmitter } from "events"
 import { URLSearchParams } from "url"
 
 import type {
-    Version, FetchResponse, APIClientOptions, InternalFetchCache,
+    Version, FetchResponse, APIClientOptions,
     ProxyValidator, ValueOf, RequestInitWithInternals
-} from "../util/types"
+} from "../utils/types"
 import type { Response } from "node-fetch"
 
-
-const defaultCacheMaxSize = 250
-const defaultCacheMaxAge = 60000 * 5
 const defaultRetryLimit = 5
-const defaultRequestTimeout = 15_000
+const defaultRequestTimeout = 30_000
 const defaultApiVersion = 2
-const defaultNoWarning = false
 const defaultUnstableOption = false
-
 
 class APIClient extends EventEmitter {
     protected readonly headers!: Record<string, string>
@@ -31,9 +26,8 @@ class APIClient extends EventEmitter {
     public readonly baseUri!: string
     public readonly globalUri!: string
     public readonly token!: string
+    public globalReset: null | number
     public options: APIClientOptions
-    public cache: LRU<string, FetchResponse>
-    private _internals: Set<InternalFetchCache>
     private _timeouts: Set<NodeJS.Timeout | number>
     private _agent?: https.Agent
     private _destroyed: boolean
@@ -80,26 +74,19 @@ class APIClient extends EventEmitter {
     constructor(options: APIClientOptions) {
         super()
 
-        this.options = options ?? {}
+        this.options = options
+
         const optionsProxy = new Proxy(this.options, APIClient.validator<APIClientOptions>())
 
         optionsProxy.token = options.token
         optionsProxy.version = options.version ?? defaultApiVersion
-        // TODO(zero734kr): stop using warning and use event emitter
-        optionsProxy.noWarning = options.noWarning ?? defaultNoWarning
-        optionsProxy.cacheOptions = options.cacheOptions ?? { max: defaultCacheMaxSize, maxAge: defaultCacheMaxAge }
         optionsProxy.requestTimeout = options.requestTimeout ?? defaultRequestTimeout
         optionsProxy.retryLimit = options.retryLimit ?? defaultRetryLimit
         optionsProxy.unstable = options.unstable ?? defaultUnstableOption
 
-        /**
-         * API를 향한 요청들의 캐시
-         */
-        this.cache = new LRU<string, FetchResponse>(this.options.cacheOptions)
+        this.globalReset = null
 
         this._destroyed = false
-
-        this._internals = new Set<InternalFetchCache>()
         this._timeouts = new Set<NodeJS.Timeout | number>()
         this._agent = https.Agent ? new https.Agent({ keepAlive: !this._destroyed }) : void 0
         this._retries = new Set<{ id: AbortSignal, retry: number }>()
@@ -163,22 +150,20 @@ class APIClient extends EventEmitter {
         this._destroyed = true
 
         for (const timeout of [...this._timeouts]) this.clearTimeout(timeout as NodeJS.Timeout)
-        this._internals.clear()
+
         this._retries.clear()
 
         this.removeAllListeners()
     }
 
     async request<T = unknown>(method: string, url: string, options?: RequestInitWithInternals): Promise<FetchResponse<T>> {
+        if (this.globalReset) {
+            const delayFor = this.globalReset - Date.now()
+
+            await Utils.waitFor(delayFor)
+        }
+
         const controller = new AbortController()
-        const timeout = this.setTimeout(() => {
-            this.emit("timeout", {
-                url,
-                method,
-                [Symbol("requestOptions")]: options
-            })
-            controller.abort()
-        }, this.options.requestTimeout)
         const mergedOptions = {
             ...options,
             headers: this.headers,
@@ -186,29 +171,35 @@ class APIClient extends EventEmitter {
             agent: this._agent,
             signal: controller.signal
         } as RequestInitWithInternals
-
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        if (this.cache.get(url) && (Date.now() - this.cache.get(url)!.updatedTimestamp!) <= 5000)
-            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-            return this.cache.get(url)! as FetchResponse<T>
-
         const baseRoute = mergedOptions[KoreanbotsInternal]?.global
             ? this.globalUri
             : this.baseUri
         const query = typeof mergedOptions[KoreanbotsInternal]?.query === "string"
             ? `?${mergedOptions[KoreanbotsInternal]?.query}`
-            : mergedOptions[KoreanbotsInternal]?.query instanceof URLSearchParams 
+            : mergedOptions[KoreanbotsInternal]?.query instanceof URLSearchParams
                 ? `?${mergedOptions[KoreanbotsInternal]?.query?.toString()}`
                 : ""
 
         const fetchUrl = `${baseRoute}${encodeURI(url)}${query}`
+        const timeout = this.setTimeout(() => {
+            this.emit("timeout", {
+                url,
+                method,
+                [Symbol("requestOptions")]: options
+            })
+            controller.abort()
+        }, this.options.requestTimeout!)
 
         let res: T
         let r: Response
         try {
             const response = await fetch(fetchUrl, mergedOptions)
 
-            res = await (mergedOptions[KoreanbotsInternal]?.bodyResolver?.(response) ?? response.json())
+            res = await (mergedOptions[KoreanbotsInternal]?.bodyResolver?.(response) ?? response.text()
+                // code for debug
+                .then(a => Utils.isJSON(a) ? JSON.parse(a) : (() => { throw a })())
+                .catch(console.error)
+            )
             r = response
         } finally {
             this.clearTimeout(timeout)
@@ -217,7 +208,7 @@ class APIClient extends EventEmitter {
         if ((r.status >= 400 || r.status < 600) && r.status !== 429 && r.status !== 404) {
             const { retry } = [...this._retries].find(e => e.id === controller.signal) ?? { retry: 0 }
 
-            if (retry >= this.options.retryLimit) throw new KoreanbotsAPIError(
+            if (retry >= this.options.retryLimit!) throw new KoreanbotsAPIError(
                 // @ts-expect-error check
                 `올바르지 않은 응답이 반환 되었습니다. ${res.data?.message || JSON.stringify(res.data)}`,
                 r.status,
@@ -227,10 +218,14 @@ class APIClient extends EventEmitter {
             this._retries.add({ id: controller.signal, retry: retry + 1 })
         }
 
-        // TODO(zero734kr): bypass this and add to 'this._internals' if is global rate limit
         if (r.status === 429) {
-            const delay = parseInt(r.headers.get("x-ratelimit-reset") ?? "0")
+            const delay = (parseInt(r.headers.get("x-ratelimit-reset") ?? "0") * 1000) - Date.now()
             const isGlobal = Boolean(r.headers.get("x-ratelimit-global"))
+
+            this.clearTimeout(timeout)
+
+            // request again if `this.globalReset` was already defined to handle global rate limit
+            if (this.globalReset) return this.request(method, url, options)
 
             this.emit("rateLimit", {
                 isGlobal,
@@ -245,28 +240,15 @@ class APIClient extends EventEmitter {
             if (!isGlobal) {
                 if (delay === 0) return this.request(method, url, options)
 
-                await Utils.waitFor(delay + 1000)
+                await Utils.waitFor(delay)
                 return this.request(method, url, options)
             }
 
-            // handle global rate limit from here
-            // if global rate limit handler is already started
-            this.scheduleRequests(delay)
+            this.globalReset = parseInt(r.headers.get("x-ratelimit-reset") ?? "0") * 1000
 
-            this._internals.add({
-                method,
-                url,
-                options
-            })
+            await Utils.waitFor(this.globalReset - Date.now())
 
-            return {
-                code: 429,
-                data: null,
-                message: `Rate limited ${isGlobal ? "globally" : `from ${url}`}`,
-                isCache: false,
-                ratelimitRemaining: 0,
-                url
-            }
+            return this.request(method, url, options)
         }
 
         const response = {
@@ -281,28 +263,7 @@ class APIClient extends EventEmitter {
             updatedTimestamp: Date.now()
         }
 
-        if (method === "GET" && r.status === 200) this.cache.set(url, {
-            ...response,
-            isCache: true
-        })
-
         return response
-    }
-
-    private scheduleRequests(delay: number) {
-        if (this._internals.size !== 0) return
-
-        // change to other task (or the first global rate limited request will be freezed waiting for return)
-        process.nextTick(async () => {
-            await Utils.waitFor(delay + 1000)
-
-            // store requests informations inside 'this._internals' cache and retry
-            await Promise.allSettled(
-                [...this._internals].map(({ method, url, options }) => (
-                    this.request(method, url, options)
-                ))
-            )
-        })
     }
 }
 
