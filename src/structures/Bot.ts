@@ -3,8 +3,16 @@ import { Owners } from "./Owners"
 import { User } from "./User"
 import { Discord } from "./Discord"
 
-import type { RawBotInstance, BotFlags, Nullable, Category, BotState, BotStatus } from "../util/types"
+import type { RequestInit } from "node-fetch"
+import type { RawBotInstance, BotFlags, Nullable, Category, BotState, BotStatus, FetchResponse } from "../utils/types"
 import type { Koreanbots } from "../client/Koreanbots"
+
+interface BotQuery {
+    bots(botID: string): {
+        get(options?: RequestInit): Promise<FetchResponse<RawBotInstance>>
+    }
+}
+
 
 export class Bot extends Base {
     public id: string
@@ -64,7 +72,13 @@ export class Bot extends Base {
         this.state = data.state
     }
 
-    getVotes(): number {
-        return 0
+    async fetchVotes({ cache }: { cache: boolean } = { cache: true }): Promise<number> {
+        const { data, message } = await this.koreanbots.api<BotQuery>().bots(this.id).get()
+
+        if (!data) throw new Error(message)
+
+        if (cache) this.votes = data.votes
+
+        return this.votes
     }
 }
