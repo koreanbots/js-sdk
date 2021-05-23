@@ -2,7 +2,7 @@ import { Collection } from "discord.js"
 import { User } from "./User"
 
 import type { Koreanbots } from "../client/Koreanbots"
-import type { FetchResponse, RawUserInstance } from "../util/types"
+import type { FetchResponse, RawUserInstance } from "../utils/types"
 
 interface UserQuery {
     users(id: string): {
@@ -11,13 +11,13 @@ interface UserQuery {
 }
 
 export class Owners extends Collection<string, User> {
-    constructor(public readonly koreanbots: Koreanbots, data: User[]) {
+    constructor(public readonly koreanbots: Koreanbots, private data: User[]) {
         super()
 
         for (const owner of data) this.set(owner.id, owner)
     }
 
-    public async fetch(): Promise<(FetchResponse<RawUserInstance>)[]> {
+    public async fetch(): Promise<(RawUserInstance | null)[]> {
         const result = await Promise.all(this.map(user => (
             this.koreanbots.api<UserQuery>().users(user.id).get()
         )))
@@ -27,6 +27,6 @@ export class Owners extends Collection<string, User> {
             this.set(owner.data!.id, new User(this.koreanbots, owner.data!))
         })
 
-        return result
+        return result.map(f => f.data)
     }
 }
