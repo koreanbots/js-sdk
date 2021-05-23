@@ -16,7 +16,10 @@ class KoreanbotsClient extends Client {
         this.once("ready", this._ok)
     }
 
-    get _getGuildCount() {
+    async _getGuildCount() {
+        if (this.shard?.count && this.shard?.count > 1) return this.shard.fetchClientValues("guilds.cache.size")
+            .then(numbers => numbers.reduce((a, c) => a + c))
+
         return DjsVersion >= 12 ? this.guilds.cache.size : this.guilds.size
     }
 
@@ -24,18 +27,21 @@ class KoreanbotsClient extends Client {
         throw new Error("Can't modify value as " + v)
     }
 
-    _update() {
-        return this.koreanbots.update(this._getGuildCount)
+    async _update() {
+        const count = await this._getGuildCount()
+        
+        return this.koreanbots.update(count)
     }
 
-    _ok() {
-        if (!this._getGuildCount) return setTimeout(() => this._ok(), 1000)
+    async _ok() {
+        const count = await this._getGuildCount()
+        if (!count) return setTimeout(this._ok.bind(this), 1000)
 
         const { MyBot } = require("./")
         this.koreanbots = new MyBot(this.options.koreanbotsToken, this.options.koreanbotsOptions)
 
-        this._update()
-        this.koreanbotsInterval = setInterval(()=> this._update(), this.options.koreanbotsOptions.interval)
+        await this._update()
+        this.koreanbotsInterval = setInterval(this._update.bind(this), this.options.koreanbotsOptions.interval)
     }
 } 
 
