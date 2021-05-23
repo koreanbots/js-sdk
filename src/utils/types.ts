@@ -1,3 +1,4 @@
+import type { ClientOptions } from "discord.js"
 import type { RequestInit, Response } from "node-fetch"
 import type { URLSearchParams } from "url"
 import type { KoreanbotsInternal } from "./Constants"
@@ -11,6 +12,13 @@ export type WidgetType = "status" | "servers" | "votes"
 export type WidgetTarget = "bots"
 export type WidgetStyle = "classic" | "flat"
 export type WidgetFormat = "webp" | "png" | "jpg" | "jpeg" | "svg"
+
+export interface KoreanbotsClientOptions extends ClientOptions {
+    koreanbotsOptions: Omit<KoreanbotsOptions, "clientID"> & { clientID?: string }
+    koreanbotsClientOptions?: {
+        updateInterval?: number
+    }
+}
 
 export interface Vote { 
     voted: boolean
@@ -154,6 +162,8 @@ export interface KoreanbotsOptions extends BaseOptions {
     widgetOptions?: WidgetManagerOptions
     userOptions?: UserManagerOptions
     clientID: string
+    max?: number
+    maxAge?: number
 }
 
 export interface APIClientOptions extends BaseOptions {

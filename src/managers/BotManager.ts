@@ -21,6 +21,23 @@ const defaultCacheMaxAge = 60000 * 60
 export class BotManager {
     public cache: LifetimeCollection<string, Nullable<Bot>>
 
+    /**
+     * 새로운 BotManager 인스턴스를 만듭니다.
+     * @param koreanbots 
+     * @param options 
+     * @example
+     * new BotManager(
+     *     new Koreanbots({
+     *         // ...
+     *     })),
+     *     {
+     *         cache: {
+     *             max: 150,
+     *             maxAge: 60000
+     *         }
+     *     }
+     * )
+     */
     constructor(public readonly koreanbots: Koreanbots, public readonly options?: BotManagerOptions) {
         this.options = options ?? { cache: {} }
         const optionsProxy = new Proxy(this.options, CacheOptionsValidator<BotManagerOptions>())
@@ -34,6 +51,24 @@ export class BotManager {
         })
     }
 
+    /**
+     * KOREANBOTS에서 봇을 불러옵니다.
+     * @param botID 
+     * @param options 
+     * @returns {Promise<Bot>}
+     * @example
+     * koreanbots.bots.fetch("12345678901234567")
+     *     .then(bot => console.log(`${bot.name} 봇을 불러왔습니다!`))
+     *     .catch(err => console.error(`다음 오류로 인해 봇을 불러오는 것에 실패 했습니다. ${err.stack}`))
+     * @example
+     * koreanbots.bots.fetch("12345678901234567", { force: true })
+     *     .then(bot => console.log(`캐시를 무시하고 ${bot.name} 봇을 불러온 후, 캐시에 저장 했습니다.`))
+     *     .catch(err => console.error(`다음 오류로 인해 봇을 불러오는 것에 실패 했습니다. ${err.stack}`))
+     * @example
+     * koreanbots.bots.fetch("12345678901234567", { cache: false, force: true })
+     *     .then(bot => console.log(`캐시를 무시하고 ${bot.name} 봇을 불러왔으며, 캐시에 저장하지 않았습니다.`))
+     *     .catch(err => console.error(`다음 오류로 인해 봇을 불러오는 것에 실패 했습니다. ${err.stack}`))
+     */
     async fetch(botID: string, options: FetchOptions = { cache: true, force: false }): Promise<Bot> {
         if (!botID || typeof botID !== "string") throw new Error(`"botID" 값은 주어지지 않았거나 문자열이어야 합니다. (받은 타입: ${typeof botID})`)
 

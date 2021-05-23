@@ -32,11 +32,16 @@ export class Mybot {
     public updatedTimestamp?: number
     public votes: LifetimeCollection<string, Vote>
 
+    /**
+     * 새로운 Mybot 인스턴스를 생성합니다.
+     * @param koreanbots 
+     * @param clientID 
+     */
     constructor(public readonly koreanbots: Koreanbots, public readonly clientID: string) {
         this.bot = null
 
         this.votes = new LifetimeCollection({
-            maxAge: 60000 * 60 * 12 // 12 hours because it resets after 12 hours
+            maxAge: 10000
         })
 
         this.mybotInit()
@@ -49,6 +54,18 @@ export class Mybot {
         return this.bot = new Bot(this.koreanbots, res.data!)
     }
 
+    /**
+     * 해당 유저가 내 봇에 하트를 눌렀는지 체크합니다. (cache TTL: 10초)
+     * @param id 
+     * @returns 
+     * @example
+     * koreanbots.mybot.checkVote("12345678901234567")
+     *     .then(voted => {
+     *         if (voted) return message.channel.send(`${message.author} 님, 하트를 눌러주셔서 감사합니다!`)
+     * 
+     *         return message.channel.send(`${message.author} 님, 하트를 아직 누르지 않으셨습니다.`)
+     *     })
+     */
     async checkVote(id: string): Promise<Vote> {
         const cache = this.votes.get(id)
         if (cache) return cache
@@ -67,6 +84,13 @@ export class Mybot {
         return res.data
     }
 
+    /**
+     * 봇의 서버 수를 업데이트합니다.
+     * @param count 
+     * @returns 
+     * @example
+     * koreanbots.mybot.update(client.guilds.cache.size)
+     */
     async update(count: number): Promise<UpdateResponse> {
         if (this.lastGuildCount === count) return {
             code: 304,
@@ -89,6 +113,9 @@ export class Mybot {
 
         this.updatedTimestamp = Date.now()
         this.updatedAt = new Date(this.updatedTimestamp || Date.now())
+
+        if (this.koreanbots?.api.client.listeners("serverCountUpdated"))
+            this.koreanbots?.api.client.emit("serversUpdated", { ...response.data, servers: count })
 
         return response.data
     }

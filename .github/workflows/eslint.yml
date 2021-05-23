@@ -1,5 +1,6 @@
 on:
   push:
+    branches: [master]
   pull_request:
 
 jobs:
@@ -14,8 +15,8 @@ jobs:
       with:
         node-version: 14
 
-    - name: npm install
-      run: npm install
+    - name: yarn install
+      run: yarn install
 
     - name: ESLint
       uses: icrawl/action-eslint@v1

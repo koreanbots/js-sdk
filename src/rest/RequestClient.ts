@@ -94,6 +94,10 @@ class APIClient extends EventEmitter {
         this.setupReadonly(options)
     }
 
+    public on(event: "rateLimit" | "timeout" | "serverCountUpdated", listener: (...args: unknown[]) => void): this {
+        return super.on(event, listener)
+    }
+
     private setupReadonly(options: APIClientOptions) {
         Object.defineProperties(this, {
             version: {
@@ -232,7 +236,7 @@ class APIClient extends EventEmitter {
                 path: url,
                 method,
                 limit: parseInt(r.headers.get("x-ratelimit-limit") ?? "0"),
-                retryAfter: parseInt(r.headers.get("x-ratelimit-reset") ?? "0"),
+                retryAfter: parseInt(r.headers.get("x-ratelimit-reset") ?? "0") * 1000,
                 [Symbol("requestOptions")]: options
             })
 
