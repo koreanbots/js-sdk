@@ -1,4 +1,4 @@
-import type { Version } from "../util/types"
+import type { Version } from "../utils/types"
 
 
 const defaultVersion = 2
