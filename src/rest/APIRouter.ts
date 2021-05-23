@@ -41,9 +41,7 @@ const reflectors = [
 
 let cachedClient: APIClient | undefined
 function buildRoute(options: APIClientOptions): Proxy {
-    if (!cachedClient) cachedClient = new APIClient(options)
-
-    const client = cachedClient
+    const client = cachedClient || (cachedClient = new APIClient(options))
 
     const api = <A extends unknown>(internalOptions: InternalOptions = { global: false }) => {
         const route = [""]
