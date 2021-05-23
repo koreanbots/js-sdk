@@ -7,7 +7,7 @@
   "license": "MIT",
   "scripts": {
     "test": "cross-env NODE_ENV=test jest --forceExit --detectOpenHandles",
-    "test:local": "SWC_NODE_PROJECT=./tsconfig.test.json node -r @swc-node/register tests/local/index.ts",
+    "test:local": "node tests/local/index.js",
     "coverage": "yarn test --coverage",
     "build ": "tsc",
     "lint": "eslint .",
