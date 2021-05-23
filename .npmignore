@@ -4,3 +4,4 @@ tests/
 .github/
 *.config.js
 coverage/
+.env.test

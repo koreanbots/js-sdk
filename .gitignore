@@ -4,3 +4,4 @@ yarn-*
 tests/config.json
 dist/
 coverage/
+.env.test
