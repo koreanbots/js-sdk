@@ -1,7 +1,7 @@
-import { snowflakeRegex as userIdRegex, KoreanbotsInternal } from "../util/Constants"
+import { snowflakeRegex as userIdRegex, KoreanbotsInternal } from "../utils/Constants"
 import APIClient from "./RequestClient"
 
-import type { APIClientOptions, InternalOptions, RequestInitWithInternals } from "../util/types"
+import type { APIClientOptions, InternalOptions, RequestInitWithInternals } from "../utils/types"
 
 type Serialize = () => string
 type APIRequest<T> = (options?: RequestInitWithInternals) => T
