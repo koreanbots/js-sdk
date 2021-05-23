@@ -1,11 +1,11 @@
 import { Base } from "./Base"
-import { UserFlags } from "../util/types"
+import { UserFlags } from "../utils/types"
 import { Github } from "./Github"
 import { Collection } from "discord.js"
-import Utils from "../util"
+import * as Utils from "../utils"
 
 import type { Koreanbots } from "../client/Koreanbots"
-import type { RawUserInstance, Nullable, FetchResponse } from "../util/types"
+import type { RawUserInstance, Nullable, FetchResponse } from "../utils/types"
 import type { Bot } from "./Bot"
 
 interface UserQuery {
@@ -50,10 +50,10 @@ export class User extends Base {
                 this.bots.filter(e => !e).map((v, k) => this.koreanbots.bots.fetch(k))
             )
 
-            const cache = (bot: FetchResponse<Bot>) => {
-                if (!bot.data?.id) return
+            const cache = (bot: Bot) => {
+                if (!bot) return
 
-                this.bots.set(bot.data?.id, this.koreanbots.bots.cache.get(bot.data?.id))
+                this.bots.set(bot?.id, this.koreanbots.bots.cache.get(bot?.id))
             }
 
             botsFromApi.map(cache)
@@ -61,8 +61,12 @@ export class User extends Base {
     }
 
     is(type: keyof typeof UserFlags | UserFlags): boolean {
-        if (typeof type === "number") return !!(this.flags & type)
+        if (typeof type === "number") {
+            if (type === 0) return true
+            return !!(this.flags & type)
+        }
 
+        if (UserFlags[type] === 0) return true
         return !!(this.flags & UserFlags[type])
     }
 
