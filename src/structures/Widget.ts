@@ -3,8 +3,8 @@ import { Base } from "./Base"
 import type { Koreanbots } from "../client/Koreanbots"
 import type {
     WidgetOptions, WidgetTarget, WidgetType,
-    FetchResponse, WidgetData
-} from "../util/types"
+    WidgetData
+} from "../utils/types"
 
 export class Widget extends Base {
     public buffer: Buffer
@@ -23,7 +23,7 @@ export class Widget extends Base {
         this.id = data.id
     }
 
-    fetch(options: WidgetOptions = { format: "svg" }): Promise<FetchResponse<Widget>> {
+    fetch(options: WidgetOptions = { format: "svg" }): Promise<Widget> {
         return this.koreanbots.widgets._fetch({
             ...options,
             target: this.target,
