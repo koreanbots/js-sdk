@@ -23,10 +23,6 @@ class KoreanbotsClient extends Client {
         return DjsVersion >= 12 ? this.guilds.cache.size : this.guilds.size
     }
 
-    set _getGuildCount(v) {
-        throw new Error("Can't modify value as " + v)
-    }
-
     async _update() {
         const count = await this._getGuildCount()
         
