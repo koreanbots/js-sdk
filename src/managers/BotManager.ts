@@ -52,7 +52,7 @@ export class BotManager {
     }
 
     /**
-     * KOREANBOTS에서 봇을 불러옵니다.
+     * 봇을 불러옵니다.
      * @param botID 
      * @param options 
      * @returns {Promise<Bot>}
