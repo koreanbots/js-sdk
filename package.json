@@ -3,7 +3,7 @@
   "version": "3.0.0-alpha3",
   "description": "JavaScript/TypeScript SDK for KOREANBOTS",
   "main": "dist/src/index.js",
-  "typings": "diist/src/index.d.ts",
+  "typings": "dist/src/index.d.ts",
   "license": "MIT",
   "scripts": {
     "test": "cross-env NODE_ENV=test jest --forceExit --detectOpenHandles",
