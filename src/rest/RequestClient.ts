@@ -37,7 +37,7 @@ class APIClient extends EventEmitter {
         set: (obj: T, prop: keyof T, value: ValueOf<T>) => {
             switch (prop) {
             case "token":
-                if (typeof value !== "string") throw new TypeError(`"token" 옵션은 숫자여야 합니다. (받은 타입: ${typeof value})`)
+                if (typeof value !== "string") throw new TypeError(`"token" 옵션은 문자열이여야 합니다. (받은 타입: ${typeof value})`)
 
                 // eslint-disable-next-line no-case-declarations
                 const [algorithm, info] = value.split(".").map(e => {
