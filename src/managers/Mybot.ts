@@ -89,16 +89,21 @@ export class Mybot {
      * @param count 
      * @returns 
      * @example
-     * koreanbots.mybot.update(client.guilds.cache.size)
+     * koreanbots.mybot.update({ count: client.guilds.cache.size })
      */
-    async update(count: number): Promise<UpdateResponse> {
+    async update({ count, shards }: { count: number, shards?: number }): Promise<UpdateResponse> {
+        if (!count || typeof count !== "number") throw new TypeError(`"count" 옵션은 숫자여야 합니다. (받은 타입: ${typeof count})`)
+
         if (this.lastGuildCount === count) return {
             code: 304,
             version: this.koreanbots.options.apiOptions.version ?? 2,
             message: "서버 수가 같아서 업데이트 되지 않았습니다."
         }
 
-        const body = JSON.stringify({ servers: count })
+        const body = JSON.stringify({ 
+            servers: count,
+            shards
+        })
         const response = await this.koreanbots.api<BotQuery>().bots(this.clientID).stats.post({
             body
         })

@@ -29,7 +29,7 @@ describe("Mybot Test", () => {
 
     it("should be able to update server count", async done => {
         const serverCount = Math.round(Math.random() * 750)
-        await koreanbots.mybot.update(serverCount)
+        await koreanbots.mybot.update({ count: serverCount })
 
         const botInfo = await koreanbots.bots.fetch(process.env.CLIENT_ID!)
 
