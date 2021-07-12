@@ -11,7 +11,7 @@ describe("Mybot Test", () => {
             clientID: process.env.CLIENT_ID!,
             apiOptions: {
                 token: process.env.TOKEN!,
-                unstable: true // change it to false if v2 get released to stable channel
+                unstable: false 
             }
         })
 

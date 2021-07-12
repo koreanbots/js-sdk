@@ -11,9 +11,11 @@ describe("Widgets Test", () => {
             clientID: process.env.CLIENT_ID!,
             apiOptions: {
                 token: process.env.TOKEN!,
-                unstable: true // change it to false if v2 get released to stable channel
+                unstable: false 
             }
         })
+
+        
 
         koreanbots.api.client.on("timeout", a => console.log(`Timeout: ${inspect(a)}`))
         koreanbots.api.client.on("rateLimit", a => console.log(`Rate limit: ${inspect(a)}`))

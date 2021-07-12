@@ -1,4 +1,5 @@
 import * as Utils from "../../src/utils"
+import { performance } from "perf_hooks"
 
 describe("Utils", () => {
     it("should be able to determine if this is JSON structure or not.", done => {
@@ -26,11 +27,11 @@ describe("Utils", () => {
     })
 
     it("should be able to freeze asynchronously.", async done => {
-        const time = Date.now()
+        const time = performance.now()
 
         await Utils.waitFor(100)
 
-        expect(Date.now() - time).toBeLessThanOrEqual(110)
+        expect(performance.now() - time).toBeLessThanOrEqual(110)
 
         done()
     })

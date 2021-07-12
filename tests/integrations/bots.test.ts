@@ -13,7 +13,7 @@ describe("Bots Test", () => {
             clientID: process.env.CLIENT_ID!,
             apiOptions: {
                 token: process.env.TOKEN!,
-                unstable: true // change it to false if v2 get released to stable channel
+                unstable: false 
             }
         })
 
@@ -44,8 +44,7 @@ describe("Bots Test", () => {
 
         expect(typeof votes).toBe("number")
 
-        expect(botInfo.discord.id).toBe(process.env.CLIENT_ID)
-        expect(botInfo.discord.inviteUrl).toMatch(/https?:\/\/discord\.gg\/[A-Z][a-z]{6}/i)
+        expect(botInfo.discord.inviteUrl).toMatch(/https?:\/\/discord\.gg\/(.{6,10})/i)
 
         done()
     })

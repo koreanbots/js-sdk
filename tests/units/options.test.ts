@@ -15,7 +15,7 @@ describe("Check options", () => {
                 }
             })
         } catch (e) {
-            expect(e.message).toBe("\"clientID\" 옵션은 디스코드의 ID 체계인 Snowflake여야 합니다.")
+            expect(e.message).toBe("\"clientID\" 옵션은 Snowflake여야 합니다.")
         }
 
         try {
