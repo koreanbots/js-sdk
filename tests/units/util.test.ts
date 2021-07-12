@@ -31,7 +31,7 @@ describe("Utils", () => {
 
         await Utils.waitFor(100)
 
-        expect(performance.now() - time).toBeLessThanOrEqual(110)
+        expect(performance.now() - time).toBeLessThanOrEqual(150)
 
         done()
     })

@@ -3,7 +3,6 @@
 import { Koreanbots } from "../../src"
 import { inspect } from "util"
 import { User } from "../../src/structures/User"
-import { hostname } from "os"
 
 describe("Users Test", () => {
     let koreanbots: Koreanbots
