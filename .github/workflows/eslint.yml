@@ -1,5 +1,6 @@
 on:
   push:
+    branches: [master]
   pull_request:
 
 jobs:
@@ -9,13 +10,14 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
-    - name: setup node v12
-      uses: actions/setup-node@v1
+    - name: setup node v14
+      uses: actions/setup-node@v2.2.0
       with:
-        node-version: 12
+        node-version: 14
+        cache: 'npm'
 
-    - name: npm install
-      run: npm install
+    - name: yarn install
+      run: yarn install
 
     - name: ESLint
       uses: icrawl/action-eslint@v1
