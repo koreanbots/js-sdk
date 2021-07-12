@@ -83,8 +83,8 @@ export class Koreanbots {
         return {
             ...options,
             cache: {
-                max: options?.cache?.max ?? this.options.max,
-                maxAge: options?.cache?.maxAge ?? this.options.maxAge
+                ...(options?.cache ?? {}),
+                ...this.options
             }
         }
     }
