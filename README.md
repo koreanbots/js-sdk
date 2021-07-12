@@ -18,9 +18,12 @@
   <a href="https://github.com/koreanbots/js-sdk/blob/master/.github/workflows/eslint.yml" target="_blank">
     <img alt="eslint.yml" src="https://github.com/koreanbots/js-sdk/workflows/.github/workflows/eslint.yml/badge.svg">
   </a>
+  <a href="https://codecov.io/gh/koreanbots/js-sdk">
+    <img alt="codecov-badge" src="https://codecov.io/gh/koreanbots/js-sdk/branch/master/graph/badge.svg?token=X7YON789AE" target="_blank" />
+  </a>
 </p>
 
-> TypeScript/JavaScript SDK for <a href="https://koreanbots.dev">Koreanbots</a>
+> TypeScript/JavaScript SDK for <a href="https://koreanbots.dev">KOREANBOTS</a>
 
 ### 🏠 [홈페이지](https://koreanbots.dev)
 
@@ -40,19 +43,16 @@ $ yarn add koreanbots
 
 ## 옵션 
 
-### Koreanbots.MyBot
+### Koreanbots.Koreanbots
 
 ❯ 이외의 함수 이용법 [가이드](https://github.com/koreanbots/js-sdk/blob/master/docs/mybot.md)
 
-| 옵션                         | 타입         | 필수 | 기본값       | 설명                                                                                           |
-|-----------------------------|-------------|-----|------------|-----------------------------------------------------------------------------------------------|
-| `options.token`             | String      |  O  |      -     | Koreanbots의 토큰                                                                               |
-| `options.clientID`          | String      |  O  |      -     | 자신의 봇의 ID                                                                                   |
-| `options.hideToken`         | Boolean     |  X  |    false   | 외부로 유출될수 있는 `options.token`을 가립니다.                                                      |
-| `options.noWarning`         | Boolean     |  X  |    false   | 모듈의 경고 알림을 끕니다                                                                           |
-| `options.avoidRateLimit`    | Boolean     |  X  |    true    | 레이트리밋을 최대한 피합니다                                                                         |
-| `options.cacheTTL`          | Number      |  x  |    60000   | Time-to-Live의 약자로써 `options.cacheTTL`(밀리초) 뒤에 해당 내용을 삭제합니다.                          |
-| `options.apiVersion`        | Number      |  x  |      2     | Koreanbots API의 버전을 선택합니다.                                                                |
+| 옵션                          | 타입         | 필수 | 기본값       | 설명                                                                                           |
+|------------------------------|-------------|-----|------------|-----------------------------------------------------------------------------------------------|
+| `options.apiOptions.token`   | String      |  O  |      -     | Koreanbots의 토큰                                                                               |
+| `options.clientID`           | String      |  O  |      -     | 자신의 봇의 ID                                                                                   |
+| `options.userOptions.maxAge` | Number      |  x  |    60000   | Time-to-Live의 약자로써 `options.cacheTTL`(밀리초) 뒤에 해당 내용을 삭제합니다.                          |
+| `options.apiVersion`         | Number      |  x  |      2     | Koreanbots API의 버전을 선택합니다.                                                                |
 
 ### Koreanbots.Bots
 
@@ -140,7 +140,6 @@ if(bots.fetchClient.cache.size >= 100) bots.fetchClient.cache.clear()
 
 - discord.js : 자동 업데이트 
 
-**주의:** *이 KoreanbotsClient는 discord.js v12에서만 작동합니다.*
 ```js
 const { KoreanbotsClient } = require("koreanbots")
 const client = new KoreanbotsClient({
