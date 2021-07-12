@@ -44,7 +44,7 @@ describe("Bots Test", () => {
 
         expect(typeof votes).toBe("number")
 
-        expect(botInfo.discord.inviteUrl).toMatch(/https?:\/\/discord\.gg\/(.{6,10})/i)
+        if (botInfo.discord) expect(botInfo.discord.inviteUrl).toMatch(/https?:\/\/discord\.gg\/(.{6,10})/i)
 
         done()
     })
