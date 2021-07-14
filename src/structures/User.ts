@@ -1,7 +1,7 @@
+import { Collection } from "discord.js"
 import { Base } from "./Base"
 import { UserFlags } from "../utils/types"
 import { Github } from "./Github"
-import { Collection } from "discord.js"
 import * as Utils from "../utils"
 
 import type { Koreanbots } from "../client/Koreanbots"
