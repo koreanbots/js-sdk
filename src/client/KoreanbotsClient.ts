@@ -5,8 +5,8 @@ import type { KoreanbotsClientOptions } from "../utils/types"
 
 export class KoreanbotsClient extends Client {
     #retryCount: number
-    public koreanbotsInterval: NodeJS.Timeout | number | null
-    public koreanbots: Koreanbots | null
+    public koreanbotsInterval: Nullable<NodeJS.Timeout | number>
+    public koreanbots: Nullable<Koreanbots>
     public options: KoreanbotsClientOptions
 
     /**
