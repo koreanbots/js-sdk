@@ -165,7 +165,7 @@ Bots.get("653534001742741552")
 ## 🤝 도움주기
 
 이슈와 PR은 모두 환영입니다!<br>
-무언가 문제가 생겼다면 [이슈 페이지](https://github.com/koreanbots/js-sdk/issues) 또는 [koreanbots 통합 이슈 페이지](https://github.com/koreanbots/koreanbots)에 저를 언급하여 알려주세요! ``(예시: @zero734kr, js sdk 버그입니다.)``<br>
+무언가 문제가 생겼다면 [이슈 페이지](https://github.com/koreanbots/js-sdk/issues)에 저를 언급하여 알려주세요! ``(예시: @zero734kr, js sdk 버그입니다.)``<br>
 코드 수정 요청은 [PR 페이지](https://github.com/koreanbots/js-sdk/pulls)에 올려주세요.
 
 ## 서포트
