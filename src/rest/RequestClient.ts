@@ -1,13 +1,13 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import fetch from "node-fetch"
+import { EventEmitter } from "events"
+import { URLSearchParams } from "url"
+import AbortController, { AbortSignal } from "abort-controller"
+import https from "https"
 import { getVersionRoute, getGlobalRoute } from "./getRoute"
 import * as Utils from "../utils"
 import { version, snowflakeRegex, KoreanbotsInternal } from "../utils/Constants"
-import AbortController, { AbortSignal } from "abort-controller"
-import https from "https"
 import { KoreanbotsAPIError } from "./KoreanbotsAPIError"
-import { EventEmitter } from "events"
-import { URLSearchParams } from "url"
 
 import type {
     Version, FetchResponse, APIClientOptions,
