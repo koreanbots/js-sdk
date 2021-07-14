@@ -11,7 +11,7 @@ describe("Bots Test", () => {
     beforeAll(async () => {
         koreanbots = new Koreanbots({
             clientID: process.env.CLIENT_ID!,
-            apiOptions: {
+            api: {
                 token: process.env.TOKEN!,
                 unstable: false 
             }
