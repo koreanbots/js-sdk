@@ -1,0 +1,15 @@
+version: 2	
+updates:	
+  - package-ecosystem: "npm" # See documentation for possible values	
+    directory: "/" # Location of package manifests	
+    schedule:	
+      interval: "daily"
+    reviewers:
+      - "zero734kr"
+
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:	
+      interval: "daily"
+    reviewers:
+      - "koreanbots/javascript-sdk-developer"

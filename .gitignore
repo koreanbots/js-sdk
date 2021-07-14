@@ -1,7 +1,8 @@
 node_modules/
-test/
-1.0.9/
-package-lock.json
-yarn*
-test/
+tests/local/
+yarn-*
+tests/config.json
 dist/
+coverage/
+.env.test
+.vscode/

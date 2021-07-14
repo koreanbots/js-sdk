@@ -1,6 +1,7 @@
 node_modules/
-test/
-1.0.9/
-package-lock.json
-yarn*
-test/
+yarn-*
+tests/
+.github/
+*.config.js
+coverage/
+.env.test

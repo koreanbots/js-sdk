@@ -1,0 +1,32 @@
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+
+jobs:
+  jest:
+    name: Jest
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2.3.4
+
+    - name: install node v14
+      uses: actions/setup-node@v2.2.0
+      with:
+        node-version: 14
+        cache: 'npm'
+
+    - name: yarn install
+      run: yarn install
+
+    - name: Jest
+      run: yarn coverage
+      env:
+        TOKEN: ${{ secrets.KOREANBOTS_TOKEN }}
+        CLIENT_ID: ${{ secrets.CLIENT_ID }}
+
+    - name: Upload coverage to Codecov
+      uses: codecov/codecov-action@v1.5.2
+      with: 
+          token: ${{ secrets.CODECOV_TOKEN }}

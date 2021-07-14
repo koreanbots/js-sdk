@@ -1,0 +1,17 @@
+{
+    "extends": "@tsconfig/recommended/tsconfig.json",
+    "compilerOptions": {
+        "rootDir": "./",
+        "allowJs": true,
+        "moduleResolution": "node",
+        "module": "CommonJS",
+        "removeComments": false,
+        "outDir": "dist",
+        "resolveJsonModule": true,
+        "target": "es2018",
+        "declaration": true,
+        "sourceMap": true,
+        "lib": ["ES2020"]
+    },
+    "exclude": ["node_modules", "dist", "tests", "husky.config.js", "commitlint.config.js", "jest.config.js"]
+}
