@@ -1,6 +1,6 @@
+import { URLSearchParams } from "url"
 import { Bot } from "../structures/Bot"
 import { KoreanbotsInternal } from "../utils/Constants"
-import { URLSearchParams } from "url"
 
 import type { Koreanbots } from "../client/Koreanbots"
 import type { FetchResponse, RawBotInstance, RequestInitWithInternals, Vote } from "../utils/types"
