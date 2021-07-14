@@ -60,7 +60,7 @@ const client = new KoreanbotsClient({
         api: {
             token: "KOREANBOTS 토큰"
         }
-    }
+    },
     koreanbotsClient: {
         updateInterval: 600000 //10분마다 서버 수를 업데이트합니다. (기본값 30분)
     }
