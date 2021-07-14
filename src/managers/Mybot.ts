@@ -117,7 +117,7 @@ export class Mybot {
         this.lastGuildCount = count
 
         this.updatedTimestamp = Date.now()
-        this.updatedAt = new Date(this.updatedTimestamp || Date.now())
+        this.updatedAt = new Date(this.updatedTimestamp)
 
         if (this.koreanbots?.api.client.listeners("serverCountUpdated"))
             this.koreanbots?.api.client.emit("serversUpdated", { ...response.data, servers: count })
