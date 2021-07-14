@@ -12,4 +12,4 @@ updates:
     schedule:	
       interval: "daily"
     reviewers:
-      - "zero734kr"
+      - "koreanbots/javascript-sdk-developer"
