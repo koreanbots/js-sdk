@@ -204,7 +204,7 @@ client.login("토큰")
 
 ## 📝 라이센스
 
-Copyright © 2020 [zero734kr](https://github.com/koreanbots).<br />
+Copyright © 2020-2021 [koreanbots](https://github.com/koreanbots).<br />
 This project is [MIT](https://github.com/koreanbots/js-sdk/blob/master/LICENSE) licensed.
 
 ***
