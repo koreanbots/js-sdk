@@ -18,13 +18,13 @@ export class KoreanbotsClient extends Client {
      * const { KoreanbotsClient } = require("koreanbots")
      * 
      * const client = new KoreanbotsClient({
-     *     koreanbotsOptions: {
+     *     koreanbots: {
      *         // src/client/Koreanbots.ts
-     *         apiOptions: {
+     *         api: {
      *             token: process.env.KOREANBOTS_TOKEN
      *         }
      *     },
-     *     koreanbotsClientOptions: {
+     *     koreanbotsClient: {
      *         updateInterval: 60000 * 15 // 15분마다 서버 수를 업데이트
      *     }
      * })
@@ -65,8 +65,8 @@ export class KoreanbotsClient extends Client {
         if (!this.guilds?.cache.size || !this.user) return this.retry()
 
         this.koreanbots = new Koreanbots({
-            ...this.options.koreanbotsOptions,
-            clientID: this.user?.id ?? this.options.koreanbotsOptions?.clientID
+            ...this.options.koreanbots,
+            clientID: this.user?.id ?? this.options.koreanbots?.clientID
         })
 
         const getGuildCount = () => {
@@ -86,7 +86,7 @@ export class KoreanbotsClient extends Client {
                 const count = await getGuildCount()
                 return await this.koreanbots?.mybot.update({ count, shards })
             },
-            this.options.koreanbotsClientOptions?.updateInterval ?? 60000 * 10
+            this.options.koreanbotsClient?.updateInterval ?? 60000 * 10
         )
     }
 }

@@ -96,7 +96,7 @@ export class Mybot {
 
         if (this.lastGuildCount === count) return {
             code: 304,
-            version: this.koreanbots.options.apiOptions.version ?? 2,
+            version: this.koreanbots.options.api.version ?? 2,
             message: "서버 수가 같아서 업데이트 되지 않았습니다."
         }
 

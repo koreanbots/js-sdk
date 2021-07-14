@@ -54,7 +54,7 @@ export class Bot extends Base {
                 new User(this.koreanbots, u)
             )
         )
-        this.lib = data.lib
+        this.lib = data.lib ?? "discord.js"
         this.prefix = data.prefix
         this.votes = data.votes
         this.servers = data.servers
