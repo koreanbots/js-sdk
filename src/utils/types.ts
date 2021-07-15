@@ -207,6 +207,7 @@ export interface RawBotInstance {
     banner: Nullable<string>
     status?: Nullable<BotStatus>
     state: BotState
+    shards: Nullable<number>
 }
 
 export interface RawUserInstance {

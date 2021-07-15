@@ -38,6 +38,7 @@ export class Bot extends Base {
     public banner: Nullable<string>
     public status: Nullable<BotStatus>
     public state: BotState
+    public shards: Nullable<number>
 
     constructor(public readonly koreanbots: Koreanbots, data: RawBotInstance) {
         super()
@@ -70,6 +71,7 @@ export class Bot extends Base {
         this.bg = data.bg
         this.banner = data.banner
         this.state = data.state
+        this.shards = data.shards
     }
 
     async fetchVotes({ cache }: { cache: boolean } = { cache: true }): Promise<number> {
