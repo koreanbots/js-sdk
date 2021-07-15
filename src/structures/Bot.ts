@@ -18,7 +18,7 @@ export class Bot extends Base {
     public id: string
     public name: string
     public tag: string
-    public fullTag: string
+    public discriminator: string
     public avatar: Nullable<string>
     public owners: Owners
     public flags: BotFlags
@@ -44,8 +44,8 @@ export class Bot extends Base {
 
         this.id = data.id
         this.name = data.name
-        this.tag = data.tag
-        this.fullTag = `${data.name}#${data.tag}`
+        this.discriminator = data.tag
+        this.tag = `${data.name}#${data.tag}`
         this.avatar = data.avatar
         this.flags = data.flags
         this.owners = new Owners(

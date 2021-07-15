@@ -36,6 +36,7 @@ export class Koreanbots {
      * 새로운 Koreanbots 인스턴스를 생성합니다.
      * @param options 옵션
      * @example
+     * ```js
      * new Koreanbots({
      *     clientID: process.env.CLIENT_ID,
      *     apiOptions: {
@@ -51,6 +52,7 @@ export class Koreanbots {
      *         }
      *     }
      * })
+     * ```
      */
     constructor(options: KoreanbotsOptions) {
         this.options = options ?? {}

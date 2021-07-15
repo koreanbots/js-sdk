@@ -7,3 +7,5 @@ coverage/
 web/
 .env.test
 .vscode/
+
+.vercel

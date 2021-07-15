@@ -59,12 +59,14 @@ export class Mybot {
      * @param id 
      * @returns 
      * @example
+     * ```js
      * koreanbots.mybot.checkVote("12345678901234567")
      *     .then(voted => {
      *         if (voted) return message.channel.send(`${message.author} 님, 하트를 눌러주셔서 감사합니다!`)
      * 
      *         return message.channel.send(`${message.author} 님, 하트를 아직 누르지 않으셨습니다.`)
      *     })
+     * ```
      */
     async checkVote(id: string): Promise<Vote> {
         const cache = this.votes.get(id)
@@ -89,7 +91,9 @@ export class Mybot {
      * @param count 
      * @returns 
      * @example
+     * ```js
      * koreanbots.mybot.update({ count: client.guilds.cache.size })
+     * ```
      */
     async update({ count, shards }: { count: number, shards?: number }): Promise<UpdateResponse> {
         if (!count || typeof count !== "number") throw new TypeError(`"count" 옵션은 숫자여야 합니다. (받은 타입: ${typeof count})`)

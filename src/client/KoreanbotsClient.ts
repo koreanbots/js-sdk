@@ -15,6 +15,7 @@ export class KoreanbotsClient extends Client {
      * 새로운 KoreanbotsClient 인스턴스를 생성합니다.
      * @param options 
      * @example
+     * ```js
      * const { KoreanbotsClient } = require("koreanbots")
      * 
      * const client = new KoreanbotsClient({
@@ -28,6 +29,7 @@ export class KoreanbotsClient extends Client {
      *         updateInterval: 60000 * 15 // 15분마다 서버 수를 업데이트
      *     }
      * })
+     * ```
      */
     constructor(options: KoreanbotsClientOptions) {
         super(options)
