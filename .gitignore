@@ -4,5 +4,7 @@ yarn-*
 tests/config.json
 dist/
 coverage/
+web/
 .env.test
 .vscode/
+.vercel

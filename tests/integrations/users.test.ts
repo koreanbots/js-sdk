@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 
-import { Koreanbots } from "../../src"
 import { inspect } from "util"
+import { Koreanbots } from "../../src"
 import { User } from "../../src/structures/User"
 
 describe("Users Test", () => {

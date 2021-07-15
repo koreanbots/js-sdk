@@ -53,6 +53,7 @@ $ yarn add koreanbots
 ## 사용법
 
 - 자동 업데이트
+
 ```js
 const { KoreanbotsClient } = require("koreanbots")
 const client = new KoreanbotsClient({
@@ -77,6 +78,7 @@ process.on("SIGINT", () => {
 ```
 
 - 수동 업데이트
+
 ```js
 const { Koreanbots } = require("koreanbots")
 const Discord = require("discord.js")
