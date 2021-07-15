@@ -100,7 +100,7 @@ export class Mybot {
             message: "서버 수가 같아서 업데이트 되지 않았습니다."
         }
 
-        const body = JSON.stringify({ 
+        const body = JSON.stringify({
             servers: count,
             shards
         })

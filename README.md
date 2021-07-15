@@ -60,7 +60,7 @@ const client = new KoreanbotsClient({
         api: {
             token: "KOREANBOTS 토큰"
         }
-    }
+    },
     koreanbotsClient: {
         updateInterval: 600000 //10분마다 서버 수를 업데이트합니다. (기본값 30분)
     }
@@ -79,14 +79,16 @@ process.on("SIGINT", () => {
 - 수동 업데이트
 ```js
 const { Koreanbots } = require("koreanbots")
-const Bot = new Koreanbots({
+const Discord = require("discord.js")
+const client = new Discord.Client()
+const koreanbots = new Koreanbots({
     api: {
         token: "KOREANBOTS 토큰"
     },
     clientID: "봇 아이디"
 })
 
-let update = count => Bot.update(count) 
+let update = count => koreanbots.mybot.update({ count, shards: client.shard?.count }) 
     .then(res => console.log("서버 수를 정상적으로 업데이트하였습니다!\n반환된 정보:" + JSON.stringify(res)))
     .catch(console.error)
 

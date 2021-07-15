@@ -267,6 +267,16 @@ class APIClient extends EventEmitter {
             updatedTimestamp: Date.now()
         }
 
+        const identity = JSON.parse(Buffer.from(this.token.split(".")[1], "base64").toString()).id
+
+        this.emit("request", {
+            url: fetchUrl,
+            method,
+            options: mergedOptions,
+            identity,
+            response
+        })
+
         return response
     }
 }
