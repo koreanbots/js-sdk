@@ -157,7 +157,7 @@ export interface DefaultCacheOptions {
 }
 
 export interface KoreanbotsOptions extends BaseOptions {
-    api: APIClientOptions
+    api: RequestClientOptions
     bots?: BotManagerOptions
     widgets?: WidgetManagerOptions
     users?: UserManagerOptions
@@ -166,7 +166,7 @@ export interface KoreanbotsOptions extends BaseOptions {
     maxAge?: number
 }
 
-export interface APIClientOptions extends BaseOptions {
+export interface RequestClientOptions extends BaseOptions {
     version?: Version
     token: string
     requestTimeout?: number

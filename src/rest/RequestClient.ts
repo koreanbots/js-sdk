@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import fetch from "node-fetch"
+
+import fetch, { Request } from "node-fetch"
 import { EventEmitter } from "events"
 import { URLSearchParams } from "url"
 import AbortController, { AbortSignal } from "abort-controller"
@@ -10,7 +11,7 @@ import { version, snowflakeRegex, KoreanbotsInternal } from "../utils/Constants"
 import { KoreanbotsAPIError } from "../utils/Errors"
 
 import type {
-    Version, FetchResponse, APIClientOptions,
+    Version, FetchResponse, RequestClientOptions,
     ProxyValidator, ValueOf, RequestInitWithInternals
 } from "../utils/types"
 import type { Response } from "node-fetch"
@@ -20,14 +21,14 @@ const defaultRequestTimeout = 30_000
 const defaultApiVersion = 2
 const defaultUnstableOption = false
 
-class APIClient extends EventEmitter {
+class RequestClient extends EventEmitter {
     protected readonly headers!: Record<string, string>
     public readonly version!: Version
     public readonly baseUri!: string
     public readonly globalUri!: string
     public readonly token!: string
     public globalReset: null | number
-    public options: APIClientOptions
+    public options: RequestClientOptions
     private _timeouts: Set<NodeJS.Timeout | number>
     private _agent?: https.Agent
     private _destroyed: boolean
@@ -71,12 +72,12 @@ class APIClient extends EventEmitter {
         }
     })
 
-    constructor(options: APIClientOptions) {
+    constructor(options: RequestClientOptions) {
         super()
 
         this.options = options
 
-        const optionsProxy = new Proxy(this.options, APIClient.validator<APIClientOptions>())
+        const optionsProxy = new Proxy(this.options, RequestClient.validator<RequestClientOptions>())
 
         optionsProxy.token = options.token
         optionsProxy.version = options.version ?? defaultApiVersion
@@ -94,11 +95,11 @@ class APIClient extends EventEmitter {
         this.setupReadonly(options)
     }
 
-    public on(event: "rateLimit" | "timeout" | "serverCountUpdated", listener: (...args: unknown[]) => void): this {
+    public on(event: "rateLimit" | "timeout" | "request" | "serverCountUpdated", listener: (...args: unknown[]) => void): this {
         return super.on(event, listener)
     }
 
-    private setupReadonly(options: APIClientOptions) {
+    private setupReadonly(options: RequestClientOptions) {
         Object.defineProperties(this, {
             version: {
                 writable: false,
@@ -267,18 +268,12 @@ class APIClient extends EventEmitter {
             updatedTimestamp: Date.now()
         }
 
-        const identity = JSON.parse(Buffer.from(this.token.split(".")[1], "base64").toString()).id
+        const req = new Request(fetchUrl, mergedOptions)
 
-        this.emit("request", {
-            url: fetchUrl,
-            method,
-            options: mergedOptions,
-            identity,
-            response
-        })
+        this.emit("request", req, r)
 
         return response
     }
 }
 
-export default APIClient
+export default RequestClient

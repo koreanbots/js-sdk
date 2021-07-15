@@ -6,10 +6,11 @@ import type { Koreanbots } from "../client/Koreanbots"
 import type { FetchResponse, RawBotInstance, RequestInitWithInternals, Vote } from "../utils/types"
 import LifetimeCollection from "../utils/Collection"
 
-interface UpdateResponse {
+export interface UpdateResponse {
     code: number
     version: number
     message: string
+    servers?: number
 }
 
 interface BotQuery {
@@ -124,7 +125,7 @@ export class Mybot {
         this.updatedAt = new Date(this.updatedTimestamp)
 
         if (this.koreanbots?.api.client.listeners("serverCountUpdated"))
-            this.koreanbots?.api.client.emit("serversUpdated", { ...response.data, servers: count })
+            this.koreanbots?.api.client.emit("serverCountUpdated", { ...response.data, servers: count })
 
         return response.data
     }

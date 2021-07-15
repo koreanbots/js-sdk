@@ -9,7 +9,7 @@ export class KoreanbotsClient extends Client {
     #retryCount: number
     public koreanbotsInterval: Nullable<NodeJS.Timeout | number>
     public koreanbots: Nullable<Koreanbots>
-    public options: KoreanbotsClientOptions
+    public options!: KoreanbotsClientOptions
 
     /**
      * 새로운 KoreanbotsClient 인스턴스를 생성합니다.
@@ -33,8 +33,6 @@ export class KoreanbotsClient extends Client {
      */
     constructor(options: KoreanbotsClientOptions) {
         super(options)
-
-        this.options = options
 
         this.koreanbots = null
 
