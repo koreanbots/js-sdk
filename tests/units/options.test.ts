@@ -4,7 +4,7 @@ import { Koreanbots } from "../../src"
 
 describe("Check options", () => {
     const clientID = process.env.CLIENT_ID!
-    const token = process.env.TOKEN!
+    const token = process.env.KOREANBOTS_TOKEN!
     
     it("should throw error if wrong clientID format was provided", done => {
         try {
