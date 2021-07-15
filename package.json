@@ -13,7 +13,7 @@
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "commit": "git-cz",
-    "docgen": "typedoc --entryPoints src/index.ts --out web"
+    "docgen": "typedoc src/index.ts --out web --highlightTheme github-dark --includeVersion"
   },
   "repository": {
     "type": "git",
