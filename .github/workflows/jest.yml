@@ -23,7 +23,8 @@ jobs:
     - name: Jest
       run: yarn coverage
       env:
-        TOKEN: ${{ secrets.KOREANBOTS_TOKEN }}
+        TOKEN: ${{ secrets.TOKEN }}
+        KOREANBOTS_TOKEN: ${{ secrets.KOREANBOTS_TOKEN }}}
         CLIENT_ID: ${{ secrets.CLIENT_ID }}
 
     - name: Upload coverage to Codecov
