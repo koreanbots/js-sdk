@@ -35,7 +35,7 @@ export function CacheOptionsValidator<T>(): ProxyValidator<T> {
     }
 }
 
-export LifetimeCollection from "./Collection"
+export { default as LifetimeCollection } from "./Collection"
 export { getGlobalRoute, getVersionRoute } from "../rest/getRoute"
-export { * as Errors } from "./KoreanbotsAPIError"
-export RequestClient from "../rest/RequestClient"
+export * as Errors from "./Errors"
+export { default as RequestClient } from "../rest/RequestClient"

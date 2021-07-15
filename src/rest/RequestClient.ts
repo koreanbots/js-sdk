@@ -7,7 +7,7 @@ import https from "https"
 import { getVersionRoute, getGlobalRoute } from "./getRoute"
 import * as Utils from "../utils"
 import { version, snowflakeRegex, KoreanbotsInternal } from "../utils/Constants"
-import { KoreanbotsAPIError } from "./KoreanbotsAPIError"
+import { KoreanbotsAPIError } from "../utils/Errors"
 
 import type {
     Version, FetchResponse, APIClientOptions,
