@@ -39,7 +39,6 @@ describe("Mybot Test", () => {
         done()
     })
 
-    /** TODO: This is not working yet on API server
     it("should be able to update with shard count", async done => {
         const serverCount = Math.round(Math.random() * 750)
         const shardCount = Math.round(Math.random() * 10)
@@ -48,12 +47,10 @@ describe("Mybot Test", () => {
         const botInfo = await koreanbots.bots.fetch(process.env.CLIENT_ID!)
 
         expect(botInfo.id).toBe(process.env.CLIENT_ID!)
-        expect(botInfo.servers).toBe(serverCount)
-        // expect(botInfo.shards).toBe(shardCount)
+        expect(botInfo.shards).toBe(shardCount)
 
         done()
     })
-    */
 
     it("should be able to check vote", async done => {
         const res = await koreanbots.mybot.checkVote("462355431071809537")
