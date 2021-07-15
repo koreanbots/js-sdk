@@ -40,7 +40,7 @@ export class Koreanbots {
      * new Koreanbots({
      *     clientID: process.env.CLIENT_ID,
      *     apiOptions: {
-     *         token: process.env.TOKEN
+     *         token: process.env.KOREANBOTS_TOKEN
      *     },
      *     // 글로벌 캐시 옵션이며, 누락할 경우 모든 캐시 옵션이 각각의 기본 값으로 설정됩니다 (로컬 캐시 옵션이 우선권을 가집니다)
      *     max: 250, // (기본값: 100) 캐시에 최대 250개의 내용을 저장
