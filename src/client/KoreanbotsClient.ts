@@ -1,20 +1,19 @@
 import { Client } from "discord.js"
 import { Koreanbots } from "./Koreanbots"
 
-import type { KoreanbotsClientOptions } from "../utils/types"
-
-type Nullable<T> = T | null
+import type { KoreanbotsClientOptions, Nullable } from "../utils/types"
 
 export class KoreanbotsClient extends Client {
     #retryCount: number
     public koreanbotsInterval: Nullable<NodeJS.Timeout | number>
     public koreanbots: Nullable<Koreanbots>
-    public options: KoreanbotsClientOptions
+    public options!: KoreanbotsClientOptions
 
     /**
      * 새로운 KoreanbotsClient 인스턴스를 생성합니다.
      * @param options 
      * @example
+     * ```js
      * const { KoreanbotsClient } = require("koreanbots")
      * 
      * const client = new KoreanbotsClient({
@@ -28,11 +27,10 @@ export class KoreanbotsClient extends Client {
      *         updateInterval: 60000 * 15 // 15분마다 서버 수를 업데이트
      *     }
      * })
+     * ```
      */
     constructor(options: KoreanbotsClientOptions) {
         super(options)
-
-        this.options = options
 
         this.koreanbots = null
 

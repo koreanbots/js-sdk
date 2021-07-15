@@ -6,10 +6,11 @@ import type { Koreanbots } from "../client/Koreanbots"
 import type { FetchResponse, RawBotInstance, RequestInitWithInternals, Vote } from "../utils/types"
 import LifetimeCollection from "../utils/Collection"
 
-interface UpdateResponse {
+export interface UpdateResponse {
     code: number
     version: number
     message: string
+    servers?: number
 }
 
 interface BotQuery {
@@ -59,12 +60,14 @@ export class Mybot {
      * @param id 
      * @returns 
      * @example
+     * ```js
      * koreanbots.mybot.checkVote("12345678901234567")
      *     .then(voted => {
      *         if (voted) return message.channel.send(`${message.author} 님, 하트를 눌러주셔서 감사합니다!`)
      * 
      *         return message.channel.send(`${message.author} 님, 하트를 아직 누르지 않으셨습니다.`)
      *     })
+     * ```
      */
     async checkVote(id: string): Promise<Vote> {
         const cache = this.votes.get(id)
@@ -89,10 +92,16 @@ export class Mybot {
      * @param count 
      * @returns 
      * @example
+     * ```js
      * koreanbots.mybot.update({ count: client.guilds.cache.size })
+     * ```
      */
-    async update({ count, shards }: { count: number, shards?: number }): Promise<UpdateResponse> {
-        if (!count || typeof count !== "number") throw new TypeError(`"count" 옵션은 숫자여야 합니다. (받은 타입: ${typeof count})`)
+    async update({ count, shards }: { count?: number, shards?: number }): Promise<UpdateResponse> {
+        if (typeof count !== "number" && count !== undefined) throw new TypeError(`"count" 옵션은 숫자여야 합니다. (받은 타입: ${typeof count})`)
+        if (typeof shards !== "number" && shards !== null && shards !== undefined) 
+            throw new TypeError(`"shards" 옵션은 숫자, null 또는 undefined이여야 합니다. (받은 타입: ${typeof shards})`)
+
+        if (!count && !shards) throw new Error("\"count\" 또는 \"shards\" 값이 제공되어야 합니다.")
 
         if (this.lastGuildCount === count) return {
             code: 304,
@@ -100,7 +109,7 @@ export class Mybot {
             message: "서버 수가 같아서 업데이트 되지 않았습니다."
         }
 
-        const body = JSON.stringify({ 
+        const body = JSON.stringify({
             servers: count,
             shards
         })
@@ -120,7 +129,7 @@ export class Mybot {
         this.updatedAt = new Date(this.updatedTimestamp)
 
         if (this.koreanbots?.api.client.listeners("serverCountUpdated"))
-            this.koreanbots?.api.client.emit("serversUpdated", { ...response.data, servers: count })
+            this.koreanbots?.api.client.emit("serverCountUpdated", { ...response.data, servers: count })
 
         return response.data
     }

@@ -18,7 +18,7 @@ export class Bot extends Base {
     public id: string
     public name: string
     public tag: string
-    public fullTag: string
+    public discriminator: string
     public avatar: Nullable<string>
     public owners: Owners
     public flags: BotFlags
@@ -38,14 +38,15 @@ export class Bot extends Base {
     public banner: Nullable<string>
     public status: Nullable<BotStatus>
     public state: BotState
+    public shards: Nullable<number>
 
     constructor(public readonly koreanbots: Koreanbots, data: RawBotInstance) {
         super()
 
         this.id = data.id
         this.name = data.name
-        this.tag = data.tag
-        this.fullTag = `${data.name}#${data.tag}`
+        this.discriminator = data.tag
+        this.tag = `${data.name}#${data.tag}`
         this.avatar = data.avatar
         this.flags = data.flags
         this.owners = new Owners(
@@ -70,6 +71,7 @@ export class Bot extends Base {
         this.bg = data.bg
         this.banner = data.banner
         this.state = data.state
+        this.shards = data.shards
     }
 
     async fetchVotes({ cache }: { cache: boolean } = { cache: true }): Promise<number> {

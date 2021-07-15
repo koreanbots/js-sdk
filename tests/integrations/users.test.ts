@@ -11,7 +11,7 @@ describe("Users Test", () => {
         koreanbots = new Koreanbots({
             clientID: process.env.CLIENT_ID!,
             api: {
-                token: process.env.TOKEN!,
+                token: process.env.KOREANBOTS_TOKEN!,
                 unstable: false 
             }
         })
