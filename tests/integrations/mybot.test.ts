@@ -27,26 +27,16 @@ describe("Mybot Test", () => {
         koreanbots.bots.cache.clear()
     })
 
-    it("should be able to update server count", async done => {
+    it("should be able to update server count and shard count", async done => {
         const serverCount = Math.round(Math.random() * 750)
-        await koreanbots.mybot.update({ count: serverCount })
+        const shardCount = Math.round(Math.random() * 10)
+
+        await koreanbots.mybot.update({ count: serverCount, shards: shardCount })
 
         const botInfo = await koreanbots.bots.fetch(process.env.CLIENT_ID!)
 
         expect(botInfo.id).toBe(process.env.CLIENT_ID!)
         expect(botInfo.servers).toBe(serverCount)
-
-        done()
-    })
-
-    it("should be able to update with shard count", async done => {
-        const serverCount = Math.round(Math.random() * 750)
-        const shardCount = Math.round(Math.random() * 10)
-
-        await koreanbots.mybot.update({ count: serverCount, shards: shardCount })
-        const botInfo = await koreanbots.bots.fetch(process.env.CLIENT_ID!)
-
-        expect(botInfo.id).toBe(process.env.CLIENT_ID!)
         expect(botInfo.shards).toBe(shardCount)
 
         done()

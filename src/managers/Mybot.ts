@@ -96,8 +96,12 @@ export class Mybot {
      * koreanbots.mybot.update({ count: client.guilds.cache.size })
      * ```
      */
-    async update({ count, shards }: { count: number, shards?: number }): Promise<UpdateResponse> {
-        if (!count || typeof count !== "number") throw new TypeError(`"count" 옵션은 숫자여야 합니다. (받은 타입: ${typeof count})`)
+    async update({ count, shards }: { count?: number, shards?: number }): Promise<UpdateResponse> {
+        if (typeof count !== "number" && count !== undefined) throw new TypeError(`"count" 옵션은 숫자여야 합니다. (받은 타입: ${typeof count})`)
+        if (typeof shards !== "number" && shards !== null && shards !== undefined) 
+            throw new TypeError(`"shards" 옵션은 숫자, null 또는 undefined이여야 합니다. (받은 타입: ${typeof shards})`)
+
+        if (!count && !shards) throw new Error("\"count\" 또는 \"shards\" 값이 제공되어야 합니다.")
 
         if (this.lastGuildCount === count) return {
             code: 304,

@@ -1,9 +1,7 @@
 import { Client } from "discord.js"
 import { Koreanbots } from "./Koreanbots"
 
-import type { KoreanbotsClientOptions } from "../utils/types"
-
-type Nullable<T> = T | null
+import type { KoreanbotsClientOptions, Nullable } from "../utils/types"
 
 export class KoreanbotsClient extends Client {
     #retryCount: number
