@@ -90,7 +90,7 @@ const koreanbots = new Koreanbots({
     clientID: "봇 아이디"
 })
 
-let update = count => koreanbots.mybot.update({ count, shards: client.shard?.count }) 
+let update = servers => koreanbots.mybot.update({ servers, shards: client.shard?.count }) 
     .then(res => console.log("서버 수를 정상적으로 업데이트하였습니다!\n반환된 정보:" + JSON.stringify(res)))
     .catch(console.error)
 
