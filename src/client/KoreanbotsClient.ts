@@ -75,14 +75,14 @@ export class KoreanbotsClient extends Client {
         }
         const getShardCount = () => this.shard?.count
 
-        const count = await getGuildCount()
+        const servers = await getGuildCount()
         const shards = getShardCount()
 
-        this.koreanbots.mybot.update({ count, shards })
+        this.koreanbots.mybot.update({ servers, shards })
         this.koreanbotsInterval = setInterval(
             async () => {
-                const count = await getGuildCount()
-                return await this.koreanbots?.mybot.update({ count, shards })
+                const servers = await getGuildCount()
+                return await this.koreanbots?.mybot.update({ servers, shards })
             },
             this.options.koreanbotsClient?.updateInterval ?? 60000 * 10
         )
