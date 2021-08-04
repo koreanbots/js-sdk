@@ -10,7 +10,7 @@ jobs:
         with:
           # we actually need "github.event.pull_request.commits + 1" commit
           fetch-depth: 0
-      - uses: actions/setup-node@v2.2.0
+      - uses: actions/setup-node@v2.3.1
       # or just "yarn" if you depend on "@commitlint/cli" already
       - run: yarn add @commitlint/cli
       - run: yarn run commitlint --from HEAD~${{ github.event.pull_request.commits }} --to HEAD
