@@ -51,7 +51,7 @@ export class Bot extends Base {
         this.flags = data.flags
         this.owners = new Owners(
             this.koreanbots,
-            data.owners.map(u =>
+            data.owners?.map(u =>
                 new User(this.koreanbots, u)
             )
         )
