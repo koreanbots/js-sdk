@@ -1,6 +1,6 @@
 {
   "name": "koreanbots",
-  "version": "3.0.0-rc.15",
+  "version": "3.0.0-rc.16",
   "description": "JavaScript/TypeScript SDK for KOREANBOTS",
   "main": "dist/src/index.js",
   "typings": "dist/src/index.d.ts",
@@ -36,7 +36,7 @@
   "dependencies": {
     "abort-controller": "^3.0.0",
     "node-fetch": "^2.6.1",
-    "discord.js": ">=12"
+    "discord.js": ">=13"
   },
   "devDependencies": {
     "@commitlint/cli": "^12.0.1",
