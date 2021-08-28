@@ -9,7 +9,7 @@
     "test": "cross-env NODE_ENV=test jest --forceExit --detectOpenHandles",
     "test:local": "node tests/local/index.js",
     "coverage": "yarn test --coverage",
-    "build": "tsc",
+    "prepack": "tsc",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "commit": "git-cz",
