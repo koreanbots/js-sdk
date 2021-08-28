@@ -41,7 +41,7 @@ export class KoreanbotsClient extends Client {
         this.koreanbotsInterval = null
         this.#retryCount = 0
 
-        this.once("ready", this.ok.bind(this))
+        this.once("ready", () => void this.ok.bind(this)())
     }
 
     /**
@@ -69,7 +69,7 @@ export class KoreanbotsClient extends Client {
 
         const getGuildCount = () => {
             if (this.shard?.count && this.shard?.count > 1) return this.shard.fetchClientValues("guilds.cache.size")
-                .then(numbers => numbers.reduce((a, c) => a + c))
+                .then(numbers => (<number[]>numbers).reduce((a, c) => a + c))
 
             return this.guilds?.cache.size
         }
