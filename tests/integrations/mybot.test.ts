@@ -31,7 +31,7 @@ describe("Mybot Test", () => {
         const serverCount = Math.round(Math.random() * 750)
         const shardCount = Math.round(Math.random() * 10)
 
-        await koreanbots.mybot.update({ count: serverCount, shards: shardCount })
+        await koreanbots.mybot.update({ servers: serverCount, shards: shardCount })
 
         const botInfo = await koreanbots.bots.fetch(process.env.CLIENT_ID!)
 
