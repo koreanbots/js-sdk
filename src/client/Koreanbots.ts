@@ -55,7 +55,7 @@ export class Koreanbots {
      * ```
      */
     constructor(options: KoreanbotsOptions) {
-        this.options = options ?? {}
+        this.options = options
 
         Object.defineProperty(this, "api", {
             writable: false,
