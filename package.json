@@ -35,7 +35,7 @@
   },
   "dependencies": {
     "abort-controller": "^3.0.0",
-    "discord.js": ">=12",
+    "discord.js": "^12.5.3",
     "node-fetch": "^2.6.1"
   },
   "devDependencies": {
