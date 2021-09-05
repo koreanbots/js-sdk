@@ -43,8 +43,8 @@ $ yarn add koreanbots
 | discord.js version        | supported | planned to support |
 |---------------------------|-----------|--------------------|
 | v11.x                     |  no       |  no                |
-| v12.x (stable)            |  yes      |  -                 |
-| v13.x (master)            |  no       |  yes               |
+| v12.x                     |  yes      |  -                 |
+| v13.x (stable)            |  yes      |  -                 |
 
 ## v2 -> v3 마이그레이션 가이드
 
