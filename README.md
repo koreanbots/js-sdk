@@ -57,6 +57,7 @@ $ yarn add koreanbots
 ```js
 const { KoreanbotsClient } = require("koreanbots")
 const client = new KoreanbotsClient({
+    intents: ["GUILDS", "GUILD_MESSAGES", "GUILD_MEMBERS"],
     koreanbots: {
         api: {
             token: "KOREANBOTS 토큰"
