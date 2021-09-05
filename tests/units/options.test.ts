@@ -4,13 +4,13 @@ import { Koreanbots } from "../../src"
 
 describe("Check options", () => {
     const clientID = process.env.CLIENT_ID!
-    const token = process.env.TOKEN!
+    const token = process.env.KOREANBOTS_TOKEN!
     
     it("should throw error if wrong clientID format was provided", done => {
         try {
             new Koreanbots({
                 clientID: "테스트용아이디",
-                apiOptions: {
+                api: {
                     token
                 }
             })
@@ -22,7 +22,7 @@ describe("Check options", () => {
             new Koreanbots({
                 // @ts-expect-error disabling type check to test
                 clientID: false,
-                apiOptions: {
+                api: {
                     token
                 }
             })
@@ -37,7 +37,7 @@ describe("Check options", () => {
         try {
             new Koreanbots({
                 clientID: clientID,
-                apiOptions: {
+                api: {
                     token: "응애ㅐㅐㅐㅐㅐ"
                 }
             })
@@ -52,10 +52,10 @@ describe("Check options", () => {
         try {
             new Koreanbots({
                 clientID: clientID,
-                apiOptions: {
+                api: {
                     token
                 },
-                botOptions: {
+                bots: {
                     cache: {
                         // @ts-expect-error disabling type check to test
                         max: false
@@ -69,10 +69,10 @@ describe("Check options", () => {
         try {
             new Koreanbots({
                 clientID: clientID,
-                apiOptions: {
+                api: {
                     token
                 },
-                botOptions: {
+                bots: {
                     cache: {
                         // @ts-expect-error disabling type check to test
                         maxAge: false
@@ -86,10 +86,10 @@ describe("Check options", () => {
         try {
             new Koreanbots({
                 clientID: clientID,
-                apiOptions: {
+                api: {
                     token
                 },
-                botOptions: {
+                bots: {
                     cache: {
                         max: -1
                     }
@@ -102,10 +102,10 @@ describe("Check options", () => {
         try {
             new Koreanbots({
                 clientID: clientID,
-                apiOptions: {
+                api: {
                     token
                 },
-                botOptions: {
+                bots: {
                     cache: {
                         maxAge: -1
                     }
@@ -118,10 +118,10 @@ describe("Check options", () => {
         try {
             new Koreanbots({
                 clientID: clientID,
-                apiOptions: {
+                api: {
                     token
                 },
-                botOptions: {
+                bots: {
                     cache: {
                         max: Infinity
                     }
@@ -134,10 +134,10 @@ describe("Check options", () => {
         try {
             new Koreanbots({
                 clientID: clientID,
-                apiOptions: {
+                api: {
                     token
                 },
-                botOptions: {
+                bots: {
                     cache: {
                         maxAge: Infinity
                     }

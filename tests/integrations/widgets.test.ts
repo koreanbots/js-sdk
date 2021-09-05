@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 
-import { Koreanbots } from "../../src"
 import { inspect } from "util"
+import { Koreanbots } from "../../src"
 
 describe("Widgets Test", () => {
     let koreanbots: Koreanbots
@@ -9,8 +9,8 @@ describe("Widgets Test", () => {
     beforeAll(async () => {
         koreanbots = new Koreanbots({
             clientID: process.env.CLIENT_ID!,
-            apiOptions: {
-                token: process.env.TOKEN!,
+            api: {
+                token: process.env.KOREANBOTS_TOKEN!,
                 unstable: false 
             }
         })

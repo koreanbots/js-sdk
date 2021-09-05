@@ -1,9 +1,9 @@
+import { createHash } from "crypto"
+import { URLSearchParams } from "url"
 import LifetimeCollection from "../utils/Collection"
 import { Widget } from "../structures/Widget"
 import { KoreanbotsInternal } from "../utils/Constants"
-import { URLSearchParams } from "url"
 import { CacheOptionsValidator } from "../utils"
-import { createHash } from "crypto"
 
 import type {
     WidgetManagerOptions, FetchResponse, Nullable, WidgetOptions, WidgetMakeOptions,

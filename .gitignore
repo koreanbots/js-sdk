@@ -1,7 +1,11 @@
-node_modules
+node_modules/
 tests/local/
 yarn-*
 tests/config.json
 dist/
 coverage/
+web/
 .env.test
+.vscode/
+
+.vercel

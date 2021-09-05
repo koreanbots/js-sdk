@@ -36,28 +36,30 @@ export class Koreanbots {
      * 새로운 Koreanbots 인스턴스를 생성합니다.
      * @param options 옵션
      * @example
+     * ```js
      * new Koreanbots({
      *     clientID: process.env.CLIENT_ID,
      *     apiOptions: {
-     *         token: process.env.TOKEN
+     *         token: process.env.KOREANBOTS_TOKEN
      *     },
      *     // 글로벌 캐시 옵션이며, 누락할 경우 모든 캐시 옵션이 각각의 기본 값으로 설정됩니다 (로컬 캐시 옵션이 우선권을 가집니다)
      *     max: 250, // (기본값: 100) 캐시에 최대 250개의 내용을 저장
      *     maxAge: 60000 * 15, // (기본값: 10000 = 10초) 캐시에 저장한 내용을 15분 뒤에 삭제합니다.
-     *     userOptions: {
+     *     users: {
      *         cache: { // 이 캐시 설정은 로컬이므로 앞서 적은 글로벌 캐시 옵션보다 우선권을 갖습니다.
      *             max: 500, // (기본값: 100)
      *             maxAge: 60000 * 30 // (기본값: 60000 * 60)
      *         }
      *     }
      * })
+     * ```
      */
     constructor(options: KoreanbotsOptions) {
-        this.options = options ?? {}
+        this.options = options
 
         Object.defineProperty(this, "api", {
             writable: false,
-            value: APIRouter(this.options.apiOptions ?? {})
+            value: APIRouter(this.options.api ?? {})
         })
 
         const optionsProxy = new Proxy(this.options, Koreanbots.validator<KoreanbotsOptions>())
@@ -67,9 +69,9 @@ export class Koreanbots {
         this.options.max = options.max ?? defaultMaxOption
         this.options.maxAge = options.maxAge ?? defaultMaxAgeOption
 
-        this.bots = new BotManager(this, this.getOptions(options.botOptions))
-        this.users = new UserManager(this, this.getOptions(options.userOptions))
-        this.widgets = new WidgetManager(this, this.getOptions(options.widgetOptions))
+        this.bots = new BotManager(this, this.getOptions(options.bots))
+        this.users = new UserManager(this, this.getOptions(options.users))
+        this.widgets = new WidgetManager(this, this.getOptions(options.widgets))
 
         this.mybot = new Mybot(this, options.clientID)
     }

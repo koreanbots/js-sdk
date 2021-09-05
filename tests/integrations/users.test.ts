@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 
-import { Koreanbots } from "../../src"
 import { inspect } from "util"
+import { Koreanbots } from "../../src"
 import { User } from "../../src/structures/User"
 
 describe("Users Test", () => {
@@ -10,8 +10,8 @@ describe("Users Test", () => {
     beforeAll(() => {
         koreanbots = new Koreanbots({
             clientID: process.env.CLIENT_ID!,
-            apiOptions: {
-                token: process.env.TOKEN!,
+            api: {
+                token: process.env.KOREANBOTS_TOKEN!,
                 unstable: false 
             }
         })

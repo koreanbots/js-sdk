@@ -1,7 +1,7 @@
+import { Collection } from "discord.js"
 import { Base } from "./Base"
 import { UserFlags } from "../utils/types"
 import { Github } from "./Github"
-import { Collection } from "discord.js"
 import * as Utils from "../utils"
 
 import type { Koreanbots } from "../client/Koreanbots"
@@ -18,7 +18,7 @@ export class User extends Base {
     public readonly id: string
     public readonly flags: UserFlags
     public readonly github: Nullable<Github>
-    public readonly fullTag: string
+    public readonly tag: string
     public readonly username: string
     public readonly bots: Collection<string, Nullable<Bot> | undefined>
 
@@ -30,7 +30,7 @@ export class User extends Base {
         this.github = data.github ? new Github(this.koreanbots, data.github) : null
         this.username = data.username
 
-        this.fullTag = `${data.username}#${data.tag}`
+        this.tag = `${data.username}#${data.tag}`
 
         this.bots = new Collection(data.bots.map(bot => {
             const id = typeof bot === "string" ? bot : bot.id

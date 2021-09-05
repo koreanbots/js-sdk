@@ -1,7 +1,7 @@
 import { snowflakeRegex as userIdRegex, KoreanbotsInternal } from "../utils/Constants"
 import APIClient from "./RequestClient"
 
-import type { APIClientOptions, InternalOptions, RequestInitWithInternals } from "../utils/types"
+import type { RequestClientOptions, InternalOptions, RequestInitWithInternals } from "../utils/types"
 
 type Serialize = () => string
 type APIRequest<T> = (options?: RequestInitWithInternals) => T
@@ -40,7 +40,7 @@ const reflectors = [
 ]
 
 let cachedClient: APIClient | undefined
-function buildRoute(options: APIClientOptions): Proxy {
+function buildRoute(options: RequestClientOptions): Proxy {
     const client = cachedClient || (cachedClient = new APIClient(options))
 
     const api = <A extends unknown>(internalOptions: InternalOptions = { global: false }) => {

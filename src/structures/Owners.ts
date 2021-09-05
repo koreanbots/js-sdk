@@ -11,8 +11,10 @@ interface UserQuery {
 }
 
 export class Owners extends Collection<string, User> {
-    constructor(public readonly koreanbots: Koreanbots, private data: User[]) {
+    constructor(public readonly koreanbots: Koreanbots, private data?: User[]) {
         super()
+
+        if (!data) return
 
         for (const owner of data) this.set(owner.id, owner)
     }

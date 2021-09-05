@@ -14,8 +14,8 @@ export type WidgetStyle = "classic" | "flat"
 export type WidgetFormat = "webp" | "png" | "jpg" | "jpeg" | "svg"
 
 export interface KoreanbotsClientOptions extends ClientOptions {
-    koreanbotsOptions: Omit<KoreanbotsOptions, "clientID"> & { clientID?: string }
-    koreanbotsClientOptions?: {
+    koreanbots: Omit<KoreanbotsOptions, "clientID"> & { clientID?: string }
+    koreanbotsClient?: {
         updateInterval?: number
     }
 }
@@ -157,16 +157,16 @@ export interface DefaultCacheOptions {
 }
 
 export interface KoreanbotsOptions extends BaseOptions {
-    apiOptions: APIClientOptions
-    botOptions?: BotManagerOptions
-    widgetOptions?: WidgetManagerOptions
-    userOptions?: UserManagerOptions
+    api: RequestClientOptions
+    bots?: BotManagerOptions
+    widgets?: WidgetManagerOptions
+    users?: UserManagerOptions
     clientID: string
     max?: number
     maxAge?: number
 }
 
-export interface APIClientOptions extends BaseOptions {
+export interface RequestClientOptions extends BaseOptions {
     version?: Version
     token: string
     requestTimeout?: number
@@ -207,6 +207,7 @@ export interface RawBotInstance {
     banner: Nullable<string>
     status?: Nullable<BotStatus>
     state: BotState
+    shards: Nullable<number>
 }
 
 export interface RawUserInstance {

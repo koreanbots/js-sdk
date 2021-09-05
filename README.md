@@ -36,115 +36,33 @@ $ npm install koreanbots
 $ yarn add koreanbots
 ```
 
+## 사용 조건
+
+> Node.js v12 이상이 권장됩니다.
+
+| discord.js version        | supported | planned to support |
+|---------------------------|-----------|--------------------|
+| v11.x                     |  no       |  no                |
+| v12.x                     |  yes      |  -                 |
+| v13.x (stable)            |  yes      |  -                 |
+
 ## v2 -> v3 마이그레이션 가이드
 
 ❯ [가이드](https://github.com/koreanbots/js-sdk/blob/master/docs/v3-migration.md)
 
+## 사용법
 
-## 옵션 
-
-### Koreanbots.Koreanbots
-
-❯ 이외의 함수 이용법 [가이드](https://github.com/koreanbots/js-sdk/blob/master/docs/mybot.md)
-
-| 옵션                          | 타입         | 필수 | 기본값       | 설명                                                                                           |
-|------------------------------|-------------|-----|------------|-----------------------------------------------------------------------------------------------|
-| `options.apiOptions.token`   | String      |  O  |      -     | Koreanbots의 토큰                                                                               |
-| `options.clientID`           | String      |  O  |      -     | 자신의 봇의 ID                                                                                   |
-| `options.userOptions.maxAge` | Number      |  x  |    60000   | Time-to-Live의 약자로써 `options.cacheTTL`(밀리초) 뒤에 해당 내용을 삭제합니다.                          |
-| `options.apiVersion`         | Number      |  x  |      2     | Koreanbots API의 버전을 선택합니다.                                                                |
-
-### Koreanbots.Bots
-
-❯ 주의: Bots는 캐시를 자주 활용합니다. 이는 곧 메모리 사용량으로 직결되며 cacheTTL 옵션을 잘 설정해주세요.
-❯ 이외의 함수 이용법 [가이드](https://github.com/koreanbots/js-sdk/blob/master/docs/bots.md)
-
-| 옵션                         | 타입         | 필수 | 기본값       | 설명                                                                                           |
-|-----------------------------|-------------|-----|------------|------------------------------------------------------------------------------------------------|
-| `options.token`             | String      |  O  |      -     | Koreanbots의 토큰                                                                               |
-| `options.hideToken`         | Boolean     |  X  |    false   | 외부로 유출될수 있는 `options.token`을 가립니다.                                                      |
-| `options.noWarning`         | Boolean     |  x  |    false   | 모듈의 경고 알림을 끕니다                                                                           |
-| `options.avoidRateLimit`    | Boolean     |  x  |    true    | 레이트리밋을 최대한 피합니다                                                                         |
-| `options.cacheTTL`          | Number      |  x  |   3600000  | Time-to-Live의 약자로써 `options.cacheTTL`(밀리초) 뒤에 해당 내용을 삭제합니다.                          |
-| `options.apiVersion`        | Number      |  x  |      2     | Koreanbots API의 버전을 선택합니다.                                                                |
-
-### Koreanbots.KoreanbotsClient
-
-❯ 이외의 이용법 [가이드](https://github.com/koreanbots/js-sdk/blob/master/docs/kclient.md)
-
-| 옵션                                           | 타입         | 필수 | 기본값       | 설명                                                                         |
-|-----------------------------------------------|-------------|-----|------------|------------------------------------------------------------------------------|
-| `options.koreanbotsOptions.token`             | String      |  O  |      -     | Koreanbots의 토큰                                                             |
-| `options.koreanbotsOptions.hideToken`         | Boolean     |  X  |    false   | 외부로 유출될수 있는 `options.token`을 가립니다.                                    |
-| `options.koreanbotsOptions.cacheTTL`          | Number      |  x  |    60000   | Time-to-Live의 약자로써 `options.cacheTTL`(밀리초) 뒤에 해당 내용을 삭제합니다.        |
-| `options.koreanbotsOptions.apiVersion`        | Number      |  x  |      2     | Koreanbots API의 버전을 선택합니다.                                              |
-| `options.koreanbotsOptions.noWarning`         | Boolean     |  x  |    false   | 모듈의 경고 알림을 끕니다                                                         |
-| `options.koreanbotsOptions.avoidRateLimit`    | Boolean     |  x  |    true    | 레이트리밋을 최대한 피합니다                                                       |
-| `options.koreanbotsOptions.updateInterval`    | Number      |  x  |   1800000  | `options.koreanbotsOptions.updateInterval`(밀리초)마다 서버 수를 업데이트합니다.     |
-
-### Koreanbots.Users
-
-❯ 이외의 함수 이용법 [가이드](https://github.com/koreanbots/js-sdk/blob/master/docs/users.md)
-
-| 옵션                         | 타입         | 필수 | 기본값       | 설명                                                                                           |
-|-----------------------------|-------------|-----|------------|------------------------------------------------------------------------------------------------|
-| `options.token`             | String      |  O  |      -     | Koreanbots의 토큰                                                                               |
-| `options.hideToken`         | Boolean     |  X  |    false   | 외부로 유출될수 있는 `options.token`을 가립니다.                                                      |
-| `options.noWarning`         | Boolean     |  x  |    false   | 모듈의 경고 알림을 끕니다                                                                           |
-| `options.avoidRateLimit`    | Boolean     |  x  |    true    | 레이트리밋을 최대한 피합니다                                                                         |
-| `options.cacheTTL`          | Number      |  x  |   3600000  | Time-to-Live의 약자로써 `options.cacheTTL`(밀리초) 뒤에 해당 내용을 삭제합니다.                          |
-| `options.apiVersion`        | Number      |  x  |      2     | Koreanbots API의 버전을 선택합니다.                                                                |
-
-### Koreanbots.FetchClient 
-
-| 옵션                         | 타입         | 필수 | 기본값       | 설명                                                                                           |
-|-----------------------------|-------------|-----|------------|------------------------------------------------------------------------------------------------|
-| `options.token`             | String      |  O  |      -     | Koreanbots의 토큰                                                                               |
-| `options.hideToken`         | Boolean     |  X  |    false   | 외부로 유출될수 있는 `options.token`을 가립니다.                                                      |
-| `options.noWarning`         | Boolean     |  x  |    false   | 모듈의 경고 알림을 끕니다                                                                           |
-| `options.avoidRateLimit`    | Boolean     |  x  |    true    | 레이트리밋을 최대한 피합니다                                                                         |
-| `options.cacheTTL`          | Number      |  x  |    60000   | Time-to-Live의 약자로써 `options.cacheTTL`(밀리초) 뒤에 해당 내용을 삭제합니다.                          |
-| `options.apiVersion`        | Number      |  x  |      2     | Koreanbots API의 버전을 선택합니다.                                                                |
-
-### Koreanbots.Cache
-
-❯ 이외의 이용법 [가이드](https://github.com/koreanbots/js-sdk/blob/master/docs/cache.md)
-
-| 옵션                         | 타입         | 필수 | 기본값       | 설명                                                                                           | 
-|-----------------------------|-------------|-----|------------|-----------------------------------------------------------------------------------------------|
-| `ttl`                       | Number      |  O  |      -     | 캐시 Time-to-Live                                                                              |
-
-### Koreanbots.Widgets
-
-❯ 이외의 함수 이용법 [가이드](https://github.com/koreanbots/js-sdk/blob/master/docs/widgets.md)
-
-| 옵션                         | 타입         | 필수 | 기본값       | 설명                                                                                           |
-|-----------------------------|-------------|-----|------------|------------------------------------------------------------------------------------------------|
-| `options.cacheTTL`          | Number      |  x  |  10800000  | Time-to-Live의 약자로써 `options.cacheTTL`(밀리초) 뒤에 해당 내용을 삭제합니다.                          |
-| `options.apiVersion`        | Number      |  x  |      2     | Koreanbots API의 버전을 선택합니다.                                                                |
-
-
-## 수동 메모리(캐시) 관리
-
-```js
-const { Bots } = require("koreanbots")
-const bots = new Bots({
-    token: "토큰"
-})
-
-if(bots.fetchClient.cache.size >= 100) bots.fetchClient.cache.clear()
-```
-
-
-## 테스트하기
-
-- discord.js : 자동 업데이트 
+- 자동 업데이트
 
 ```js
 const { KoreanbotsClient } = require("koreanbots")
 const client = new KoreanbotsClient({
-    koreanbotsOptions: {
-        token: "토큰",
+    koreanbots: {
+        api: {
+            token: "KOREANBOTS 토큰"
+        }
+    },
+    koreanbotsClient: {
         updateInterval: 600000 //10분마다 서버 수를 업데이트합니다. (기본값 30분)
     }
 })
@@ -159,22 +77,27 @@ process.on("SIGINT", () => {
 })
 ```
 
-- discord.js : 수동 업데이트
+- 수동 업데이트
+
 ```js
-const { MyBot } = require("koreanbots")
-const Bot = new MyBot({
-    token: "토큰",
-    clientID: "봇 ID"
+const { Koreanbots } = require("koreanbots")
+const Discord = require("discord.js")
+const client = new Discord.Client()
+const koreanbots = new Koreanbots({
+    api: {
+        token: "KOREANBOTS 토큰"
+    },
+    clientID: "봇 아이디"
 })
 
-let update = count => Bot.update(count) 
+let update = servers => koreanbots.mybot.update({ servers, shards: client.shard?.count }) 
     .then(res => console.log("서버 수를 정상적으로 업데이트하였습니다!\n반환된 정보:" + JSON.stringify(res)))
     .catch(console.error)
 
 client.on("ready", () => {
     console.log(`${client.user.tag}로 로그인하였습니다.`)
 
-    update(client.guilds.size) // 준비 상태를 시작할 때, 최초로 업데이트합니다.
+    update(client.guilds.cache.size) // 준비 상태를 시작할 때, 최초로 업데이트합니다.
     setInterval(() => update(client.guilds.cache.size), 600000) // 10분마다 서버 수를 업데이트합니다.
 })
 
@@ -193,7 +116,7 @@ client.login("토큰")
 ## 🤝 도움주기
 
 이슈와 PR은 모두 환영입니다!<br>
-무언가 문제가 생겼다면 [이슈 페이지](https://github.com/koreanbots/js-sdk/issues) 또는 [koreanbots 통합 이슈 페이지](https://github.com/koreanbots/koreanbots)에 저를 언급하여 알려주세요! ``(예시: @zero734kr, js sdk 버그입니다.)``<br>
+무언가 문제가 생겼다면 [이슈 페이지](https://github.com/koreanbots/js-sdk/issues)에 이슈를 열어주세요.<br>
 코드 수정 요청은 [PR 페이지](https://github.com/koreanbots/js-sdk/pulls)에 올려주세요.
 
 
@@ -204,7 +127,7 @@ client.login("토큰")
 
 ## 📝 라이센스
 
-Copyright © 2020 [zero734kr](https://github.com/koreanbots).<br />
+Copyright © 2020-2021 [koreanbots](https://github.com/koreanbots).<br />
 This project is [MIT](https://github.com/koreanbots/js-sdk/blob/master/LICENSE) licensed.
 
 ***
