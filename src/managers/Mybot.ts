@@ -89,28 +89,26 @@ export class Mybot {
 
     /**
      * 봇의 서버 수를 업데이트합니다.
-     * @param count 
-     * @returns 
      * @example
      * ```js
-     * koreanbots.mybot.update({ count: client.guilds.cache.size })
+     * koreanbots.mybot.update({ servers: client.guilds.cache.size })
      * ```
      */
-    async update({ count, shards }: { count?: number, shards?: number }): Promise<UpdateResponse> {
-        if (typeof count !== "number" && count !== undefined) throw new TypeError(`"count" 옵션은 숫자여야 합니다. (받은 타입: ${typeof count})`)
+    async update({ servers, shards }: { servers?: number, shards?: number }): Promise<UpdateResponse> {
+        if (typeof servers !== "number" && servers !== undefined) throw new TypeError(`"count" 옵션은 숫자여야 합니다. (받은 타입: ${typeof servers})`)
         if (typeof shards !== "number" && shards !== null && shards !== undefined) 
             throw new TypeError(`"shards" 옵션은 숫자, null 또는 undefined이여야 합니다. (받은 타입: ${typeof shards})`)
 
-        if (!count && !shards) throw new Error("\"count\" 또는 \"shards\" 값이 제공되어야 합니다.")
+        if (!servers && !shards) throw new Error("\"servers\" 또는 \"shards\" 값이 제공되어야 합니다.")
 
-        if (this.lastGuildCount === count) return {
+        if (this.lastGuildCount === servers) return {
             code: 304,
             version: this.koreanbots.options.api.version ?? 2,
             message: "서버 수가 같아서 업데이트 되지 않았습니다."
         }
 
         const body = JSON.stringify({
-            servers: count,
+            servers: servers,
             shards
         })
         const response = await this.koreanbots.api<BotQuery>().bots(this.clientID).stats.post({
@@ -123,13 +121,13 @@ export class Mybot {
                 `API에서 알 수 없는 응답이 돌아왔습니다. ${JSON.stringify(response.data)}`
             )
 
-        this.lastGuildCount = count
+        this.lastGuildCount = servers
 
         this.updatedTimestamp = Date.now()
         this.updatedAt = new Date(this.updatedTimestamp)
 
         if (this.koreanbots?.api.client.listeners("serverCountUpdated"))
-            this.koreanbots?.api.client.emit("serverCountUpdated", { ...response.data, servers: count })
+            this.koreanbots?.api.client.emit("serverCountUpdated", { ...response.data, servers })
 
         return response.data
     }

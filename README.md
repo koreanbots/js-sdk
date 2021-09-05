@@ -43,8 +43,8 @@ $ yarn add koreanbots
 | discord.js version        | supported | planned to support |
 |---------------------------|-----------|--------------------|
 | v11.x                     |  no       |  no                |
-| v12.x (stable)            |  yes      |  -                 |
-| v13.x (master)            |  no       |  yes               |
+| v12.x                     |  yes      |  -                 |
+| v13.x (stable)            |  yes      |  -                 |
 
 ## v2 -> v3 마이그레이션 가이드
 
@@ -90,7 +90,7 @@ const koreanbots = new Koreanbots({
     clientID: "봇 아이디"
 })
 
-let update = count => koreanbots.mybot.update({ count, shards: client.shard?.count }) 
+let update = servers => koreanbots.mybot.update({ servers, shards: client.shard?.count }) 
     .then(res => console.log("서버 수를 정상적으로 업데이트하였습니다!\n반환된 정보:" + JSON.stringify(res)))
     .catch(console.error)
 
