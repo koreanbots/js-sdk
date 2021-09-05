@@ -1,6 +1,6 @@
 {
   "name": "koreanbots",
-  "version": "3.0.0-rc.16",
+  "version": "3.0.0",
   "description": "JavaScript/TypeScript SDK for KOREANBOTS",
   "main": "dist/src/index.js",
   "typings": "dist/src/index.d.ts",
