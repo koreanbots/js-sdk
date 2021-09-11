@@ -46,10 +46,6 @@ $ yarn add koreanbots
 | v12.x                     |  yes      |  -                 |
 | v13.x (stable)            |  yes      |  -                 |
 
-## v2 -> v3 마이그레이션 가이드
-
-❯ [가이드](https://github.com/koreanbots/js-sdk/blob/master/docs/v3-migration.md)
-
 ## 사용법
 
 - 자동 업데이트
@@ -57,6 +53,7 @@ $ yarn add koreanbots
 ```js
 const { KoreanbotsClient } = require("koreanbots")
 const client = new KoreanbotsClient({
+    intents: ["GUILDS", "GUILD_MESSAGES", "GUILD_MEMBERS"],
     koreanbots: {
         api: {
             token: "KOREANBOTS 토큰"
