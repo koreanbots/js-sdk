@@ -3,7 +3,7 @@ import { Bot } from "../structures/Bot"
 import { KoreanbotsInternal } from "../utils/Constants"
 
 import type { Koreanbots } from "../client/Koreanbots"
-import type { FetchResponse, RawBotInstance, RequestInitWithInternals, Vote } from "../utils/types"
+import type { FetchResponse, RawBotInstance, RequestOptions, Vote } from "../utils/types"
 import LifetimeCollection from "../utils/Collection"
 
 export interface UpdateResponse {
@@ -15,12 +15,12 @@ export interface UpdateResponse {
 
 interface BotQuery {
     bots(clientID: string): {
-        get(options?: RequestInitWithInternals): Promise<FetchResponse<RawBotInstance>>
+        get(options?: RequestOptions): Promise<FetchResponse<RawBotInstance>>
         vote: {
-            get(options?: RequestInitWithInternals): Promise<FetchResponse<Vote>>
+            get(options?: RequestOptions): Promise<FetchResponse<Vote>>
         }
         stats: {
-            post(options?: RequestInitWithInternals): Promise<FetchResponse<UpdateResponse>>
+            post(options?: RequestOptions): Promise<FetchResponse<UpdateResponse>>
         }
     }
 }

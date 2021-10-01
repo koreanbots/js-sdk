@@ -1,17 +1,22 @@
 import { snowflakeRegex as userIdRegex, KoreanbotsInternal } from "../utils/Constants"
 import APIClient from "./RequestClient"
 
-import type { RequestClientOptions, InternalOptions, RequestInitWithInternals } from "../utils/types"
+import type {
+    RequestClientOptions,
+    InternalOptions,
+    RequestOptions
+} from "../utils/types"
+import type { HttpMethod } from "undici/types/dispatcher"
 
 type Serialize = () => string
-type APIRequest<T> = (options?: RequestInitWithInternals) => T
+type APIRequest<T> = (options?: RequestOptions) => T
 type Proxy = {
     client: APIClient
     <A>(routeOptions?: InternalOptions): A
 }
 
 interface APIHandler<T> {
-    get(target: never, name: string): Serialize | APIRequest<T> | unknown
+    get(target: never, name: HttpMethod): Serialize | APIRequest<T> | unknown
     apply(target: never, _: never, args: string[]): unknown
 }
 
@@ -57,7 +62,7 @@ function buildRoute(options: RequestClientOptions): Proxy {
                         // All other parts of the route should be considered as part of the bucket identifier
                         else routeBucket.push(route[i])
                     }
-                    return (options?: RequestInitWithInternals) => {
+                    return (options?: RequestOptions) => {
                         let kInternal = {
                             ...internalOptions
                         }
@@ -66,10 +71,10 @@ function buildRoute(options: RequestClientOptions): Proxy {
                             kInternal = { ...internalOptions, ...options[KoreanbotsInternal] }
 
                         return client.request(
-                            name.toUpperCase(),
                             route.join("/"),
                             {
                                 ...options,
+                                method: options?.method ?? "GET",
                                 [KoreanbotsInternal]: kInternal
                             }
                         )

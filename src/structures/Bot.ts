@@ -3,13 +3,13 @@ import { Owners } from "./Owners"
 import { User } from "./User"
 import { Discord } from "./Discord"
 
-import type { RequestInit } from "node-fetch"
+import type { Dispatcher } from "undici"
 import type { RawBotInstance, BotFlags, Nullable, Category, BotState, BotStatus, FetchResponse } from "../utils/types"
 import type { Koreanbots } from "../client/Koreanbots"
 
 interface BotQuery {
     bots(botID: string): {
-        get(options?: RequestInit): Promise<FetchResponse<RawBotInstance>>
+        get(options?: Dispatcher.RequestOptions): Promise<FetchResponse<RawBotInstance>>
     }
 }
 

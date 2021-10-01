@@ -7,11 +7,11 @@ import type {
     FetchOptions
 } from "../utils/types"
 import type { Koreanbots } from "../client/Koreanbots"
-import type { RequestInit } from "node-fetch"
+import type { Dispatcher } from "undici"
 
 interface UserQuery {
     users(userID: string): {
-        get(options?: RequestInit): Promise<FetchResponse<RawUserInstance>>
+        get(options?: Dispatcher.RequestOptions): Promise<FetchResponse<RawUserInstance>>
     }
 }
 

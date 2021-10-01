@@ -1,5 +1,6 @@
 import type { ClientOptions } from "discord.js"
-import type { RequestInit, Response } from "node-fetch"
+import type { Dispatcher } from "undici"
+import type { HttpMethod } from "undici/types/dispatcher"
 import type { URLSearchParams } from "url"
 import type { KoreanbotsInternal } from "./Constants"
 
@@ -20,9 +21,9 @@ export interface KoreanbotsClientOptions extends ClientOptions {
     }
 }
 
-export interface Vote { 
+export interface Vote {
     voted: boolean
-    lastVote: number 
+    lastVote: number
 }
 export interface WidgetOptions {
     style?: WidgetStyle
@@ -44,14 +45,22 @@ export interface WidgetData {
 
 export type WidgetMakeOptions = WidgetData & WidgetOptions
 
-export interface RequestInitWithInternals extends RequestInit {
+interface FetchRequestOptions extends Omit<Dispatcher.RequestOptions, "path"> {
+    path?: string
+}
+
+interface RequestInitWithInternals extends FetchRequestOptions {
     [KoreanbotsInternal]?: InternalOptions
+}
+
+export interface RequestOptions extends Omit<RequestInitWithInternals, "method"> {
+    method?: HttpMethod
 }
 
 export interface InternalOptions {
     global?: boolean
     query?: URLSearchParams | string
-    bodyResolver?: <T = unknown>(res: Response) => Promise<T>
+    bodyResolver?: <T = unknown>(res: Dispatcher.ResponseData) => Promise<T>
 }
 
 export enum BotFlags {

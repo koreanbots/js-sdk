@@ -7,16 +7,16 @@ import { CacheOptionsValidator } from "../utils"
 
 import type {
     WidgetManagerOptions, FetchResponse, Nullable, WidgetOptions, WidgetMakeOptions,
-    WidgetTarget, WidgetType, RequestInitWithInternals, DefaultCacheOptions, FetchOptions
+    WidgetTarget, WidgetType, RequestOptions, DefaultCacheOptions, FetchOptions
 } from "../utils/types"
 import type { Koreanbots } from "../client/Koreanbots"
-import type { Response } from "node-fetch"
+import type { Dispatcher } from "undici"
 
 interface WidgetQuery {
     widget(target: WidgetTarget):
         (type: WidgetType) =>
             (id: string) => {
-                get: (options?: RequestInitWithInternals) => FetchResponse<Buffer>
+                get: (options?: RequestOptions) => FetchResponse<Buffer>
             }
 }
 
@@ -128,7 +128,7 @@ export class WidgetManager {
             this.koreanbots.api<WidgetQuery>({ global: true }).widget(options.target)(options.type)(`${options.id}.svg`).get({
                 [KoreanbotsInternal]: {
                     query,
-                    bodyResolver: <T>(res: Response) => res.buffer() as unknown as T
+                    bodyResolver: <T>(res: Dispatcher.ResponseData) => res.body.blob() as unknown as T
                 }
             }),
             import("sharp").catch(() => {
