@@ -74,7 +74,7 @@ function buildRoute(options: RequestClientOptions): Proxy {
                             route.join("/"),
                             {
                                 ...options,
-                                method: options?.method ?? "GET",
+                                method: name.toUpperCase() as HttpMethod ?? "GET",
                                 [KoreanbotsInternal]: kInternal
                             }
                         )

@@ -31,7 +31,7 @@ describe("Bots Test", () => {
         koreanbots.bots.cache.clear()
     })
 
-    it("should be able to fetch other bot information", async done => {
+    it("should be able to fetch other bot information", async () => {
         expect(typeof botInfo).toBe("object")
         expect(botInfo.id).toBe(process.env.CLIENT_ID)
 
@@ -46,6 +46,6 @@ describe("Bots Test", () => {
 
         if (botInfo.discord) expect(botInfo.discord.inviteUrl).toMatch(/https?:\/\/discord\.gg\/(.{6,10})/i)
 
-        done()
+        return 
     })
 })

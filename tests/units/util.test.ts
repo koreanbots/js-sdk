@@ -27,17 +27,17 @@ describe("Utils", () => {
         done()
     })
 
-    it("should be able to freeze asynchronously.", async done => {
+    it("should be able to freeze asynchronously.", async () => {
         const time = performance.now()
 
         await Utils.waitFor(100)
 
         expect(performance.now() - time).toBeLessThanOrEqual(150)
 
-        done()
+        return
     })
 
-    it("KoreanbotsAPIError", done => {
+    it("KoreanbotsAPIError", () => {
         const ERROR_MESSAGE = "test error"
         const ERROR_CODE = 400
         const ERROR_METHOD = "POST"
@@ -53,7 +53,8 @@ describe("Utils", () => {
             expect(e.method).toBe(ERROR_METHOD)
             expect(e.path).toBe(ERROR_PATH)
         } finally {
-            done()
+            // eslint-disable-next-line no-unsafe-finally
+            return 
         }
     })
 })

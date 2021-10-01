@@ -6,7 +6,7 @@ import { URLSearchParams } from "url"
 import { getVersionRoute, getGlobalRoute } from "./getRoute"
 import * as Utils from "../utils"
 import { version, snowflakeRegex, KoreanbotsInternal } from "../utils/Constants"
-import { KoreanbotsAPIError } from "../utils/Errors"
+import { KoreanbotsAPIError, KoreanbotsError } from "../utils/Errors"
 
 import type {
     Version, FetchResponse, RequestClientOptions,
@@ -201,10 +201,11 @@ class RequestClient extends EventEmitter {
 
             res = await (mergedOptions[KoreanbotsInternal]?.bodyResolver?.(response) ?? response.body.text()
                 // code for debug
-                .then(a => Utils.isJSON(a) ? JSON.parse(a) : (() => { throw a })())
-                .catch(console.error)
+                .then(a => Utils.isJSON(a) ? JSON.parse(a) : (() => null)())
             )
             r = response
+        } catch (err) {
+            throw new KoreanbotsError(err)
         } finally {
             this.clearTimeout(timeout)
         }

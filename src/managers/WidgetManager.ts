@@ -130,8 +130,7 @@ export class WidgetManager {
             this.koreanbots.api<WidgetQuery>({ global: true }).widget(options.target)(options.type)(`${options.id}.svg`).get({
                 [KoreanbotsInternal]: {
                     query,
-                    // TODO: https://github.com/nodejs/undici/discussions/1050
-                    bodyResolver: async <T>(res: Dispatcher.ResponseData) => Buffer.from(await res.body.text()) as unknown as T
+                    bodyResolver: async <T>(res: Dispatcher.ResponseData) => Buffer.from(await res.body.arrayBuffer()) as unknown as T
                 }
             }),
             import("sharp").catch(() => {

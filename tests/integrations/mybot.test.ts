@@ -2,6 +2,7 @@
 
 import { Koreanbots } from "../../src"
 import { inspect } from "util"
+import { waitFor } from "../../src/utils"
 
 describe("Mybot Test", () => {
     let koreanbots: Koreanbots
@@ -27,11 +28,13 @@ describe("Mybot Test", () => {
         koreanbots.bots.cache.clear()
     })
 
-    it("should be able to update server count and shard count", async done => {
+    it("should be able to update server count and shard count", async () => {
         const serverCount = Math.round(Math.random() * 750)
         const shardCount = Math.round(Math.random() * 10)
 
         await koreanbots.mybot.update({ servers: serverCount, shards: shardCount })
+
+        await waitFor(1000)
 
         const botInfo = await koreanbots.bots.fetch(process.env.CLIENT_ID!)
 
@@ -39,14 +42,14 @@ describe("Mybot Test", () => {
         expect(botInfo.servers).toBe(serverCount)
         expect(botInfo.shards).toBe(shardCount)
 
-        done()
+        return 
     })
 
-    it("should be able to check vote", async done => {
+    it("should be able to check vote", async () => {
         const res = await koreanbots.mybot.checkVote("462355431071809537")
 
         expect(typeof res.voted).toBe("boolean")
 
-        done()
+        return 
     })
 })
