@@ -5,14 +5,8 @@ import { Github } from "./Github"
 import * as Utils from "../utils"
 
 import type { Koreanbots } from "../client/Koreanbots"
-import type { RawUserInstance, Nullable, FetchResponse } from "../utils/types"
+import type { RawUserInstance, Nullable } from "../utils/types"
 import type { Bot } from "./Bot"
-
-interface UserQuery {
-    users(id: string): {
-        get: () => Promise<FetchResponse<RawUserInstance>>
-    }
-}
 
 export class User extends Base {
     public readonly id: string
@@ -32,7 +26,7 @@ export class User extends Base {
 
         this.tag = `${data.username}#${data.tag}`
 
-        this.bots = new Collection(data.bots.map(bot => {
+        this.bots = new Collection(data.bots?.map(bot => {
             const id = typeof bot === "string" ? bot : bot.id
             return [id, this.koreanbots.bots.cache.get(id)]
         }))
@@ -71,7 +65,7 @@ export class User extends Base {
     }
 
     async fetch(): Promise<User> {
-        const user = await this.koreanbots.api<UserQuery>().users(this.id).get()
+        const user = await this.koreanbots.api().users(this.id).get()
 
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         return new User(this.koreanbots, user.data!)

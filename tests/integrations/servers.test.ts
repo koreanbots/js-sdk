@@ -2,25 +2,27 @@
 
 import { Koreanbots } from "../../src"
 import { inspect } from "util"
-import { Bot } from "../../src/structures/Bot"
+import { Server } from "../../src/structures/Server"
+
+const KOREANBOTS_SERVER_ID = "653083797763522580"
 
 describe("Bots Test", () => {
     let koreanbots: Koreanbots
-    let botInfo: Bot
+    let serverInfo: Server
 
     beforeAll(async () => {
         koreanbots = new Koreanbots({
             clientID: process.env.CLIENT_ID!,
             api: {
                 token: process.env.KOREANBOTS_TOKEN!,
-                unstable: false 
+                unstable: true
             }
         })
 
         koreanbots.api.client.on("timeout", a => console.log(`Timeout: ${inspect(a)}`))
         koreanbots.api.client.on("rateLimit", a => console.log(`Rate limit: ${inspect(a)}`))
 
-        botInfo = await koreanbots.bots.fetch(process.env.CLIENT_ID!)
+        serverInfo = await koreanbots.servers.fetch(KOREANBOTS_SERVER_ID)
     })
 
     afterAll(() => {
@@ -32,20 +34,21 @@ describe("Bots Test", () => {
     })
 
     it("should be able to fetch other bot information", async () => {
-        expect(typeof botInfo).toBe("object")
-        expect(botInfo.id).toBe(process.env.CLIENT_ID)
+        expect(typeof serverInfo).toBe("object")
+        expect(serverInfo.id).toBe(KOREANBOTS_SERVER_ID)
 
-        const owners = await botInfo.owners.fetch()
+        const admins = serverInfo.admins
 
-        expect(owners.every(f => typeof f?.username === "string")).toBe(true)
-        expect(owners.every(f => typeof f?.id === "string")).toBe(true)
+        expect(admins.every(f => typeof f?.username === "string")).toBe(true)
+        expect(admins.every(f => typeof f?.id === "string")).toBe(true)
 
-        const votes = await botInfo.fetchVotes()
+        const votes = await serverInfo.fetchVotes()
 
         expect(typeof votes).toBe("number")
 
-        if (botInfo.discord) expect(botInfo.discord.url).toMatch(/https?:\/\/discord\.com\/invite\/(.{6,10})/i)
+        if (serverInfo.invite && !serverInfo.vanity) expect(serverInfo.invite.url).toMatch(/https?:\/\/discord\.gg\/(.{6,10})/i)
+        if (serverInfo.invite && serverInfo.vanity) expect(serverInfo.invite.url).toBe(`https://discord.com/invite/${serverInfo.vanity}`)
 
-        return 
+        return
     })
 })

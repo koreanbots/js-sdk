@@ -4,7 +4,8 @@ import APIClient from "./RequestClient"
 import type {
     RequestClientOptions,
     InternalOptions,
-    RequestOptions
+    RequestOptions,
+    Query
 } from "../utils/types"
 import type { HttpMethod } from "undici/types/dispatcher"
 
@@ -12,7 +13,7 @@ type Serialize = () => string
 type APIRequest<T> = (options?: RequestOptions) => T
 type Proxy = {
     client: APIClient
-    <A>(routeOptions?: InternalOptions): A
+    <A = Query>(routeOptions?: InternalOptions): A
 }
 
 interface APIHandler<T> {

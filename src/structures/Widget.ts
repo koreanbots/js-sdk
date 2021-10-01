@@ -2,7 +2,9 @@ import { Base } from "./Base"
 
 import type { Koreanbots } from "../client/Koreanbots"
 import type {
-    WidgetOptions, WidgetTarget, WidgetType,
+    WidgetOptions, 
+    WidgetTarget, 
+    WidgetType,
     WidgetData
 } from "../utils/types"
 

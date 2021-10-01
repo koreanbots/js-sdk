@@ -2,16 +2,17 @@ import { Base } from "./Base"
 import { Owners } from "./Owners"
 import { User } from "./User"
 import { Discord } from "./Discord"
+import { BotFlags } from "../utils/types"
 
-import type { Dispatcher } from "undici"
-import type { RawBotInstance, BotFlags, Nullable, Category, BotState, BotStatus, FetchResponse } from "../utils/types"
+import type {
+    RawBotInstance,
+    Nullable,
+    BotCategory,
+    BotState,
+    BotStatus
+} from "../utils/types"
 import type { Koreanbots } from "../client/Koreanbots"
-
-interface BotQuery {
-    bots(botID: string): {
-        get(options?: Dispatcher.RequestOptions): Promise<FetchResponse<RawBotInstance>>
-    }
-}
+import { KoreanbotsError } from "../utils/Errors"
 
 
 export class Bot extends Base {
@@ -32,7 +33,7 @@ export class Bot extends Base {
     public git: Nullable<string>
     public url: Nullable<string>
     public discord: Nullable<Discord>
-    public category: Category[]
+    public category: BotCategory[]
     public vanity: Nullable<string>
     public bg: Nullable<string>
     public banner: Nullable<string>
@@ -75,12 +76,22 @@ export class Bot extends Base {
     }
 
     async fetchVotes({ cache }: { cache: boolean } = { cache: true }): Promise<number> {
-        const { data, message } = await this.koreanbots.api<BotQuery>().bots(this.id).get()
+        const { data, message } = await this.koreanbots.api().bots(this.id).get()
 
-        if (!data) throw new Error(message)
+        if (!data) throw new KoreanbotsError(message)
 
         if (cache) this.votes = data.votes
 
         return this.votes
+    }
+
+    is(type: keyof typeof BotFlags | BotFlags): boolean {
+        if (typeof type === "number") {
+            if (type === 0) return true
+            return !!(this.flags & type)
+        }
+
+        if (BotFlags[type] === 0) return true
+        return !!(this.flags & BotFlags[type])
     }
 }

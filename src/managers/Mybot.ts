@@ -4,26 +4,7 @@ import { KoreanbotsInternal } from "../utils/Constants"
 import { LimitedCollection } from "discord.js"
 
 import type { Koreanbots } from "../client/Koreanbots"
-import type { FetchResponse, RawBotInstance, RequestOptions, Vote } from "../utils/types"
-
-export interface UpdateResponse {
-    code: number
-    version: number
-    message: string
-    servers?: number
-}
-
-interface BotQuery {
-    bots(clientID: string): {
-        get(options?: RequestOptions): Promise<FetchResponse<RawBotInstance>>
-        vote: {
-            get(options?: RequestOptions): Promise<FetchResponse<Vote>>
-        }
-        stats: {
-            post(options?: RequestOptions): Promise<FetchResponse<UpdateResponse>>
-        }
-    }
-}
+import type { UpdateResponse, Vote } from "../utils/types"
 
 const defaultCacheSweepInterval = 10000
 
@@ -51,7 +32,7 @@ export class Mybot {
     }
 
     protected async mybotInit(): Promise<Bot> {
-        const res = await this.koreanbots.api<BotQuery>().bots(this.clientID).get()
+        const res = await this.koreanbots.api().bots(this.clientID).get()
 
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         return this.bot = new Bot(this.koreanbots, res.data!)
@@ -78,7 +59,7 @@ export class Mybot {
         const query = new URLSearchParams()
         query.append("userID", id)
 
-        const res = await this.koreanbots.api<BotQuery>().bots(this.clientID).vote.get({
+        const res = await this.koreanbots.api().bots(this.clientID).vote.get({
             [KoreanbotsInternal]: {
                 query
             }
@@ -113,7 +94,7 @@ export class Mybot {
             servers: servers,
             shards
         })
-        const response = await this.koreanbots.api<BotQuery>().bots(this.clientID).stats.post({
+        const response = await this.koreanbots.api().bots(this.clientID).stats.post({
             body
         })
 

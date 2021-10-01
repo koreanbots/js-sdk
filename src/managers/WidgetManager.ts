@@ -5,19 +5,15 @@ import { Widget } from "../structures/Widget"
 import { KoreanbotsInternal } from "../utils/Constants"
 
 import type {
-    WidgetManagerOptions, FetchResponse, Nullable, WidgetOptions, WidgetMakeOptions,
-    WidgetTarget, WidgetType, RequestOptions, FetchOptions
+    WidgetManagerOptions,
+    Nullable,
+    WidgetOptions,
+    WidgetMakeOptions,
+    FetchOptions
 } from "../utils/types"
 import type { Koreanbots } from "../client/Koreanbots"
 import type { Dispatcher } from "undici"
 
-interface WidgetQuery {
-    widget(target: WidgetTarget):
-        (type: WidgetType) =>
-            (id: string) => {
-                get: (options?: RequestOptions) => FetchResponse<Buffer>
-            }
-}
 
 const defaultCacheMaxSize = 100
 const defaultCacheSweepInterval = 60000 * 60
@@ -127,7 +123,7 @@ export class WidgetManager {
         }
 
         const [res, sharp] = await Promise.allSettled([
-            this.koreanbots.api<WidgetQuery>({ global: true }).widget(options.target)(options.type)(`${options.id}.svg`).get({
+            this.koreanbots.api({ global: true }).widget(options.target)(options.type)(`${options.id}.svg`).get({
                 [KoreanbotsInternal]: {
                     query,
                     bodyResolver: async <T>(res: Dispatcher.ResponseData) => Buffer.from(await res.body.arrayBuffer()) as unknown as T

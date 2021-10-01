@@ -1,9 +1,11 @@
 import { snowflakeRegex } from "../utils/Constants"
 import APIRouter from "../rest/APIRouter"
+
 import { Mybot } from "../managers/Mybot"
 import { BotManager } from "../managers/BotManager"
 import { UserManager } from "../managers/UserManager"
 import { WidgetManager } from "../managers/WidgetManager"
+import { ServerManager } from "../managers/ServerManager"
 
 import type { BotManagerOptions, KoreanbotsOptions, ProxyValidator, UserManagerOptions, WidgetManagerOptions } from "../utils/types"
 
@@ -17,6 +19,7 @@ export class Koreanbots {
     public bots: BotManager
     public users: UserManager
     public widgets: WidgetManager
+    public servers: ServerManager
 
     static validator = <T>(): ProxyValidator<T> => ({
         set(obj, prop, value) {
@@ -72,6 +75,7 @@ export class Koreanbots {
         this.bots = new BotManager(this, this.getOptions(options.bots))
         this.users = new UserManager(this, this.getOptions(options.users))
         this.widgets = new WidgetManager(this, this.getOptions(options.widgets))
+        this.servers = new ServerManager(this, this.getOptions(options.servers))
 
         this.mybot = new Mybot(this, options.clientID)
     }
