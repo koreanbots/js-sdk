@@ -1,13 +1,12 @@
 import { createHash } from "crypto"
 import { URLSearchParams } from "url"
-import LifetimeCollection from "../utils/Collection"
+import { LimitedCollection } from "discord.js"
 import { Widget } from "../structures/Widget"
 import { KoreanbotsInternal } from "../utils/Constants"
-import { CacheOptionsValidator } from "../utils"
 
 import type {
     WidgetManagerOptions, FetchResponse, Nullable, WidgetOptions, WidgetMakeOptions,
-    WidgetTarget, WidgetType, RequestOptions, DefaultCacheOptions, FetchOptions
+    WidgetTarget, WidgetType, RequestOptions, FetchOptions
 } from "../utils/types"
 import type { Koreanbots } from "../client/Koreanbots"
 import type { Dispatcher } from "undici"
@@ -21,23 +20,26 @@ interface WidgetQuery {
 }
 
 const defaultCacheMaxSize = 100
-const defaultCacheMaxAge = 60000 * 60
+const defaultCacheSweepInterval = 60000 * 60
+const defaultOptions = {
+    cache: {
+        maxSize: defaultCacheMaxSize,
+        sweepInterval: defaultCacheSweepInterval
+    }
+}
 
 export class WidgetManager {
-    public cache: LifetimeCollection<string, Nullable<Widget>>
+    public cache: LimitedCollection<string, Nullable<Widget>>
 
     constructor(public readonly koreanbots: Koreanbots, public readonly options?: WidgetManagerOptions) {
-        this.options = options ?? { cache: {} }
+        this.options = options ?? defaultOptions
 
-        const cacheOptionsProxy = new Proxy(this.options.cache, CacheOptionsValidator<DefaultCacheOptions>())
-        // const optionsProxy = new Proxy(this.options, WidgetManager.validator<WidgetManagerOptions>())
+        if (!this.options?.cache.maxSize) this.options.cache.maxSize = defaultCacheMaxSize
+        if (!this.options?.cache.sweepInterval) this.options.cache.sweepInterval = defaultCacheSweepInterval
 
-        cacheOptionsProxy.max = options?.cache?.max ?? defaultCacheMaxSize
-        cacheOptionsProxy.maxAge = options?.cache?.maxAge ?? defaultCacheMaxAge
-
-        this.cache = new LifetimeCollection({
-            max: this.options.cache.max,
-            maxAge: this.options.cache.maxAge
+        this.cache = new LimitedCollection({
+            maxSize: this.options.cache.maxSize,
+            sweepInterval: this.options.cache.sweepInterval
         })
     }
 
@@ -128,7 +130,8 @@ export class WidgetManager {
             this.koreanbots.api<WidgetQuery>({ global: true }).widget(options.target)(options.type)(`${options.id}.svg`).get({
                 [KoreanbotsInternal]: {
                     query,
-                    bodyResolver: <T>(res: Dispatcher.ResponseData) => res.body.blob() as unknown as T
+                    // TODO: https://github.com/nodejs/undici/discussions/1050
+                    bodyResolver: async <T>(res: Dispatcher.ResponseData) => Buffer.from(await res.body.text()) as unknown as T
                 }
             }),
             import("sharp").catch(() => {

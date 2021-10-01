@@ -1,10 +1,10 @@
 import { URLSearchParams } from "url"
 import { Bot } from "../structures/Bot"
 import { KoreanbotsInternal } from "../utils/Constants"
+import { LimitedCollection } from "discord.js"
 
 import type { Koreanbots } from "../client/Koreanbots"
 import type { FetchResponse, RawBotInstance, RequestOptions, Vote } from "../utils/types"
-import LifetimeCollection from "../utils/Collection"
 
 export interface UpdateResponse {
     code: number
@@ -25,13 +25,15 @@ interface BotQuery {
     }
 }
 
+const defaultCacheSweepInterval = 10000
+
 export class Mybot {
     public bot: Bot | null
 
     public lastGuildCount?: number
     public updatedAt?: Date
     public updatedTimestamp?: number
-    public votes: LifetimeCollection<string, Vote>
+    public votes: LimitedCollection<string, Vote>
 
     /**
      * 새로운 Mybot 인스턴스를 생성합니다.
@@ -41,8 +43,8 @@ export class Mybot {
     constructor(public readonly koreanbots: Koreanbots, public readonly clientID: string) {
         this.bot = null
 
-        this.votes = new LifetimeCollection({
-            maxAge: 10000
+        this.votes = new LimitedCollection({
+            sweepInterval: koreanbots.options.sweepInterval ?? defaultCacheSweepInterval
         })
 
         this.mybotInit()

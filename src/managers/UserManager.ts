@@ -1,6 +1,5 @@
-import LifetimeCollection from "../utils/Collection"
+import { LimitedCollection } from "discord.js"
 import { User } from "../structures/User"
-import { CacheOptionsValidator } from "../utils"
 
 import type {
     UserManagerOptions, FetchResponse, Nullable, RawUserInstance,
@@ -16,21 +15,26 @@ interface UserQuery {
 }
 
 const defaultCacheMaxSize = 100
-const defaultCacheMaxAge = 60000 * 60
+const defaultCacheSweepInterval = 60000 * 60
+const defaultOptions = {
+    cache: {
+        maxSize: defaultCacheMaxSize,
+        sweepInterval: defaultCacheSweepInterval
+    }
+}
 
 export class UserManager {
-    public cache: LifetimeCollection<string, Nullable<User>>
+    public cache: LimitedCollection<string, Nullable<User>>
 
     constructor(public readonly koreanbots: Koreanbots, public readonly options?: UserManagerOptions) {
-        this.options = options ?? { cache: {} }
-        const optionsProxy = new Proxy(this.options, CacheOptionsValidator<UserManagerOptions>())
+        this.options = options ?? defaultOptions
 
-        optionsProxy.cache.max = options?.cache?.max ?? defaultCacheMaxSize
-        optionsProxy.cache.maxAge = options?.cache?.maxAge ?? defaultCacheMaxAge
+        if (!this.options?.cache.maxSize) this.options.cache.maxSize = defaultCacheMaxSize
+        if (!this.options?.cache.sweepInterval) this.options.cache.sweepInterval = defaultCacheSweepInterval
 
-        this.cache = new LifetimeCollection({
-            max: this.options.cache.max,
-            maxAge: this.options.cache.maxAge
+        this.cache = new LimitedCollection({
+            maxSize: this.options.cache.maxSize,
+            sweepInterval: this.options.cache.sweepInterval
         })
     }
 

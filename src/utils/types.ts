@@ -1,4 +1,6 @@
-import type { ClientOptions } from "discord.js"
+
+import type { Bot } from ".."
+import type { ClientOptions, LimitedCollectionOptions } from "discord.js"
 import type { Dispatcher } from "undici"
 import type { HttpMethod } from "undici/types/dispatcher"
 import type { URLSearchParams } from "url"
@@ -160,19 +162,14 @@ export type BaseOptions = {
 
 }
 
-export interface DefaultCacheOptions {
-    max?: number
-    maxAge?: number
-}
-
 export interface KoreanbotsOptions extends BaseOptions {
     api: RequestClientOptions
     bots?: BotManagerOptions
     widgets?: WidgetManagerOptions
     users?: UserManagerOptions
     clientID: string
-    max?: number
-    maxAge?: number
+    maxSize?: number
+    sweepInterval?: number
 }
 
 export interface RequestClientOptions extends BaseOptions {
@@ -184,7 +181,7 @@ export interface RequestClientOptions extends BaseOptions {
 }
 
 export interface BotManagerOptions extends BaseOptions {
-    cache: DefaultCacheOptions
+    cache: LimitedCollectionOptions<string, Nullable<Bot>>
 }
 
 export type UserManagerOptions = BotManagerOptions

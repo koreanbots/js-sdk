@@ -1,6 +1,5 @@
-import LifetimeCollection from "../utils/Collection"
+import { LimitedCollection } from "discord.js"
 import { Bot } from "../structures/Bot"
-import { CacheOptionsValidator } from "../utils"
 
 import type {
     BotManagerOptions, FetchResponse, Nullable, RawBotInstance,
@@ -15,10 +14,16 @@ interface BotQuery {
 }
 
 const defaultCacheMaxSize = 100
-const defaultCacheMaxAge = 60000 * 60
+const defaultCacheSweepInterval = 60000 * 60
+const defaultOptions = {
+    cache: {
+        maxSize: defaultCacheMaxSize,
+        sweepInterval: defaultCacheSweepInterval
+    }
+}
 
 export class BotManager {
-    public cache: LifetimeCollection<string, Nullable<Bot>>
+    public cache: LimitedCollection<string, Nullable<Bot>>
 
     /**
      * 새로운 BotManager 인스턴스를 만듭니다.
@@ -32,23 +37,22 @@ export class BotManager {
      *     })),
      *     {
      *         cache: {
-     *             max: 150,
-     *             maxAge: 60000
+     *             maxSize: 150,
+     *             sweepInterval: 60000
      *         }
      *     }
      * )
      * ```
      */
     constructor(public readonly koreanbots: Koreanbots, public readonly options?: BotManagerOptions) {
-        this.options = options ?? { cache: {} }
-        const optionsProxy = new Proxy(this.options, CacheOptionsValidator<BotManagerOptions>())
+        this.options = options ?? defaultOptions
 
-        optionsProxy.cache.max = options?.cache?.max ?? defaultCacheMaxSize
-        optionsProxy.cache.maxAge = options?.cache?.maxAge ?? defaultCacheMaxAge
+        if (!this.options?.cache.maxSize) this.options.cache.maxSize = defaultCacheMaxSize
+        if (!this.options?.cache.sweepInterval) this.options.cache.sweepInterval = defaultCacheSweepInterval
 
-        this.cache = new LifetimeCollection({
-            max: this.options.cache.max,
-            maxAge: this.options.cache.maxAge
+        this.cache = new LimitedCollection({
+            maxSize: this.options.cache.maxSize,
+            sweepInterval: this.options.cache.sweepInterval
         })
     }
 

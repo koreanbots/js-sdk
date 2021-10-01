@@ -3,7 +3,6 @@
 import { Dispatcher, request } from "undici"
 import { EventEmitter } from "events"
 import { URLSearchParams } from "url"
-import * as https from "https"
 import { getVersionRoute, getGlobalRoute } from "./getRoute"
 import * as Utils from "../utils"
 import { version, snowflakeRegex, KoreanbotsInternal } from "../utils/Constants"
@@ -11,7 +10,7 @@ import { KoreanbotsAPIError } from "../utils/Errors"
 
 import type {
     Version, FetchResponse, RequestClientOptions,
-    ProxyValidator, ValueOf, RequestOptions
+    ValueOf, RequestOptions, ProxyValidator
 } from "../utils/types"
 import type { HttpMethod } from "undici/types/dispatcher"
 
@@ -33,12 +32,10 @@ class RequestClient extends EventEmitter {
     public globalReset: null | number
     public options: RequestClientOptions
     private _timeouts: Set<NodeJS.Timeout | number>
-    private _agent?: https.Agent
     private _destroyed: boolean
     private _retries: Set<{ id: AbortSignal, retry: number }>
 
     protected static validator = <T>(): ProxyValidator<T> => ({
-
         set: (obj: T, prop: keyof T, value: ValueOf<T>) => {
             switch (prop) {
             case "token":
@@ -93,7 +90,6 @@ class RequestClient extends EventEmitter {
 
         this._destroyed = false
         this._timeouts = new Set<NodeJS.Timeout | number>()
-        this._agent = https.Agent ? new https.Agent({ keepAlive: !this._destroyed }) : void 0
         this._retries = new Set<{ id: AbortSignal, retry: number }>()
 
         this.setupReadonly(options)
@@ -177,7 +173,6 @@ class RequestClient extends EventEmitter {
             ...options,
             headers: this.headers,
             method: options?.method ?? "GET",
-            agent: this._agent,
             signal: controller.signal
         } as UndiciRequestOptions
         const baseRoute = mergedOptions[KoreanbotsInternal]?.global
@@ -229,8 +224,6 @@ class RequestClient extends EventEmitter {
             )
             this._retries.add({ id: controller.signal, retry: retry + 1 })
         }
-
-        console.log(r.headers["x-ratelimit-global"], r.headers["x-ratelimit-reset"])
 
         if (r.statusCode === 429) {
             const delay = (parseInt(r.headers["x-ratelimit-reset"] as string ?? "0") * 1000) - Date.now()
