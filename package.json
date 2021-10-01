@@ -1,6 +1,6 @@
 {
   "name": "koreanbots",
-  "version": "3.0.0-rc.16",
+  "version": "3.0.0",
   "description": "JavaScript/TypeScript SDK for KOREANBOTS",
   "main": "dist/src/index.js",
   "typings": "dist/src/index.d.ts",
@@ -13,7 +13,7 @@
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "commit": "git-cz",
-    "docgen": "typedoc src/index.ts --out web --highlightTheme github-light --includeVersion"
+    "docgen": "typedoc src/index.ts --out web --darkHighlightTheme github-dark --lightHighlightTheme github-light --includeVersion"
   },
   "repository": {
     "type": "git",
