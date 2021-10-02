@@ -107,7 +107,7 @@ client.login("토큰")
 
 👤 **zero734kr**
 
-* 개인 GitHub: [@zero734kr](https://H.com/zero734kr)
+* 개인 GitHub: [@zero734kr](https://github.com/zero734kr)
 * Organization GitHub: [@koreanbots](https://github.com/koreanbots)
 
 
