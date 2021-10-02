@@ -39,7 +39,7 @@ $ yarn add koreanbots
 ## 사용 조건
 
 > 3.1 버전 이상은 Node.js v16 이상이 필요합니다.
-> 그 이하 버전은 Node.js v12부터 지원합니다.
+> 그 이하 버전은 Node.js v12부터 지원됩니다.
 
 | discord.js version        | supported | planned to support |
 |---------------------------|-----------|--------------------|
