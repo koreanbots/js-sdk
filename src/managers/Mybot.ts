@@ -1,7 +1,7 @@
+import { LimitedCollection } from "discord.js"
 import { URLSearchParams } from "url"
 import { Bot } from "../structures/Bot"
 import { KoreanbotsInternal } from "../utils/Constants"
-import { LimitedCollection } from "discord.js"
 
 import type { Koreanbots } from "../client/Koreanbots"
 import type { UpdateResponse, Vote } from "../utils/types"
