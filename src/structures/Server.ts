@@ -1,7 +1,7 @@
+import { Emoji, Collection } from "discord.js"
 import { Base } from "./Base"
 import { User } from "./User"
 import { Discord } from "./Discord"
-import { Emoji, Collection } from "discord.js"
 import { RawUserInstance, ServerFlags } from "../utils/types"
 import * as Utils from "../utils"
 
