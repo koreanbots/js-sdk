@@ -6,7 +6,13 @@ import { BotManager } from "../managers/BotManager"
 import { UserManager } from "../managers/UserManager"
 import { WidgetManager } from "../managers/WidgetManager"
 
-import type { BotManagerOptions, KoreanbotsOptions, ProxyValidator, UserManagerOptions, WidgetManagerOptions } from "../utils/types"
+import type { 
+    BotManagerOptions, 
+    KoreanbotsOptions, 
+    ProxyValidator, 
+    UserManagerOptions, 
+    WidgetManagerOptions 
+} from "../utils/types"
 
 const defaultCacheMaxSize = 100
 const defaultCacheSweepInterval = 10000
