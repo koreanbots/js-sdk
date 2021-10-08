@@ -1,0 +1,7 @@
+{
+    "entryPoints": ["src/index.ts"],
+        "out": "web",
+            "darkHighlightTheme": "github-dark",
+                "lightHighlightTheme": "github-light",
+                    "includeVersion": true
+}

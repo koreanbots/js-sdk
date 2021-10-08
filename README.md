@@ -38,7 +38,8 @@ $ yarn add koreanbots
 
 ## 사용 조건
 
-> Node.js v12 이상이 권장됩니다.
+> 3.1 버전 이상은 Node.js v16.6.0 이상이 필요합니다.
+> 그 이하 버전은 Node.js v12부터 지원됩니다.
 
 | discord.js version        | supported | planned to support |
 |---------------------------|-----------|--------------------|
@@ -106,8 +107,8 @@ client.login("토큰")
 
 👤 **zero734kr**
 
-* 개인 Github: [@zero734kr](https://github.com/zero734kr)
-* Organization Github: [@koreanbots](https://github.com/koreanbots)
+* 개인 GitHub: [@zero734kr](https://github.com/zero734kr)
+* Organization GitHub: [@koreanbots](https://github.com/koreanbots)
 
 
 ## 🤝 도움주기

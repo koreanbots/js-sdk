@@ -20,7 +20,7 @@ describe("Widgets Test", () => {
         koreanbots.api.client.on("timeout", a => console.log(`Timeout: ${inspect(a)}`))
         koreanbots.api.client.on("rateLimit", a => console.log(`Rate limit: ${inspect(a)}`))
 
-        return 0
+        return 
     })
 
     afterAll(() => {
@@ -31,7 +31,7 @@ describe("Widgets Test", () => {
         koreanbots.bots.cache.clear()
     })
 
-    it("should be able to fetch widget information", async done => {
+    it("should be able to fetch widget information", async () => {
         try {
             const webpWidget = await koreanbots.widgets.getServerWidget("387548561816027138", {
                 format: "webp",
@@ -46,7 +46,8 @@ describe("Widgets Test", () => {
         } catch {
             // 
         } finally {
-            done()
+            // eslint-disable-next-line no-unsafe-finally
+            return 
         }
     })
 })

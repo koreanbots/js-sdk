@@ -27,70 +27,17 @@ describe("Utils", () => {
         done()
     })
 
-    it("should be able to freeze asynchronously.", async done => {
+    it("should be able to freeze asynchronously.", async () => {
         const time = performance.now()
 
         await Utils.waitFor(100)
 
         expect(performance.now() - time).toBeLessThanOrEqual(150)
 
-        done()
+        return
     })
 
-    it("should be able to validate cache options.", done => {
-        const mockData1 = {
-            max: false,
-            maxAge: false
-        }
-        const mockData2 = {
-            max: -1,
-            maxAge: -1
-        }
-        const mockData3 = {
-            max: Infinity,
-            maxAge: Infinity
-        }
-
-        try {
-            Utils.CacheOptionsValidator<typeof mockData1>().set(mockData1, "max", false)
-        } catch (e) {
-            expect(e.message).toBe("\"max\" 옵션은 숫자여야 합니다. (받은 타입: boolean)")
-        }
-
-        try {
-            Utils.CacheOptionsValidator<typeof mockData1>().set(mockData1, "maxAge", false)
-        } catch (e) {
-            expect(e.message).toBe("\"maxAge\" 옵션은 숫자여야 합니다. (받은 타입: boolean)")
-        }
-
-        try {
-            Utils.CacheOptionsValidator<typeof mockData2>().set(mockData2, "max", -1)
-        } catch (e) {
-            expect(e.message).toBe("\"max\" 옵션은 0보다 커야 합니다. (받은 값: -1, 최소보다 '2' 작음)")
-        }
-
-        try {
-            Utils.CacheOptionsValidator<typeof mockData2>().set(mockData2, "maxAge", -1)
-        } catch (e) {
-            expect(e.message).toBe("\"maxAge\" 옵션은 0보다 커야 합니다. (받은 값: -1, 최소보다 '2' 작음)")
-        }
-
-        try {
-            Utils.CacheOptionsValidator<typeof mockData3>().set(mockData3, "max", Infinity)
-        } catch(e) {
-            expect(e.message).toBe("\"max\" 옵션은 32비트 정수만 허용됩니다. (받은 값: Infinity)")
-        }
-
-        try {
-            Utils.CacheOptionsValidator<typeof mockData3>().set(mockData3, "maxAge", Infinity)
-        } catch (e) {
-            expect(e.message).toBe("\"maxAge\" 옵션은 32비트 정수만 허용됩니다. (받은 값: Infinity)")
-        }
-
-        done()
-    })
-
-    it("KoreanbotsAPIError", done => {
+    it("KoreanbotsAPIError", () => {
         const ERROR_MESSAGE = "test error"
         const ERROR_CODE = 400
         const ERROR_METHOD = "POST"
@@ -106,7 +53,8 @@ describe("Utils", () => {
             expect(e.method).toBe(ERROR_METHOD)
             expect(e.path).toBe(ERROR_PATH)
         } finally {
-            done()
+            // eslint-disable-next-line no-unsafe-finally
+            return 
         }
     })
 })

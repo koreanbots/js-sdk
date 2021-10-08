@@ -1,29 +1,12 @@
+import { LimitedCollection } from "discord.js"
 import { URLSearchParams } from "url"
 import { Bot } from "../structures/Bot"
 import { KoreanbotsInternal } from "../utils/Constants"
 
 import type { Koreanbots } from "../client/Koreanbots"
-import type { FetchResponse, RawBotInstance, RequestInitWithInternals, Vote } from "../utils/types"
-import LifetimeCollection from "../utils/Collection"
+import type { UpdateResponse, Vote } from "../utils/types"
 
-export interface UpdateResponse {
-    code: number
-    version: number
-    message: string
-    servers?: number
-}
-
-interface BotQuery {
-    bots(clientID: string): {
-        get(options?: RequestInitWithInternals): Promise<FetchResponse<RawBotInstance>>
-        vote: {
-            get(options?: RequestInitWithInternals): Promise<FetchResponse<Vote>>
-        }
-        stats: {
-            post(options?: RequestInitWithInternals): Promise<FetchResponse<UpdateResponse>>
-        }
-    }
-}
+const defaultCacheSweepInterval = 10000
 
 export class Mybot {
     public bot: Bot | null
@@ -31,7 +14,7 @@ export class Mybot {
     public lastGuildCount?: number
     public updatedAt?: Date
     public updatedTimestamp?: number
-    public votes: LifetimeCollection<string, Vote>
+    public votes: LimitedCollection<string, Vote>
 
     /**
      * 새로운 Mybot 인스턴스를 생성합니다.
@@ -41,15 +24,15 @@ export class Mybot {
     constructor(public readonly koreanbots: Koreanbots, public readonly clientID: string) {
         this.bot = null
 
-        this.votes = new LifetimeCollection({
-            maxAge: 10000
+        this.votes = new LimitedCollection({
+            sweepInterval: koreanbots.options.sweepInterval ?? defaultCacheSweepInterval
         })
 
         this.mybotInit()
     }
 
     protected async mybotInit(): Promise<Bot> {
-        const res = await this.koreanbots.api<BotQuery>().bots(this.clientID).get()
+        const res = await this.koreanbots.api().bots(this.clientID).get()
 
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         return this.bot = new Bot(this.koreanbots, res.data!)
@@ -76,7 +59,7 @@ export class Mybot {
         const query = new URLSearchParams()
         query.append("userID", id)
 
-        const res = await this.koreanbots.api<BotQuery>().bots(this.clientID).vote.get({
+        const res = await this.koreanbots.api().bots(this.clientID).vote.get({
             [KoreanbotsInternal]: {
                 query
             }
@@ -111,7 +94,7 @@ export class Mybot {
             servers: servers,
             shards
         })
-        const response = await this.koreanbots.api<BotQuery>().bots(this.clientID).stats.post({
+        const response = await this.koreanbots.api().bots(this.clientID).stats.post({
             body
         })
 

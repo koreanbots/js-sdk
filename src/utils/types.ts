@@ -1,5 +1,8 @@
-import type { ClientOptions } from "discord.js"
-import type { RequestInit, Response } from "node-fetch"
+
+import type { Bot } from ".."
+import type { ClientOptions, LimitedCollectionOptions } from "discord.js"
+import type { Dispatcher } from "undici"
+import type { HttpMethod } from "undici/types/dispatcher"
 import type { URLSearchParams } from "url"
 import type { KoreanbotsInternal } from "./Constants"
 
@@ -20,9 +23,9 @@ export interface KoreanbotsClientOptions extends ClientOptions {
     }
 }
 
-export interface Vote { 
+export interface Vote {
     voted: boolean
-    lastVote: number 
+    lastVote: number
 }
 export interface WidgetOptions {
     style?: WidgetStyle
@@ -44,14 +47,22 @@ export interface WidgetData {
 
 export type WidgetMakeOptions = WidgetData & WidgetOptions
 
-export interface RequestInitWithInternals extends RequestInit {
+interface FetchRequestOptions extends Omit<Dispatcher.RequestOptions, "path"> {
+    path?: string
+}
+
+interface RequestInitWithInternals extends FetchRequestOptions {
     [KoreanbotsInternal]?: InternalOptions
+}
+
+export interface RequestOptions extends Omit<RequestInitWithInternals, "method"> {
+    method?: HttpMethod
 }
 
 export interface InternalOptions {
     global?: boolean
     query?: URLSearchParams | string
-    bodyResolver?: <T = unknown>(res: Response) => Promise<T>
+    bodyResolver?: <T = unknown>(res: Dispatcher.ResponseData) => Promise<T>
 }
 
 export enum BotFlags {
@@ -87,7 +98,7 @@ export type BotState =
     "private" |
     "archived"
 
-export type Category =
+export type BotCategory =
     "관리" |
     "뮤직" |
     "전적" |
@@ -109,7 +120,6 @@ export type Category =
     "리그 오브 레전드" |
     "배틀그라운드" |
     "마인크래프트"
-
 
 export type Library =
     "discord.js" |
@@ -151,19 +161,14 @@ export type BaseOptions = {
 
 }
 
-export interface DefaultCacheOptions {
-    max?: number
-    maxAge?: number
-}
-
 export interface KoreanbotsOptions extends BaseOptions {
     api: RequestClientOptions
     bots?: BotManagerOptions
     widgets?: WidgetManagerOptions
     users?: UserManagerOptions
     clientID: string
-    max?: number
-    maxAge?: number
+    maxSize?: number
+    sweepInterval?: number
 }
 
 export interface RequestClientOptions extends BaseOptions {
@@ -175,7 +180,7 @@ export interface RequestClientOptions extends BaseOptions {
 }
 
 export interface BotManagerOptions extends BaseOptions {
-    cache: DefaultCacheOptions
+    cache: LimitedCollectionOptions<string, Nullable<Bot>>
 }
 
 export type UserManagerOptions = BotManagerOptions
@@ -201,7 +206,7 @@ export interface RawBotInstance {
     git: Nullable<string>
     url: Nullable<string>
     discord: Nullable<string>
-    category: Category[]
+    category: BotCategory[]
     vanity: Nullable<string>
     bg: Nullable<string>
     banner: Nullable<string>
@@ -217,4 +222,39 @@ export interface RawUserInstance {
     github: Nullable<string>
     flags: UserFlags
     bots: (string | RawBotInstance)[]
+    servers: string[]
+}
+
+export interface RawEmojiInstance {
+    id: string
+    name: string
+    url: string
+}
+
+export interface UpdateResponse {
+    code: number
+    version: number
+    message: string
+    servers?: number
+}
+
+
+export interface Query {
+    widget(target: WidgetTarget):
+        (type: WidgetType) =>
+            (id: string) => {
+                get: (options?: RequestOptions) => FetchResponse<Buffer>
+            }
+    users(id: string): {
+        get: () => Promise<FetchResponse<RawUserInstance>>
+    }
+    bots(botID: string): {
+        get(options?: RequestOptions): Promise<FetchResponse<RawBotInstance>>
+        vote: {
+            get(options?: RequestOptions): Promise<FetchResponse<Vote>>
+        }
+        stats: {
+            post(options?: RequestOptions): Promise<FetchResponse<UpdateResponse>>
+        }
+    }
 }

@@ -1,20 +1,22 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 
-import fetch, { Request } from "node-fetch"
+import { Dispatcher, request } from "undici"
 import { EventEmitter } from "events"
 import { URLSearchParams } from "url"
-import AbortController, { AbortSignal } from "abort-controller"
-import * as https from "https"
 import { getVersionRoute, getGlobalRoute } from "./getRoute"
 import * as Utils from "../utils"
 import { version, snowflakeRegex, KoreanbotsInternal } from "../utils/Constants"
-import { KoreanbotsAPIError } from "../utils/Errors"
+import { KoreanbotsAPIError, KoreanbotsError } from "../utils/Errors"
 
 import type {
     Version, FetchResponse, RequestClientOptions,
-    ProxyValidator, ValueOf, RequestInitWithInternals
+    ValueOf, RequestOptions, ProxyValidator
 } from "../utils/types"
-import type { Response } from "node-fetch"
+import type { HttpMethod } from "undici/types/dispatcher"
+
+interface UndiciRequestOptions extends RequestOptions {
+    method: HttpMethod
+}
 
 const defaultRetryLimit = 5
 const defaultRequestTimeout = 30_000
@@ -30,7 +32,6 @@ class RequestClient extends EventEmitter {
     public globalReset: null | number
     public options: RequestClientOptions
     private _timeouts: Set<NodeJS.Timeout | number>
-    private _agent?: https.Agent
     private _destroyed: boolean
     private _retries: Set<{ id: AbortSignal, retry: number }>
 
@@ -89,7 +90,6 @@ class RequestClient extends EventEmitter {
 
         this._destroyed = false
         this._timeouts = new Set<NodeJS.Timeout | number>()
-        this._agent = https.Agent ? new https.Agent({ keepAlive: !this._destroyed }) : void 0
         this._retries = new Set<{ id: AbortSignal, retry: number }>()
 
         this.setupReadonly(options)
@@ -161,7 +161,7 @@ class RequestClient extends EventEmitter {
         this.removeAllListeners()
     }
 
-    async request<T = unknown>(method: string, url: string, options?: RequestInitWithInternals): Promise<FetchResponse<T>> {
+    async request<T = unknown>(url: string, options?: RequestOptions): Promise<FetchResponse<T>> {
         if (this.globalReset) {
             const delayFor = this.globalReset - Date.now()
 
@@ -172,10 +172,9 @@ class RequestClient extends EventEmitter {
         const mergedOptions = {
             ...options,
             headers: this.headers,
-            method,
-            agent: this._agent,
+            method: options?.method ?? "GET",
             signal: controller.signal
-        } as RequestInitWithInternals
+        } as UndiciRequestOptions
         const baseRoute = mergedOptions[KoreanbotsInternal]?.global
             ? this.globalUri
             : this.baseUri
@@ -189,86 +188,93 @@ class RequestClient extends EventEmitter {
         const timeout = this.setTimeout(() => {
             this.emit("timeout", {
                 url,
-                method,
+                method: mergedOptions.method,
                 [Symbol("requestOptions")]: options
             })
             controller.abort()
         }, this.options.requestTimeout!)
 
         let res: T
-        let r: Response
+        let r: Dispatcher.ResponseData
         try {
-            const response = await fetch(fetchUrl, mergedOptions)
+            const response = await request(fetchUrl, mergedOptions)
 
-            res = await (mergedOptions[KoreanbotsInternal]?.bodyResolver?.(response) ?? response.text()
+            res = await (mergedOptions[KoreanbotsInternal]?.bodyResolver?.(response) ?? response.body.text()
                 // code for debug
-                .then(a => Utils.isJSON(a) ? JSON.parse(a) : (() => { throw a })())
-                .catch(console.error)
+                .then(a => Utils.isJSON(a) ? JSON.parse(a) : (() => null)())
             )
             r = response
+        } catch (err) {
+            throw new KoreanbotsError(err)
         } finally {
             this.clearTimeout(timeout)
         }
 
-        if ((r.status >= 400 || r.status < 600) && r.status !== 429 && r.status !== 404) {
+        if (
+            (r.statusCode >= 400 || r.statusCode < 600)
+            && r.statusCode !== 429 && r.statusCode !== 404
+        ) {
             const { retry } = [...this._retries].find(e => e.id === controller.signal) ?? { retry: 0 }
 
             if (retry >= this.options.retryLimit!) throw new KoreanbotsAPIError(
                 // @ts-expect-error check
                 `올바르지 않은 응답이 반환 되었습니다. ${res.data?.message || JSON.stringify(res.data)}`,
-                r.status,
-                method,
+                r.statusCode,
+                mergedOptions.method,
                 url
             )
             this._retries.add({ id: controller.signal, retry: retry + 1 })
         }
 
-        if (r.status === 429) {
-            const delay = (parseInt(r.headers.get("x-ratelimit-reset") ?? "0") * 1000) - Date.now()
-            const isGlobal = Boolean(r.headers.get("x-ratelimit-global"))
+        if (r.statusCode === 429) {
+            const delay = (parseInt(r.headers["x-ratelimit-reset"] as string ?? "0") * 1000) - Date.now()
+            const isGlobal = Boolean(r.headers["x-ratelimit-global"])
 
             this.clearTimeout(timeout)
 
             // request again if `this.globalReset` was already defined to handle global rate limit
-            if (this.globalReset) return this.request(method, url, options)
+            if (this.globalReset) return this.request(url, options)
 
             this.emit("rateLimit", {
                 isGlobal,
                 path: url,
-                method,
-                limit: parseInt(r.headers.get("x-ratelimit-limit") ?? "0"),
-                retryAfter: parseInt(r.headers.get("x-ratelimit-reset") ?? "0") * 1000,
+                method: mergedOptions.method,
+                limit: parseInt(r.headers["x-ratelimit-limit"] as string ?? "0"),
+                retryAfter: parseInt(r.headers["x-ratelimit-reset"] as string ?? "0") * 1000,
                 [Symbol("requestOptions")]: options
             })
 
             // handle endpoint specific rate limit
             if (!isGlobal) {
-                if (delay === 0) return this.request(method, url, options)
+                if (delay === 0) return this.request(url, options)
 
                 await Utils.waitFor(delay)
-                return this.request(method, url, options)
+                return this.request(url, options)
             }
 
-            this.globalReset = parseInt(r.headers.get("x-ratelimit-reset") ?? "0") * 1000
+            this.globalReset = parseInt(r.headers["x-ratelimit-reset"] as string ?? "0") * 1000
 
             await Utils.waitFor(this.globalReset - Date.now())
 
-            return this.request(method, url, options)
+            return this.request(url, options)
         }
 
         const response = {
-            code: r.status,
+            code: r.statusCode,
             // @ts-expect-error generic
             data: res?.data ? res?.data : res,
             // @ts-expect-error generic
             message: res?.message,
             isCache: false,
-            ratelimitRemaining: parseInt(r.headers.get("x-ratelimit-remaining") ?? "0"),
+            ratelimitRemaining: parseInt(r.headers["x-ratelimit-remaining"] as string ?? "0"),
             url,
             updatedTimestamp: Date.now()
         }
 
-        const req = new Request(fetchUrl, mergedOptions)
+        const req = {
+            path: fetchUrl,
+            mergedOptions
+        }
 
         this.emit("request", req, r)
 

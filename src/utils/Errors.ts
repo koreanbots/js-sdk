@@ -10,3 +10,11 @@ export class KoreanbotsAPIError extends Error {
         this.name = "KoreanbotsAPIError"
     }
 }
+
+export class KoreanbotsError extends Error {
+    constructor(messsage: unknown) {
+        super(messsage as string)
+
+        this.name = "KoreanbotsError"
+    }
+}
