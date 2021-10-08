@@ -4,7 +4,6 @@ export { KoreanbotsClient } from "./client/KoreanbotsClient"
 export { BotManager } from "./managers/BotManager"
 export { UserManager } from "./managers/UserManager"
 export { WidgetManager } from "./managers/WidgetManager"
-export { ServerManager } from "./managers/ServerManager"
 export { Mybot } from "./managers/Mybot"
 
 export { User } from "./structures/User"
