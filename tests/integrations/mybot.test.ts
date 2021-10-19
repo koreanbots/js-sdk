@@ -47,7 +47,7 @@ describe("Mybot Test", () => {
 
     it("should be able to check vote", async () => {
         const res = await koreanbots.mybot.checkVote("462355431071809537")
-
+        console.log(res)
         expect(typeof res.voted).toBe("boolean")
 
         return 

@@ -121,7 +121,7 @@ class RequestClient extends EventEmitter {
                 writable: false,
                 value: {
                     // idk why, but here was resulting 'undefined' when is 'this.token'
-                    authorization: options.token,
+                    Authorization: options.token,
                     "Content-Type": "application/json",
                     "User-Agent": `js-sdk/${version}`
                 }
