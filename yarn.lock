@@ -4320,9 +4320,9 @@ unbox-primitive@^1.0.1:
     which-boxed-primitive "^1.0.2"
 
 undici@^4.7.0:
-  version "4.7.0"
-  resolved "https://registry.yarnpkg.com/undici/-/undici-4.7.0.tgz#3bda286d67bf45d0ab1b94ca6c84e546dcb3b0d4"
-  integrity sha512-O1q+/EIs4g0HnVMH8colei3qODGiYBLpavWYv3kI+JazBBsBIndnZfUqZ2MEfPJ12H9d56yVdwZG1/nV/xcoSQ==
+  version "4.8.0"
+  resolved "https://registry.yarnpkg.com/undici/-/undici-4.8.0.tgz#17d84f902b210a2ee5edc2f8bcc2df2ed7f1c4a7"
+  integrity sha512-+JlCKo5bJ9lMtElHMN2LwFtHqg3ovelCsuS6R4vCIJ/Js3NbP4OE3XOLOQjj9pitXJePi2mr12cteLqcbylpxQ==
 
 universalify@^0.1.2:
   version "0.1.2"
