@@ -2,7 +2,6 @@
 
 import { Koreanbots } from "../../src"
 import { inspect } from "util"
-import { waitFor } from "../../src/utils"
 
 describe("Mybot Test", () => {
     let koreanbots: Koreanbots
@@ -34,8 +33,6 @@ describe("Mybot Test", () => {
 
         await koreanbots.mybot.update({ servers: serverCount, shards: shardCount })
 
-        await waitFor(1000)
-
         const botInfo = await koreanbots.bots.fetch(process.env.CLIENT_ID!)
 
         expect(botInfo.id).toBe(process.env.CLIENT_ID!)
@@ -47,7 +44,7 @@ describe("Mybot Test", () => {
 
     it("should be able to check vote", async () => {
         const res = await koreanbots.mybot.checkVote("462355431071809537")
-        console.log(res)
+
         expect(typeof res.voted).toBe("boolean")
 
         return 

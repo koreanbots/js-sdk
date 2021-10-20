@@ -32,7 +32,6 @@ class RequestClient extends EventEmitter {
     public globalReset: null | number
     public options: RequestClientOptions
     private _timeouts: Set<NodeJS.Timeout | number>
-    private _destroyed: boolean
     private _retries: Set<{ id: AbortSignal, retry: number }>
 
     protected static validator = <T>(): ProxyValidator<T> => ({
@@ -88,7 +87,6 @@ class RequestClient extends EventEmitter {
 
         this.globalReset = null
 
-        this._destroyed = false
         this._timeouts = new Set<NodeJS.Timeout | number>()
         this._retries = new Set<{ id: AbortSignal, retry: number }>()
 
@@ -152,10 +150,10 @@ class RequestClient extends EventEmitter {
     }
 
     destroy(): void {
-        this._destroyed = true
+        for (const timeout of [...this._timeouts])
+            this.clearTimeout(timeout as NodeJS.Timeout)
 
-        for (const timeout of [...this._timeouts]) this.clearTimeout(timeout as NodeJS.Timeout)
-
+        this._timeouts.clear()
         this._retries.clear()
 
         this.removeAllListeners()
@@ -233,7 +231,8 @@ class RequestClient extends EventEmitter {
             this.clearTimeout(timeout)
 
             // request again if `this.globalReset` was already defined to handle global rate limit
-            if (this.globalReset) return this.request(url, options)
+            if (this.globalReset) 
+                return await this.request(url, options)
 
             this.emit("rateLimit", {
                 isGlobal,
@@ -246,7 +245,8 @@ class RequestClient extends EventEmitter {
 
             // handle endpoint specific rate limit
             if (!isGlobal) {
-                if (delay === 0) return this.request(url, options)
+                if (delay === 0) 
+                    return await this.request(url, options)
 
                 await Utils.waitFor(delay)
                 return this.request(url, options)

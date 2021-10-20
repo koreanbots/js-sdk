@@ -97,4 +97,11 @@ export class Koreanbots {
             }
         }
     }
+
+    destroy() {
+        this.bots.cache.clear()
+        this.users.cache.clear()
+        this.widgets.cache.clear()
+        this.mybot.votes.clear()
+    }
 }

@@ -32,6 +32,10 @@ export class KoreanbotsClient extends Client {
     constructor(options: KoreanbotsClientOptions) {
         super(options)
 
+        if (this.options.koreanbotsClient)
+            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+            this.options.koreanbotsClient!.updateOnInit ??= true
+
         this.koreanbots = null
 
         /**
@@ -78,7 +82,7 @@ export class KoreanbotsClient extends Client {
         const servers = await getGuildCount()
         const shards = getShardCount()
 
-        this.koreanbots.mybot.update({ servers, shards })
+        if (this.options.koreanbotsClient?.updateOnInit) this.koreanbots.mybot.update({ servers, shards })
         this.koreanbotsInterval = setInterval(
             async () => {
                 const servers = await getGuildCount()
@@ -86,5 +90,13 @@ export class KoreanbotsClient extends Client {
             },
             this.options.koreanbotsClient?.updateInterval ?? 60000 * 10
         )
+    }
+
+    destroy() {
+        if (this.koreanbotsInterval)
+            clearInterval(this.koreanbotsInterval as NodeJS.Timeout)
+
+        
+        return super.destroy()
     }
 }
