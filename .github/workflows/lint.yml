@@ -23,3 +23,21 @@ jobs:
       uses: icrawl/action-eslint@v1
       with:
         custom-glob: src
+
+  typecheck:
+    name: TypeScript
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: setup node v16
+      uses: actions/setup-node@v2.2.0
+      with:
+        node-version: 16
+        cache: 'npm'
+
+    - name: yarn install
+      run: yarn install
+
+    - name: TypeCheck
+      run: yarn tsc --project tsconfig.test.json
