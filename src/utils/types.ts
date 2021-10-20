@@ -20,6 +20,7 @@ export interface KoreanbotsClientOptions extends ClientOptions {
     koreanbots: Omit<KoreanbotsOptions, "clientID"> & { clientID?: string }
     koreanbotsClient?: {
         updateInterval?: number
+        updateOnInit?: boolean
     }
 }
 
