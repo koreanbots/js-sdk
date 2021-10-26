@@ -28,15 +28,15 @@ describe("Users Test", () => {
         koreanbots.bots.cache.clear()
     })
 
-    it("should be able to fetch other user information", async done => {
-        const userId = "462355431071809537" // zero734kr
+    it("should be able to fetch other user information", async () => {
+        const userId = "462355431071809537" // zero734kr#5005
         const user = await koreanbots.users.fetch(userId)
 
         const validate = (userInfo: User) => {
             expect(typeof userInfo).toBe("object")
             expect(userInfo.id).toBe(userId)
-            expect(userInfo.is("ADMINISTRATOR")).toBe(false)
-            expect(userInfo.is(1 << 0)).toBe(false)
+            expect(userInfo.is("ADMINISTRATOR")).toBe(true)
+            expect(userInfo.is(1 << 0)).toBe(true)
         }
 
         validate(user)
@@ -45,6 +45,6 @@ describe("Users Test", () => {
 
         validate(refetched)
 
-        done()
+        return 
     })
 })

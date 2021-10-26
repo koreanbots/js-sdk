@@ -1,14 +1,21 @@
 import { snowflakeRegex } from "../utils/Constants"
 import APIRouter from "../rest/APIRouter"
+
 import { Mybot } from "../managers/Mybot"
 import { BotManager } from "../managers/BotManager"
 import { UserManager } from "../managers/UserManager"
 import { WidgetManager } from "../managers/WidgetManager"
 
-import type { BotManagerOptions, KoreanbotsOptions, ProxyValidator, UserManagerOptions, WidgetManagerOptions } from "../utils/types"
+import type { 
+    BotManagerOptions, 
+    KoreanbotsOptions, 
+    ProxyValidator, 
+    UserManagerOptions, 
+    WidgetManagerOptions 
+} from "../utils/types"
 
-const defaultMaxOption = 100
-const defaultMaxAgeOption = 10000
+const defaultCacheMaxSize = 100
+const defaultCacheSweepInterval = 10000
 
 export class Koreanbots {
     public readonly options!: KoreanbotsOptions
@@ -39,16 +46,16 @@ export class Koreanbots {
      * ```js
      * new Koreanbots({
      *     clientID: process.env.CLIENT_ID,
-     *     apiOptions: {
+     *     api: {
      *         token: process.env.KOREANBOTS_TOKEN
      *     },
      *     // 글로벌 캐시 옵션이며, 누락할 경우 모든 캐시 옵션이 각각의 기본 값으로 설정됩니다 (로컬 캐시 옵션이 우선권을 가집니다)
-     *     max: 250, // (기본값: 100) 캐시에 최대 250개의 내용을 저장
-     *     maxAge: 60000 * 15, // (기본값: 10000 = 10초) 캐시에 저장한 내용을 15분 뒤에 삭제합니다.
+     *     maxSize: 250, // (기본값: 100) 캐시에 최대 250개의 내용을 저장
+     *     sweepInterval: 60000 * 15, // (기본값: 10000 = 10초) 캐시에 저장한 내용을 15분 뒤에 삭제합니다.
      *     users: {
      *         cache: { // 이 캐시 설정은 로컬이므로 앞서 적은 글로벌 캐시 옵션보다 우선권을 갖습니다.
-     *             max: 500, // (기본값: 100)
-     *             maxAge: 60000 * 30 // (기본값: 60000 * 60)
+     *             maxSize: 500, // (기본값: 100)
+     *             sweepInterval: 60000 * 30 // (기본값: 60000 * 60)
      *         }
      *     }
      * })
@@ -66,8 +73,8 @@ export class Koreanbots {
 
         optionsProxy.clientID = options.clientID
 
-        this.options.max = options.max ?? defaultMaxOption
-        this.options.maxAge = options.maxAge ?? defaultMaxAgeOption
+        if (!this.options?.maxSize) this.options.maxSize = defaultCacheMaxSize
+        if (!this.options?.sweepInterval) this.options.sweepInterval = defaultCacheSweepInterval
 
         this.bots = new BotManager(this, this.getOptions(options.bots))
         this.users = new UserManager(this, this.getOptions(options.users))
@@ -89,5 +96,12 @@ export class Koreanbots {
                 ...this.options
             }
         }
+    }
+
+    destroy() {
+        this.bots.cache.clear()
+        this.users.cache.clear()
+        this.widgets.cache.clear()
+        this.mybot.votes.clear()
     }
 }

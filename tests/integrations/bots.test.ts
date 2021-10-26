@@ -31,7 +31,7 @@ describe("Bots Test", () => {
         koreanbots.bots.cache.clear()
     })
 
-    it("should be able to fetch other bot information", async done => {
+    it("should be able to fetch other bot information", async () => {
         expect(typeof botInfo).toBe("object")
         expect(botInfo.id).toBe(process.env.CLIENT_ID)
 
@@ -44,8 +44,8 @@ describe("Bots Test", () => {
 
         expect(typeof votes).toBe("number")
 
-        if (botInfo.discord) expect(botInfo.discord.inviteUrl).toMatch(/https?:\/\/discord\.gg\/(.{6,10})/i)
+        if (botInfo.discord) expect(botInfo.discord.url).toMatch(/https?:\/\/discord\.com\/invite\/(.{6,10})/i)
 
-        done()
+        return 
     })
 })

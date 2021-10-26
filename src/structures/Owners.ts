@@ -2,13 +2,8 @@ import { Collection } from "discord.js"
 import { User } from "./User"
 
 import type { Koreanbots } from "../client/Koreanbots"
-import type { FetchResponse, RawUserInstance } from "../utils/types"
+import type { RawUserInstance } from "../utils/types"
 
-interface UserQuery {
-    users(id: string): {
-        get: () => Promise<FetchResponse<RawUserInstance>>
-    }
-}
 
 export class Owners extends Collection<string, User> {
     constructor(public readonly koreanbots: Koreanbots, private data?: User[]) {
@@ -21,7 +16,7 @@ export class Owners extends Collection<string, User> {
 
     public async fetch(): Promise<(RawUserInstance | null)[]> {
         const result = await Promise.all(this.map(user => (
-            this.koreanbots.api<UserQuery>().users(user.id).get()
+            this.koreanbots.api().users(user.id).get()
         )))
 
         result.filter(f => f.code === 200).forEach(owner => {

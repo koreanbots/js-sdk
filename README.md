@@ -38,17 +38,14 @@ $ yarn add koreanbots
 
 ## 사용 조건
 
-> Node.js v12 이상이 권장됩니다.
+> 3.1 버전 이상은 Node.js v16.6.0 이상이 필요합니다.
+> 그 이하 버전은 Node.js v12부터 지원됩니다.
 
 | discord.js version        | supported | planned to support |
 |---------------------------|-----------|--------------------|
 | v11.x                     |  no       |  no                |
 | v12.x                     |  yes      |  -                 |
 | v13.x (stable)            |  yes      |  -                 |
-
-## v2 -> v3 마이그레이션 가이드
-
-❯ [가이드](https://github.com/koreanbots/js-sdk/blob/master/docs/v3-migration.md)
 
 ## 사용법
 
@@ -57,6 +54,7 @@ $ yarn add koreanbots
 ```js
 const { KoreanbotsClient } = require("koreanbots")
 const client = new KoreanbotsClient({
+    intents: ["GUILDS", "GUILD_MESSAGES", "GUILD_MEMBERS"],
     koreanbots: {
         api: {
             token: "KOREANBOTS 토큰"
@@ -109,8 +107,8 @@ client.login("토큰")
 
 👤 **zero734kr**
 
-* 개인 Github: [@zero734kr](https://github.com/zero734kr)
-* Organization Github: [@koreanbots](https://github.com/koreanbots)
+* 개인 GitHub: [@zero734kr](https://github.com/zero734kr)
+* Organization GitHub: [@koreanbots](https://github.com/koreanbots)
 
 
 ## 🤝 도움주기
