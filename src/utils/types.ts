@@ -84,6 +84,15 @@ export enum UserFlags {
     PREMIUM_USER = 1 << 3
 }
 
+export enum ServerFlags {
+    GENERAL = 0 << 0,
+    OFFICIAL = 1 << 0,
+    KOREANBOTS_VERIFIED = 1 << 2,
+    KOREANBOTS_PARTNER = 1 << 3,
+    DISCORD_VERIFIED = 1 << 4,
+    DISCORD_PARTNER = 1 << 5
+}
+
 export type BotStatus =
     "online" |
     "idle" |
@@ -98,6 +107,12 @@ export type BotState =
     "blocked" |
     "private" |
     "archived"
+
+export type ServerState =
+    "ok" | // 정상
+    "reported" | // 일시 정지
+    "blocked" | /// 강제 삭제
+    "unreachable" // 정보를 불러올 수 없음
 
 export type BotCategory =
     "관리" |
@@ -121,6 +136,18 @@ export type BotCategory =
     "리그 오브 레전드" |
     "배틀그라운드" |
     "마인크래프트"
+
+export type ServerCategory =
+    | "커뮤니티"
+    | "친목"
+    | "음악"
+    | "기술"
+    | "교육"
+    | "게임"
+    | "오버워치"
+    | "리그 오브 레전드"
+    | "배틀그라운드"
+    | "마인크래프트"
 
 export type Library =
     "discord.js" |
@@ -167,6 +194,7 @@ export interface KoreanbotsOptions extends BaseOptions {
     bots?: BotManagerOptions
     widgets?: WidgetManagerOptions
     users?: UserManagerOptions
+    servers?: ServerManagerOptions
     clientID: string
     maxSize?: number
     sweepInterval?: number
@@ -181,6 +209,10 @@ export interface RequestClientOptions extends BaseOptions {
 }
 
 export interface BotManagerOptions extends BaseOptions {
+    cache: LimitedCollectionOptions<string, Nullable<Bot>>
+}
+
+export interface ServerManagerOptions extends BaseOptions {
     cache: LimitedCollectionOptions<string, Nullable<Bot>>
 }
 
@@ -232,6 +264,26 @@ export interface RawEmojiInstance {
     url: string
 }
 
+export interface RawServerInstance {
+    id: string
+    name: string
+    icon: Nullable<string>
+    owner: Nullable<RawUserInstance>
+    flags: number
+    votes: number
+    members: Nullable<number>
+    boostTier: Nullable<number>
+    emojis: RawEmojiInstance[]
+    desc: string
+    category: ServerCategory[]
+    invite: string
+    bots: RawBotInstance[]
+    vanity: Nullable<string>
+    bg: Nullable<string>
+    banner: Nullable<string>
+    state: ServerState
+}
+
 export interface UpdateResponse {
     code: number
     version: number
@@ -256,6 +308,12 @@ export interface Query {
         }
         stats: {
             post(options?: RequestOptions): Promise<FetchResponse<UpdateResponse>>
+        }
+    }
+    servers(serverID: string): {
+        get(options?: Dispatcher.RequestOptions): Promise<FetchResponse<RawServerInstance>>
+        owners: {
+            get(options?: Dispatcher.RequestOptions): Promise<FetchResponse<RawUserInstance[]>>
         }
     }
 }
