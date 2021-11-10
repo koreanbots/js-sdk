@@ -14,7 +14,7 @@ export type Nullable<T> = T | null
 export type WidgetType = "status" | "servers" | "votes"
 export type WidgetTarget = "bots"
 export type WidgetStyle = "classic" | "flat"
-export type WidgetFormat = "webp" | "png" | "jpg" | "jpeg" | "svg"
+export type WidgetFormat = "webp" | "png" | "jpg" | "jpeg" | "svg" | "avif"
 
 export interface KoreanbotsClientOptions extends ClientOptions {
     koreanbots: Omit<KoreanbotsOptions, "clientID"> & { clientID?: string }

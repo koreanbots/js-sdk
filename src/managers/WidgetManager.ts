@@ -154,6 +154,8 @@ export class WidgetManager {
             case "webp":
                 converted = sh(buffer).webp().toBuffer()
                 break
+            case "avif":
+                converted = sh(buffer).avif().toBuffer()
             default:
                 converted = buffer
                 break
