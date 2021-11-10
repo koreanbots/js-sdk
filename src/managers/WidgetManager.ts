@@ -156,6 +156,10 @@ export class WidgetManager {
                 break
             case "avif":
                 converted = sh(buffer).avif().toBuffer()
+                break
+            case "heif":
+                converted = sh(buffer).heif().toBuffer()
+                break
             default:
                 converted = buffer
                 break
