@@ -111,11 +111,13 @@ export class WidgetManager {
             target: options.target,
             type: options.type
         }
-
+        
         const key = createHash("sha256").update(JSON.stringify(cacheKey)).digest("hex")
-        const cache = this.cache.get(key)
 
-        if (!fetchOptions?.force && cache) return cache
+        if (!fetchOptions?.force && cache) {
+            const cache = this.cache.get(key)
+            return cache
+        }
 
         for (const queryOption of queryOptions) {
             const value = options[queryOption]?.toString?.() || options[queryOption] as string
@@ -146,19 +148,19 @@ export class WidgetManager {
             switch (options?.format) {
             case "jpeg":
             case "jpg":
-                converted = sh(buffer).jpeg().toBuffer()
+                converted = sh(buffer).jpeg(options.convertOptions).toBuffer()
                 break
             case "png":
-                converted = sh(buffer).png().toBuffer()
+                converted = sh(buffer).png(options.convertOptions).toBuffer()
                 break
             case "webp":
-                converted = sh(buffer).webp().toBuffer()
+                converted = sh(buffer).webp(options.convertOptions).toBuffer()
                 break
             case "avif":
-                converted = sh(buffer).avif().toBuffer()
+                converted = sh(buffer).avif(options.convertOptions).toBuffer()
                 break
             case "heif":
-                converted = sh(buffer).heif().toBuffer()
+                converted = sh(buffer).heif(options.convertOptions).toBuffer()
                 break
             default:
                 converted = buffer
