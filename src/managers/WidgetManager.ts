@@ -112,12 +112,11 @@ export class WidgetManager {
             type: options.type
         }
         
-        const key = createHash("sha256").update(JSON.stringify(cacheKey)).digest("hex")
+        const key = createHash("sha256").update(JSON.stringify(cacheKey)).digest("hex")       
+        const cache = this.cache.get(key)
 
-        if (!fetchOptions?.force && cache) {
-            const cache = this.cache.get(key)
+        if (!fetchOptions?.force && cache) 
             return cache
-        }
 
         for (const queryOption of queryOptions) {
             const value = options[queryOption]?.toString?.() || options[queryOption] as string
