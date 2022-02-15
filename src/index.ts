@@ -14,6 +14,7 @@ export { Github } from "./structures/Github"
 export { Owners } from "./structures/Owners"
 export { Widget } from "./structures/Widget"
 
+export * from "./utils/types"
 export * as Constants from "./utils/Constants"
 export * as Utils from "./utils"
 export * as Errors from "./utils/Errors"
