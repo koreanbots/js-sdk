@@ -111,13 +111,12 @@ export class WidgetManager {
             target: options.target,
             type: options.type
         }
-        
-        const key = createHash("sha256").update(JSON.stringify(cacheKey)).digest("hex")
 
-        if (!fetchOptions?.force && cache) {
-            const cache = this.cache.get(key)
+        const key = createHash("sha256").update(JSON.stringify(cacheKey)).digest("hex")
+        const cache = this.cache.get(key)
+
+        if (!fetchOptions?.force && cache)
             return cache
-        }
 
         for (const queryOption of queryOptions) {
             const value = options[queryOption]?.toString?.() || options[queryOption] as string
@@ -162,8 +161,6 @@ export class WidgetManager {
             case "heif":
                 converted = sh(buffer).heif(options.convertOptions).toBuffer()
                 break
-            case "avif":
-                converted = sh(buffer).avif().toBuffer()
             default:
                 converted = buffer
                 break
