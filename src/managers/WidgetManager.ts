@@ -111,11 +111,11 @@ export class WidgetManager {
             target: options.target,
             type: options.type
         }
-        
-        const key = createHash("sha256").update(JSON.stringify(cacheKey)).digest("hex")       
+
+        const key = createHash("sha256").update(JSON.stringify(cacheKey)).digest("hex")
         const cache = this.cache.get(key)
 
-        if (!fetchOptions?.force && cache) 
+        if (!fetchOptions?.force && cache)
             return cache
 
         for (const queryOption of queryOptions) {
