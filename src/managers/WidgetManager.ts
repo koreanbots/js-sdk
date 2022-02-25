@@ -161,9 +161,6 @@ export class WidgetManager {
             case "heif":
                 converted = sh(buffer).heif(options.convertOptions).toBuffer()
                 break
-            case "avif":
-                converted = sh(buffer).avif(options.convertOptions).toBuffer()
-                break
             default:
                 converted = buffer
                 break
